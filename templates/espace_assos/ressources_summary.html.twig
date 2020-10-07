@@ -1,0 +1,48 @@
+{% extends 'espace_assos/espasso_base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block header %}Ressources{% endblock %}
+
+{% block body %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-10 mx-auto">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3>Bienvenue dans les ressources Asso'esaip</h3>
+                            <p class="card-text">
+                                Ces pages sont des fiches pratiques pour faire vivre ton club dans la vie associative de l'école.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body p-0">
+                            <ul class="list-group list-group-flush">
+                                {% for page in pages %}
+                                    <li class="list-group-item" style="padding-top: 25px; padding-bottom: 25px">
+                                        <a href="{{ path('espace_assos_ressource', {url: page.url}) }}" class="pas-de-lien">
+                                            <h5>{{ page.title }}</h5>
+                                            <p class="card-text">
+                                                {{ page.description }}
+                                            </p>
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

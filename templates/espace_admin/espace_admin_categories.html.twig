@@ -1,0 +1,122 @@
+{% extends 'espace_admin/espadmin_base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block header %}Catégories <span style="color: red">(Pas encore fonctionnel)</span>{% endblock %}
+
+{% block body %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-4">
+                    <div class="card">
+                        <div class="card-header">
+                            Catégories projet
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <select class="form-control" id="inputCateg">
+                                    <option value="-1">Nouvelle catégorie</option>
+                                    {% for c in projects %}
+                                        <option value="{{ c.id }}">{{ c.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <form id="form-categ">
+                                <div class="form-group">
+                                    <label for="inputNameCateg">Nom de la catégorie</label>
+                                    <input type="text" class="form-control" id="inputNameCateg" placeholder="Entrer le nom de la catégorie.">
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputUrlCateg">URL <span class="text-muted text-sm">(Utilisé dans https://asso.esaip.org/categorie/<b>url-categorie</b>)</span></label>
+                                    <input type="text" class="form-control" id="inputUrlCateg" placeholder="Exemple : vie-associative">
+                                    <small id="urlHelp" class="form-text text-muted">L'URL est généré automatiquement. Modifiez le pour le rendre court et explicite.</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputDescription">Phrase de description</label>
+                                    <textarea class="form-control" id="inputDescription" rows="2"></textarea>
+                                </div>
+                            </form>
+                            <button onclick="enregistrerCategorie()" id="bouton-enregistrer-categorie" class="btn btn-primary">Enregistrer</button>
+                            <button onclick="supprimerCategorie()" id="bouton-supprimer-categorie" class="btn btn-danger">Supprimer</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4">
+                    <div class="card">
+                        <div class="card-header">
+                            Catégories articles
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <select class="form-control" id="inputCategArticle">
+                                    <option value="-1">Nouvelle catégorie</option>
+                                    {% for c in articles %}
+                                        <option value="{{ c.id }}">{{ c.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <form id="form-categ-article">
+                                <div class="form-group">
+                                    <label for="inputNameCategArticle">Nom de la catégorie</label>
+                                    <input type="text" class="form-control" id="inputNameCategArticle" placeholder="Entrer le nom de la catégorie.">
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputUrlCateg">URL</label>
+                                    <input type="text" class="form-control" id="inputUrlCateg" placeholder="Exemple : vie-associative">
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputColor">Couleur</label>
+                                    <input class="form-control" id="inputColor" type="color"/>
+                                </div>
+                            </form>
+                            <button onclick="" class="btn btn-primary">Enregistrer</button>
+                            <button onclick="" class="btn btn-danger">Supprimer</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4">
+                    <div class="card">
+                        <div class="card-header">
+                            Catégories événements
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <select class="form-control" id="inputCategEvent">
+                                    <option value="-1">Nouvelle catégorie</option>
+                                    {% for c in events %}
+                                        <option value="{{ c.id }}">{{ c.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <form id="form-categ-event">
+                                <div class="form-group">
+                                    <label for="inputNameCategEvent">Nom de la catégorie</label>
+                                    <input type="text" class="form-control" id="inputNameCategEvent" placeholder="Entrer le nom de la catégorie.">
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputUrlCateg">URL</label>
+                                    <input type="text" class="form-control" id="inputUrlCateg" placeholder="Exemple : vie-associative">
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputColor">Couleur</label>
+                                    <input class="form-control" id="inputColor" type="color"/>
+                                </div>
+                            </form>
+                            <button onclick="" class="btn btn-primary">Enregistrer</button>
+                            <button onclick="" class="btn btn-danger">Supprimer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

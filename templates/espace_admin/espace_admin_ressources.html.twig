@@ -1,0 +1,231 @@
+{% extends 'espace_admin/espadmin_base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('espace_admin_ressources') }}
+
+{% endblock %}
+
+{% block header %}Pages ressources{% endblock %}
+
+{% block body %}
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-4 order-lg-1">
+                    <div class="card">
+                        <div class="card-header">
+                            Liste des pages <i class="float-right text-muted">Glisser-déplacer pour réorganiser</i>
+                        </div>
+                        <div class="card-body p-0" id="nav-list-card">
+                            <ul class="list-group list-group-flush" id="nav-list">
+                                {% for page in pages %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center page-list-item" id="page-list-{{ page.id }}">
+                                        {{ page.shortTitle }}
+                                        <a href="#page-{{ page.id }}" data-toggle="tab" aria-controls="page-{{ page.id }}" aria-selected="false" {{ loop.first ? 'class="active"' }}></a>
+                                        <div class="float-right">
+                                            <button class="btn btn-danger" onclick="confirmRemove({{ page.id }}, '{{ page.title }}')">Supprimer</button>
+                                            <button class="btn btn-primary btn-page" onclick="changePage({{ page.id }})" {{ loop.first ? 'disabled' }}>{{ loop.first ? 'Modif. en cours' : 'Modifier' }}</button>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+
+                        <!-- Page list template -->
+                        <ul style="display: none">
+                            <li class="list-group-item d-flex justify-content-between align-items-center page-list-item" id="list-template">
+                                %title%
+                                <a href="#page-%id%" data-toggle="tab" aria-controls="page-%id%" aria-selected="false"></a>
+                                <div class="float-right">
+                                    <button class="btn btn-danger" onclick="confirmRemove('%id%', '%title%')">Supprimer</button>
+                                    <button class="btn btn-primary btn-page" onclick="changePage('%id%', this)" disabled>Modif. en cours</button>
+                                </div>
+                            </li>
+                        </ul>
+                        <div class="card-footer">
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addPageModal">
+                                Créer une page
+                            </button>
+                        </div>
+
+                        <div class="overlay" style="display: none">
+                            <i class="fas fa-2x fa-sync-alt"></i>
+                        </div>
+                    </div>
+                    <div class="alert alert-info">
+                        L'ordre des pages ne s'enregistre pas directement.
+                        En cas d'inversion de position de deux pages, il faut enregistrer les modifications sur les deux pages pour que les changements prennent bien effet.
+                        Cela sera corrigé.</div>
+                </div>
+
+                <div class="col-lg-8 order-lg-0" style="max-width: 1140px;">
+                    <div id="contenu">
+                        <div class="tab-content">
+                            {% for page in pages %}
+                                <div class="tab-pane fade {{ loop.first ? 'active show' }}" id="page-{{ page.id }}" role="tabpanel" aria-labelledby="page-{{ page.id }}">
+                                    <div class="card">
+                                        <div class="card-header">Infos de la page : <i>{{ page.title }}</i></div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md">
+                                                    <div class="form-group">
+                                                        <label for="inputTitle-{{ page.id }}">Titre complet</label>
+                                                        <input type="text" class="form-control" id="inputTitle-{{ page.id }}" placeholder="Entrer un nom pour la page" maxlength="255" value="{{ page.title }}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-group">
+                                                        <label for="inputShortTitle-{{ page.id }}">Titre court</label>
+                                                        <input type="text" class="form-control" id="inputShortTitle-{{ page.id }}" placeholder="Nom court pour le menu (21 caractères max.)" maxlength="21" value="{{ page.shortTitle }}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md">
+                                                    <div class="form-group">
+                                                        <label for="inputUrl-{{ page.id }}">URL</label>
+                                                        <input type="text" class="form-control" id="inputUrl-{{ page.id }}" placeholder="nom-page" maxlength="255" value="{{ page.url }}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="inputDescription-{{ page.id }}">Description</label>
+                                                <textarea class="form-control" id="inputDescription-{{ page.id }}" rows="3">{{ page.description }}</textarea>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="form-check">
+                                                        <input type="checkbox" class="form-check-input" id="inputPublished-{{ page.id }}" {{ page.published ? 'checked' }}>
+                                                        <label class="form-check-label" for="inputPublished-{{ page.id }}">Publier</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col text-right">
+                                                    <a class="btn btn-primary" id="voir-page-btn-{{ page.id }}" target="_blank" href="{{ path('espace_assos_ressource', {url: page.url}) }}">Voir la page</a>
+                                                    <button class="btn btn-success" onclick="savePage({{ page.id }})">Enregistrer</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="overlay" style="display: none">
+                                            <i class="fas fa-2x fa-sync-alt"></i>
+                                        </div>
+                                    </div>
+
+                                    <div id="summernote-{{ page.id }}">
+                                        {{ page.html | raw }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Page template -->
+                        <div style="display: none">
+                            <div class="tab-pane fade" id="tab-template" role="tabpanel" aria-labelledby="">
+                                <div class="card">
+                                    <div class="card-header">Infos de la page : <i>%title%</i></div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md">
+                                                <div class="form-group">
+                                                    <label for="inputTitle-%id%">Titre complet</label>
+                                                    <input type="text" class="form-control" id="inputTitle-%id%" placeholder="Entrer un nom pour la page" maxlength="255" value="%title%">
+                                                </div>
+                                            </div>
+                                            <div class="col-md">
+                                                <div class="form-group">
+                                                    <label for="inputShortTitle-%id%">Titre court</label>
+                                                    <input type="text" class="form-control" id="inputShortTitle-%id%" placeholder="Nom court pour le menu (21 caractères max.)" maxlength="21" value="%shortTitle%">
+                                                </div>
+                                            </div>
+                                            <div class="col-md">
+                                                <div class="form-group">
+                                                    <label for="inputUrl-%id%">URL</label>
+                                                    <input type="text" class="form-control" id="inputUrl-%id%" placeholder="nom-page" maxlength="255" value="%url%">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="inputDescription-%id%">Description</label>
+                                            <textarea class="form-control" id="inputDescription-%id%" rows="3"></textarea>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input" id="inputPublished-%id%">
+                                                    <label class="form-check-label" for="inputPublished-%id%">Publier</label>
+                                                </div>
+                                            </div>
+                                            <div class="col text-right">
+                                                <a class="btn btn-primary" id="voir-page-btn-%id%" target="_blank" href="/espace-assos/ressources/%url%">Voir la page</a>
+                                                <button class="btn btn-success" onclick="savePage('%id%')">Enregistrer</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="summernote-%id%">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modals -->
+    <div class="modal fade" id="addPageModal" data-backdrop="static" tabindex="-1" aria-labelledby="addPageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addPageModalLabel">Créer une page</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="inputTitle">Titre complet</label>
+                        <input type="text" class="form-control" id="inputTitle" placeholder="Entrer un nom pour la page" maxlength="255">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputShortTitle">Titre court</label>
+                        <input type="text" class="form-control" id="inputShortTitle" placeholder="Nom court pour le menu (21 caractères max.)" maxlength="21">
+                    </div>
+                    <div class="form-group">
+                        <label for="inputUrl">URL</label>
+                        <input type="text" class="form-control" id="inputUrl" placeholder="nom-page" maxlength="255">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary modal-btn" data-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary modal-btn" onclick="newPage()">Ajouter</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" data-backdrop="static" id="deletePageModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Supprimer une page</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Voulez-vous vraiment supprimer la page <i class="delete-page-title"></i> ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary modal-btn" data-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger delete-page-btn modal-btn">Supprimer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('espace_admin_ressources') }}
+{% endblock %}

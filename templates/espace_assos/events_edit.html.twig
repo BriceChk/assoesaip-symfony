@@ -1,0 +1,238 @@
+{% extends 'espace_assos/espasso_base.html.twig' %}
+
+{% block header %}Créer un événement <a class="btn btn-link" href="{{ path('espace_assos_events_list', {url: app.request.get('url')}) }}">Retour à la liste</a> {% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('espace_asso_article') }}
+    {{ encore_entry_link_tags('espace_asso_event') }}
+{% endblock %}
+
+{% block body %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-8" style="max-width: 1140px;">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h1 class="display-4 titre-page" contenteditable="true">{{ event is defined ? event.title : "Titre de l'événement" }}</h1>
+                            <span class="lead" contenteditable="true">
+                                {{ event is defined ? event.abstract : "Résumé" }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div id="summernote">{{ event is defined ? event.html | raw }}</div>
+                </div>
+
+                {# TODO: Charger les propriétés événement #}
+
+                <div class="col-xl-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label>Date de début</label>
+                                <div class="input-group date" id="inputStartDate" data-target-input="nearest">
+                                    <input type="text" class="form-control datetimepicker-input" data-target="#inputStartDate"/>
+                                    <div class="input-group-append" data-target="#inputStartDate" data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="custom-control custom-checkbox my-1 mr-sm-2">
+                                <input type="checkbox" class="custom-control-input" id="allDay">
+                                <label class="custom-control-label" for="allDay">Toute la journée</label>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputRepeat">Répétition</label>
+                                <select class="form-control" id="inputRepeat">
+                                    <option value="0" selected="selected">1 fois</option>
+                                    <option value="1">Plusieurs fois</option>
+                                </select>
+                            </div>
+                            <div class="form-inline" id="repeatOptions" style="display: none;">
+                                <label class="my-1 mr-2" for="inputInterval">Répéter tous les</label>
+                                <input style="width: 100px" type="number" min="1" class="form-control repeat-option" id="inputInterval" value="1">
+                                <select class="custom-select my-1 mr-sm-2 repeat-option" id="inputIntervalType">
+                                    <!--<option value="daily">jours</option>-->
+                                    <option value="weekly" selected="selected">semaines</option>
+                                    <option value="monthly">mois</option>
+                                </select>
+                                <label class="my-1 mr-2" for="inputIntervalType">et terminer après</label>
+                                <input style="width: 100px" type="number" min="2" class="form-control repeat-option" id="inputOccurrences" value="2">
+                                <label style="margin-left: 5px" class="my-1 mr-2" for="inputOccurrences">occurrences</label>
+                            </div>
+
+                            <div class="form-group" id="daysOfWeek" style="display: none;">
+                                <div>
+                                    <label for="inputIntervalType">Jours de la semaine</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="weekdayCheckbox-mo" value="mo">
+                                    <label class="form-check-label" for="weekdayCheckbox-mo">Lun</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="weekdayCheckbox-tu" value="tu">
+                                    <label class="form-check-label" for="weekdayCheckbox-tu">Mar</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="weekdayCheckbox-we" value="we">
+                                    <label class="form-check-label" for="weekdayCheckbox-we">Mer</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="weekdayCheckbox-th" value="th">
+                                    <label class="form-check-label" for="weekdayCheckbox-th">Jeu</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="weekdayCheckbox-fr" value="fr">
+                                    <label class="form-check-label" for="weekdayCheckbox-fr">Ven</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="weekdayCheckbox-sa" value="sa">
+                                    <label class="form-check-label" for="weekdayCheckbox-sa">Sam</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="weekdayCheckbox-su" value="su">
+                                    <label class="form-check-label" for="weekdayCheckbox-su">Dim</label>
+                                </div>
+                            </div>
+                            <div class="form-group" id="inputHoursGroup" style="display: none">
+                                <label for="inputHoursDuration">Durée (hh:mm)</label>
+                                <input type="time" class="form-control" id="inputHoursDuration">
+                            </div>
+                            <div class="form-group" id="inputDaysGroup" style="display: none;">
+                                <label for="inputDaysDuration">Durée (jours)</label>
+                                <input type="number" min="1" class="form-control" id="inputDaysDuration" value="1">
+                            </div>
+                            <div class="form-group" id="inputEndDateGroup">
+                                <label>Date de fin</label>
+                                <div class="input-group date" id="inputEndDate" data-target-input="nearest">
+                                    <input type="text" class="form-control datetimepicker-input" data-target="#inputEndDate"/>
+                                    <div class="input-group-append" data-target="#inputEndDate" data-toggle="datetimepicker">
+                                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: none;" id="occurList">
+                        <div class="alert alert-info" role="alert">
+                            Pensez à actualiser la liste des occurrences après avoir modifié les propriétés de l'événement.
+                        </div>
+
+                        <div class="form-group card">
+                            <div class="card-header">
+                                <h3 class="card-title">Liste des occurrences <small style="display: none;" class="text-muted">(Dernière occurrence : <span id="lastOcc"></span>)</small></h3>
+
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" onclick="updateOccurrences()" data-toggle="tooltip" data-placement="top" title="Actualiser la liste"><i class="fas fa-sync-alt"></i></button>
+                                </div>
+                                <!-- /.card-tools -->
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body p-0" style="max-height: 300px; overflow-y: auto">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th style="width: 10px;"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="tableBody">
+                                    <tr>
+                                        <td class="occurrence" id="2020-06-04 21:00:00">Jeudi 04/06/2020</td>
+                                        <td onclick="$(this).parent().remove()"><i class="fas fa-trash-alt"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="occurrence" id="2020-06-08 21:00:00">Lundi 08/06/2020</td>
+                                        <td onclick="$(this).parent().remove()"><i class="fas fa-trash-alt"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="occurrence" id="2020-06-08 21:00:00">Lundi 08/06/2020</td>
+                                        <td onclick="$(this).parent().remove()"><i class="fas fa-trash-alt"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="occurrence" id="2020-06-08 21:00:00">Lundi 08/06/2020</td>
+                                        <td onclick="$(this).parent().remove()"><i class="fas fa-trash-alt"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="occurrence" id="2020-06-08 21:00:00">Lundi 08/06/2020</td>
+                                        <td onclick="$(this).parent().remove()"><i class="fas fa-trash-alt"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="occurrence" id="2020-06-08 21:00:00">Lundi 08/06/2020</td>
+                                        <td onclick="$(this).parent().remove()"><i class="fas fa-trash-alt"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="occurrence" id="2020-06-08 21:00:00">Lundi 08/06/2020</td>
+                                        <td onclick="$(this).parent().remove()"><i class="fas fa-trash-alt"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="occurrence" id="2020-06-08 21:00:00">Lundi 08/06/2020</td>
+                                        <td onclick="$(this).parent().remove()"><i class="fas fa-trash-alt"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="occurrence" id="2020-06-08 21:00:00">Lundi 08/06/2020</td>
+                                        <td onclick="$(this).parent().remove()"><i class="fas fa-trash-alt"></i></td>
+                                    </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="categorie">Catégorie</label>
+                                <select class="form-control" id="categorie">
+                                    {% for category in categories %}
+                                        <option value="{{ category.id }}" {{ event is defined ? (event.category == category ? 'selected') }}>{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Visibilité</label>
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" id="customRadio1" name="customRadio" class="custom-control-input" {{ event is defined ? (not event.private ? 'checked') : 'checked' }}>
+                                    <label class="custom-control-label font-weight-normal" for="customRadio1">Public (visible partout)</label>
+                                </div>
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" id="customRadio2" name="customRadio" class="custom-control-input" {{ event is defined and event.private ? 'checked' }}>
+                                    <label class="custom-control-label font-weight-normal" for="customRadio2">Privé (visible uniquement via le lien)</label>
+                                </div>
+                            </div>
+                            {% if event is defined and event.published %}
+                                <span class="badge badge-success">Publié</span>
+                                <p>
+                                    Lien de l'event : <a href="{{ path('event', {url: 'test'}) }}" target="_blank">https://asso.esaip.org{{ path('event', {url: 'test'}) }}</a> <br>
+                                    <small class="text-muted">L'événement doit être re-publié pour mettre à jour le lien.</small>
+                                </p>
+                                <button type="button" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="L'événement repassera en brouillon">Annuler la publication</button>
+                            {% else %}
+                                <span class="badge badge-secondary">Brouillon</span>
+                                <p>
+                                    Le lien de l'événement sera généré après la publication.
+                                </p>
+                                <button type="button" class="btn btn-success">Publier</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('espace_asso_article') }}
+    <script src="{{ asset('build/js/moment/moment-with-locales.js') }}"></script>
+    <script src="{{ asset('build/js/tempusdominus-bootstrap.js') }}"></script>
+    {{ encore_entry_script_tags('espace_asso_event') }}
+{% endblock %}

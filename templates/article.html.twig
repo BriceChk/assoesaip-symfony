@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ article.project.name }} - {{ article.title }}{% endblock %}
+
+{% block body %}
+    <main role="main">
+        <div class="album py-5 bg-light">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-6 offset-lg-1">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h1 class="display-4 titre-page">{{ article.title }}</h1>
+                                <span class="lead">
+                                    {{ article.abstract }}
+                                </span>
+                            </div>
+                        </div>
+                        <div id="contenu">
+                            {{ article.html | raw }}
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 offset-lg-1 side-content text-center">
+
+                        {% if is_granted('EDIT', article) %}
+                            <p><a class="btn btn-primary mt-auto" href="{{ path('espace_assos_articles_edit', {url: article.project.url, id: article.id}) }}" role="button">Modifier</a></p><hr class="my-4">
+                        {% endif %}
+
+                        <div class="card card-link text-center">
+                            <div class="card-body">
+                                {% if article.project.logoFileName != null %}
+                                    <div class="text-center" style="padding-bottom: 1.25rem">
+                                        <img src="{{ vich_uploader_asset(article.project, 'logoFile') | imagine_filter('medium') }}" alt="Logo {{ article.project.name }}">
+                                    </div>
+                                {% endif %}
+                                <p><h4>{{ article.project.name }}</h4></p>
+                            </div>
+                            <a class="stretched-link" href="{{ path('project', {'url': article.project.url}) }}"></a>
+                            <!-- /.card-body -->
+                        </div>
+
+                        <div class="callout text-left" style="border-left-color: {{ article.category.color }}">
+                            <p>Catégorie : {{ article.category.name }}</p>
+                            Publié le {{ article.datePublished | format_date(locale='fr') }}
+                        </div>
+
+                        {# TODO: Photo de profil auteur #}
+
+                        <div class="card card-widget widget-user-2">
+                            <div class="card-header text-left">
+                                Auteur
+                            </div>
+                            <div class="widget-user-header">
+                                <div class="widget-user-image">
+                                    <img class="img-circle elevation-2" src="https://asso.esaip.org/images/photos-utilisateurs/placeholder.png" alt="Photo auteur">
+                                </div>
+                                <!-- /.widget-user-image -->
+                                <h3 class="widget-user-username">
+                                    {{ article.author.fullName }}
+                                    {% if article.author.promo != "" %}
+                                    <small class="text-muted">({{ article.author.promo }})</small>
+                                    {% endif %}
+                                </h3>
+                                {% if author %}
+                                <span class="description">{{ author.role }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

@@ -1,0 +1,240 @@
+{% extends 'espace_assos/espasso_base.html.twig' %}
+
+{% block header %}Informations du projet <span class="float-sm-right"><button onclick="save()" class="btn btn-primary save-button">Enregistrer les modifications</button> </span>{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('espace_asso_infos') }}
+{% endblock %}
+
+{% block body %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-text">Infos de base</div>
+                        </div>
+                        <div class="card-body">
+                            <div id="form-container">
+                                <div class="form-group">
+                                    <label for="inputName">Nom du projet</label>
+                                    <input type="text" class="form-control" id="inputName" placeholder="Entrer le nom complet du projet. Exemple : BDE - Bureau des étudiants" maxlength="60" value="{{ project.name }}">
+                                    <small id="nomHelp" class="form-text text-muted">Si le nom de votre projet a un acronyme, utilisez le format de nom suivant : "Acronyme - Nom Complet"</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputDescription">Phrase de description</label>
+                                    <textarea class="form-control" id="inputDescription" rows="2" maxlength="180">{{ project.description }}</textarea>
+                                    <small class="form-text text-muted">Rédiger une phrase pas trop longue (180 caractères max) qui explique rapidement le thème du projet.</small>
+                                </div>
+
+                                <div class="row form-group">
+                                    <div class="col-lg">
+                                        <label for="inputCategorie">Catégorie</label>
+                                        <select class="form-control" id="inputCategorie">
+                                            {% for categ in categories | sort((a, b) => a.order <=> b.order) %}
+                                                <option value="{{ categ.id }}" {{ categ == project.category ? 'selected' }}>{{ categ.name }}</option>';
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-lg">
+                                        <label for="inputType">Type</label>
+                                        <select class="form-control" id="inputType">
+                                            <option {{ project.type == 'Club' ? 'selected' }}>Club</option>
+                                            <option {{ project.type == 'Association' ? 'selected' }}>Association</option>
+                                            <option {{ project.type == 'Projet' ? 'selected' }}>Projet</option>
+                                            <option {{ project.type == 'Liste BDE' ? 'selected' }}>Liste BDE</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg" id="parentProjectGroup" {{ project.type != 'Club' ? 'style="display: none"' }}>
+                                        <label for="inputParentProject">Association mère</label>
+                                        <select class="form-control" id="inputParentProject">
+                                            {% for asso in assos %}
+                                                <option value="{{ asso.id }}" {{ project.type == 'Club' and project.parentProject == asso ? 'selected' }}>{{ asso.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <small id="categHelp" class="form-text text-muted" style="margin-left: 15px">Laisser en non catégorisé tant que la page n'a pas de contenu, ou si le projet est inactif. (non catégorisé = invisible)</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="inputKeywords">Mots-clés</label>
+                                    <input type="text" class="form-control" id="inputKeywords" placeholder="Entrer des mots clés pour le référencement de votre projet" maxlength="255" value="{{ project.keywords }}">
+                                    <small id="keywordsHelp" class="form-text text-muted">Séparer vos mots clés avec des espaces.</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="custom-file">
+                                        <label for="inputLogo" class="custom-file-label">Ajouter / remplacer le logo</label>
+                                        <input type="file" class="custom-file-input" id="inputLogo" accept=".png" onchange="previewLogo(this)">
+                                    </div>
+                                    <small id="logoHelp" class="form-text text-muted">Fichier .png transparent (sans fond blanc). Ne rien envoyer pour garder l'image actuelle.</small>
+                                </div>
+                                <div class="form-group">
+                                    {% if project.logoFileName != null %}
+                                        <img src="{{ vich_uploader_asset(project, 'logoFile') | imagine_filter('medium') }}" style="width: 200px;" id="logo-projet-preview" alt="Prévisu logo">
+                                    {% else %}
+                                        <img src="" style="width: 200px; display: none;" id="logo-projet-preview" alt="Prévisu logo">
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-text">Réseaux</div>
+                        </div>
+                        <div class="card-body">
+                            <div id="form-container">
+                                <div class="form-group">
+                                    <label for="inputEmail">Adresse mail</label>
+                                    <input type="email" class="form-control" id="inputEmail" placeholder="Ex. asso@esaip.org" maxlength="50" value="{{ project.email }}">
+                                </div>
+                                {% set s = project.social %}
+                                <div class="row form-group">
+                                    <div class="col">
+                                        <label for="inputFb">Page Facebook</label>
+                                        <input type="url" class="form-control" id="inputFb" placeholder="Ex. https://facebook.com/BdeEsaipAngers/" value="{{ s['fb'] is defined ? s['fb'] }}">
+                                    </div>
+                                    <div class="col">
+                                        <label for="inputInsta">Pseudo Instagram</label>
+                                        <input type="text" class="form-control" id="inputInsta" placeholder="Ex. bde_esaip (pas de @)" maxlength="50" value="{{ s['insta'] is defined ? s['insta'] }}">
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col">
+                                        <label for="inputYt">Chaîne YouTube</label>
+                                        <input type="url" class="form-control" id="inputYt" placeholder="Ex. https://www.youtube.com/user/MaChaineESAIP" value="{{ s['yt'] is defined ? s['yt'] }}">
+                                    </div>
+                                    <div class="col">
+                                        <label for="inputDiscord">Serveur Discord</label>
+                                        <input type="url" class="form-control" id="inputDiscord" placeholder="Ex. https://discord.com/invite/abcd123" value="{{ s['discord'] is defined ? s['discord'] }}">
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col">
+                                        <label for="inputTwitter">Pseudo Twitter</label>
+                                        <input type="text" class="form-control" id="inputTwitter" placeholder="Ex. groupeesaip (pas de @)" maxlength="50" value="{{ s['twt'] is defined ? s['twt'] }}">
+                                    </div>
+
+                                    <div class="col">
+                                        <label for="inputSnap">Pseudo Snapchat</label>
+                                        <input type="text" class="form-control" id="inputSnap" placeholder="Ex. nrsesaip (pas de @)" maxlength="50" value="{{ s['snap'] is defined ? s['snap'] }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-text">Ajouter un membre</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-info">
+                                Les administrateurs ont accès à l'espace asso du projet.
+                            </div>
+                            <div class="form-group">
+                                <div class="autocomplete">
+                                    <input type="text" class="form-control" id="inputMembre" placeholder="Nom, adresse@esaip.org">
+                                </div>
+                                <small class="form-text text-muted">Entrez un nom ou une adresse mail esaip. La personne doit s'être connectée une première fois à Asso'esaip.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-text">Liste des membres <i class="float-right text-muted">Glisser-déplacer pour réorganiser</i></div>
+                        </div>
+                        <div class="card-body p-0" style="max-height: 760px; overflow-y: auto">
+                            <ul class="list-group list-group-flush" id="members-list">
+                                {% for member in project.members | sort((a, b) => a.orderPosition > b.orderPosition) %}
+                                    {% set m = member.user %}
+                                    <li class="list-group-item" id="{{ m.id }}">
+                                        <div id="form-container">
+                                            <div class="row form-group">
+                                                <div class="col">
+                                                    <h5>{{ m.fullName }} <small class="text-muted">{{ m.email }}</small></h5>
+                                                </div>
+                                                <div class="col-md-auto">
+                                                    <span class="float-md-right">
+                                                        <button class="btn btn-outline-danger" onclick="$('#{{ m.id }}').remove();" {{ m == app.user ? 'disabled' }}>Supprimer</button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="row form-group">
+                                                <div class="col">
+                                                    <input type="text" class="form-control" placeholder="Rôle" value="{{ member.role }}">
+                                                </div>
+                                                <div class="col-md-auto">
+                                                    <div class="btn-group-toggle role-buttons" data-toggle="buttons">
+                                                        <label class="btn btn-success">
+                                                            <input type="checkbox" {{ member.admin ? 'checked' }}> Administrateur
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <textarea class="form-control" id="inputDescCourte" rows="5" maxlength="500" placeholder="Biographie ou description du poste ...">{{ member.introduction }}</textarea>
+                                            </div>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <ul style="display: none">
+                                <li class="list-group-item" id="member-template">
+                                    <div id="form-container">
+                                        <div class="row form-group">
+                                            <div class="col">
+                                                <h5>%name% <small class="text-muted">%email%</small></h5>
+                                            </div>
+                                            <div class="col-md-auto">
+                                                    <span class="float-right">
+                                                        <button class="btn btn-link text-danger" onclick="$('#%id%').remove();">Supprimer</button>
+                                                    </span>
+                                            </div>
+                                        </div>
+                                        <div class="row form-group">
+                                            <div class="col">
+                                                <input type="text" class="form-control" placeholder="Rôle">
+                                            </div>
+                                            <div class="col-md-auto">
+                                                <div class="btn-group-toggle role-buttons" data-toggle="buttons">
+                                                    <label class="btn btn-success">
+                                                        <input type="checkbox"> Administrateur
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <textarea class="form-control" id="inputDescCourte" rows="5" maxlength="500" placeholder="Biographie ou description du poste ..."></textarea>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('build/js/jquery.easy-autocomplete.js') }}"></script>
+    <script>
+        const id = {{ project.id }};
+    </script>
+    {{ encore_entry_script_tags('espace_asso_infos') }}
+{% endblock %}

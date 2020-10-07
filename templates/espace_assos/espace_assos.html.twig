@@ -1,0 +1,250 @@
+{% extends 'espace_assos/espasso_base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('espace_asso_home') }}
+{% endblock %}
+
+{% block header %}Tableau de bord{% endblock %}
+
+{% block body %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-4 d-flex">
+                    <!-- Default box -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Informations</h3>
+                        </div>
+                        <div class="text-center" style="margin-top: 20px">
+                            <img src="https://asso-esaip.bricechk.fr/media/cache/medium/images/project-logos/12345.png" style="width: 100px" class="card-img-top" alt="...">
+                        </div>
+                        <div class="card-body" style="max-height: 300px; overflow-y: auto">
+                            <h5>
+                                Bienvenue dans votre espace asso !
+                            </h5>
+                            <p>
+                                Ici tu peux gérer les infos, pages, articles, événements de ton projet. Tu trouveras également
+                                plein de ressources utiles pour faire vivre ton projet !
+                            </p>
+                            <span>
+                                Si tu as besoin d'aide, contacte nous à <a href="mailto:asso@esaip.org">asso@esaip.org</a>.
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 d-flex">
+                    <!-- Default box -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">News vie asso</h3>
+                            <div class="card-tools">
+                                <button type="button" id="questionButton" class="btn btn-tool" data-toggle="tooltip" data-placement="left" title="Les news Asso'esaip sont rédigées par le BDE d'Angers et la responsable de la vie associative.">
+                                    <i class="fas fa-question"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card-body p-0" style="max-height: 300px; overflow-y: auto">
+                            <ul class="list-group list-group-flush">
+                                {% for news in aenews | sort((a, b) => a.datePublished < b.datePublished) %}
+                                    <li class="list-group-item">
+                                        <b>{{ news.title }}</b>
+                                        {% if news.hasHTML %}
+                                            · <a href="" data-toggle="modal" data-target="#AENews-{{ news.id }}">Lire la suite</a>
+                                        {% elseif news.hasLink %}
+                                            · <a href="{{ news.link }}" target="_blank">Ouvrir le lien</a>
+                                        {% endif %}
+                                        <span class="text-muted float-right">{{ news.datePublished | date('d/m/Y') }}</span>
+                                        <p class="aenews-content">{{ news.content }}</p>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 d-flex">
+                    <!-- Default box -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title d-flex">Réservations de salle</h3>
+                            <a class="float-right" href="{{ path('espace_assos_room_booking', {url: app.request.get('url')}) }}" role="button">Gérer les réservations</a>
+                        </div>
+                        <div class="card-body p-0" style="max-height: 300px; overflow-y: auto">
+                            <ul class="list-group list-group-flush">
+                                {% set rbs = project.roomBooks | filter(rb => date(rb.date) >= date()) | sort((a, b) => date(a.date) > date(b.date)) %}
+                                {% for rb in rbs %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        {% set badge = (rb.status == 'En attente' ? 'warning' : (rb.status == 'Refusée' ? 'danger' : 'success')) %}
+                                        {{ rb.date | date('d/m/Y') }} {{ rb.startTime | format_time(pattern="H'h'mm") }}-{{ rb.endTime | format_time(pattern="H'h'mm") }} <span class="badge badge-{{ badge }}">{{ rb.status == 'Acceptée' ? rb.room : rb.status}}</span>
+                                    </li>
+                                {% endfor %}
+                                {% if rbs is empty %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Aucune réservation de salle future
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 d-flex">
+                    <!-- Default box -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">News rapides</h3>
+                            <div class="card-tools">
+                                <button type="button" id="newsButton" class="btn btn-tool" data-toggle="tooltip" data-placement="left" title="Les news rapides sont des petits message que vous pouvez publier pour tenir les Esaipiens de votre actualité immédiate (à la manière d'un tweet). Plus tard elles serviront aussi à envoyer des notifications sur l'appli Asso'esaip.">
+                                    <i class="fas fa-question"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body p-0" style="max-height: 250px; overflow-y: auto">
+                            <ul class="list-group list-group-flush">
+                                {% for news in project.news | sort((a, b) => a.datePublished < b.datePublished) %}
+                                    <li class="list-group-item">
+                                        <h5 class="card-title">
+                                            {{ news.article != null ? news.article.title }}
+                                            {{ news.event != null ? news.event.title }}
+                                        </h5>
+                                        <p class="card-text">
+                                            {% if news.article != null %}
+                                                {{ news.article.abstract }}
+                                            {% elseif news.event != null %}
+                                                {{ news.event.abstract }}
+                                            {% else %}
+                                                {{ news.content }}
+                                            {% endif %}
+                                        </p>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                {{ news.datePublished | format_datetime(pattern="dd/MM/y H'h'mm") }}
+                                                <span class="float-right">
+                                                    {% if news.link != "" %}
+                                                        <a target="_blank" href="{{ news.link }}">Ouvrir le lien</a> |
+                                                    {% elseif news.article != null %}
+                                                        <a target="_blank" href="{{ path('article', {url: news.article.url}) }}">Voir l'article</a> |
+                                                    {% elseif news.event != null %}
+                                                        <a target="_blank" href="{{ path('event', {url: news.event.url}) }}">Voir l'événement</a> |
+                                                    {% endif %}
+                                                    <a href="#" class="text-red"> Supprimer</a>
+                                                </span>
+                                            </small>
+                                        </p>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <button class="btn btn-primary btn-sm mt-auto" data-toggle="modal" data-target="#newNewsModal">Écrire une news</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 d-flex">
+                    <!-- Default box -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Articles récents</h3>
+                        </div>
+                        <div class="card-body p-0" style="max-height: 250px; overflow-y: auto">
+                            <ul class="list-group list-group-flush">
+                                {% for article in project.articles | filter(a => not a.published) %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <a href="{{ path('espace_assos_articles_edit', {url: app.request.get('url'), id: article.id}) }}" target="_blank">{{ article.title }}</a>
+                                        <span class="badge badge-secondary">Brouillon</span>
+                                    </li>
+                                {% endfor %}
+                                {% for article in project.articles | filter(a => a.published) %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <a href="{{ path('article', {url: article.url}) }}" target="_blank">{{ article.title }}</a>
+                                        <span class="badge badge-{{ article.private ? 'danger' : 'primary' }}">{{ article.private ? 'Privé' : 'Public' }}</span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <a class="btn btn-primary btn-sm mt-auto" href="{{ path('espace_assos_articles_list', {url: app.request.get('url')}) }}" role="button">Liste des articles</a>
+                            <a class="btn btn-primary btn-sm mt-auto" href="{{ path('espace_assos_articles_write', {url: app.request.get('url')}) }}" role="button">Nouvel article</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 d-flex">
+                    <!-- Default box -->
+                    <div id='calendar' style="width: 100%"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+
+    <!-- New news modal -->
+    <div class="modal fade" id="newNewsModal" tabindex="-1" role="dialog" aria-labelledby="newNewsLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Écrire une news</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="news-title" class="col-form-label">Titre</label>
+                            <input type="text" class="form-control" id="news-title">
+                            <small class="form-text text-muted">(Facultatif)</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="news-message" class="col-form-label">Message</label>
+                            <textarea class="form-control" id="news-message"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="news-link" class="col-form-label">Lien</label>
+                            <input type="text" class="form-control" id="news-link">
+                            <small class="form-text text-muted">(Facultatif)</small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-primary">Publier</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AENews modals -->
+    {% for n in aenews %}
+        <div class="modal fade" tabindex="-1" id="AENews-{{ n.id }}">
+            <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{ n.title }}</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        {{ n.html | raw }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        const eventsListRoute = "{{ path('espace_assos_events_list', {url: project.url}) }}";
+        const newEventRoute = "{{ path('espace_assos_events_write', {url: project.url}) }}";
+    </script>
+    {{ encore_entry_script_tags('espace_asso_home') }}
+{% endblock %}

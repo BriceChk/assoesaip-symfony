@@ -1,0 +1,95 @@
+{% extends 'espace_admin/espadmin_base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block header %}Projets <span style="color: red">(Pas encore fonctionnel)</span>{% endblock %}
+
+{% block body %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            Ajouter un projet
+                        </div>
+                        <div class="card-body">
+                            <div class="row form-group">
+                                <div class="col">
+                                    <label for="inputNomProjet">Nom</label>
+                                    <input type="text" class="form-control" id="inputNomProjet" placeholder="Exemple : BDE - Bureau des étudiants">
+                                </div>
+                                <div class="col">
+                                    <label for="inputCampus">Campus</label>
+                                    <select class="form-control" id="inputCampus">
+                                        <option>Angers</option>
+                                        <option>Aix</option>
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label for="inputType">Type</label>
+                                    <select class="form-control" id="inputType">
+                                        <option>Club</option>
+                                        <option>Association</option>
+                                        <option>Projet</option>
+                                        <option>Liste BDE</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col">
+                                    <label for="inputUrlProjet">URL (Utilisée dans https://asso.esaip.org/<b>url-projet</b>)</label>
+                                    <input type="text" class="form-control" id="inputUrlProjet" placeholder="Exemple : bde-angers">
+                                    <small class="form-text text-muted" onclick="utiliserUrl()">Exemple d'URL : <b id="url-exemple"></b>. Cliquez-ici pour l'utiliser, puis modifiez-la pour la rendre courte et explicite.</small>
+                                </div>
+                                <div class="col">
+                                    <label for="input1erAdmin">Choisir un premier administrateur</label>
+                                    <div class="autocomplete">
+                                        <input type="text" class="form-control" id="input1erAdmin" placeholder="Nom, adresse@esaip.org">
+                                    </div>
+                                    <small class="form-text text-muted">Entrez un nom ou une adresse mail esaip. La personne doit s'être connectée une première fois à Asso'esaip. Cette personne pourra gérer la page projet et sera prévenue de la création de la page.</small>
+                                    <ul class="list-group" id="listeMembres">
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-success" onclick="">Ajouter le projet</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            Liste des projets
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="list-group list-group-flush">
+                                {% for p in projects | sort((a, b) => a.name <=> b.name) %}
+                                    <li class="list-group-item">
+                                        <div style="display: table-cell; vertical-align: middle">
+                                            {{ p.name }} ({{ p.campus }})
+                                            <span class="text-muted text-sm">(date de création : {{ p.dateAdded | date('d/m/Y') }}, dernière modification : {{ p.dateModified | date('d/m/Y') }})</span>
+                                        </div>
+                                        <span class="float-right">
+                                        <a href="{{ path('project', {url: p.url}) }}" class="btn btn-primary">Voir la page</a>
+                                        <a href="{{ path('espace_assos', {url: p.url}) }}" class="btn btn-primary">Modifier</a>
+                                        <button class="btn btn-danger">Supprimer</button>
+                                    </span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

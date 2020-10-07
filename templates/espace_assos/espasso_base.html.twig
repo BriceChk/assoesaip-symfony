@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Espace dédié aux clubs et assos.">
+    <meta name="author" content="BDE ESAIP Angers">
+
+    <title>{% block title %}Asso'esaip - Espace assos{% endblock %}</title>
+
+    {% block stylesheets %}
+        <!-- Icones -->
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('build/images/icons/apple-touch-icon.png') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('build/images/icons/favicon-32x32.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('build/images/icons/favicon-16x16.png') }}">
+        <link rel="mask-icon" href="{{ asset('build/images/icons/safari-pinned-tab.svg') }}" color="#5bbad5">
+        <link rel="icon" href="{{ asset('build/images/icons/fav.ico') }}" type="image/x-icon" />
+        <link rel="shortcut icon" href="{{ asset('build/images/icons/fav.ico') }}" type="image/x-icon" />
+        <meta name="msapplication-config" content="{{ asset('build/images/icons/browserconfig.xml') }}">
+        <meta name="msapplication-TileColor" content="#212529">
+        <meta name="theme-color" content="#212529">
+
+
+        {{ encore_entry_link_tags('app') }}
+        {{ encore_entry_link_tags('espace_asso') }}
+
+        <meta name="robots" content="noindex">
+    {% endblock %}
+</head>
+
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-xl navbar-dark bg-dark  elevation-2">
+        <ul class="navbar-nav" style="margin-right: 20px; margin-left: 5px;">
+            <li class="nav-item">
+                <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
+            </li>
+        </ul>
+        <a class="navbar-brand" href="/">
+            <img src="{{ asset('build/images/icons/android-chrome-144x144.png') }}" style="margin-right: 10px; margin-top: -5px; width: 36px; height: 36px;" alt="logo_esaip">
+            Asso'<b class="esaip-color">e</b>saip
+        </a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Left navbar links -->
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav">
+                <li class="nav-item {{ app.request.get('_route') == 'home' ? 'active' }}">
+                    <a class="nav-link" href="{{ path('home') }}">Accueil</a>
+                </li>
+
+                <li class="nav-item {{ app.request.get('_route') == 'calendar' ? 'active' }}">
+                    <a class="nav-link" href="{{ path('calendar') }}">Calendrier</a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav">
+                <li class="divider-vertical"></li>
+            </ul>
+
+            <ul class="navbar-nav mr-auto">
+                {{ render(controller(
+                    'App\\Controller\\NavbarController::renderCategories', {onlyVisible: not is_granted('ROLE_ADMIN')}
+                )) }}
+            </ul>
+
+            <ul class="navbar-nav">
+                {% if is_granted('ROLE_USER') %}
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{{ path('espace_assos_no_project') }}">Espace assos</a>
+                    </li>
+                    <li class="nav-item dropdown dropleft">
+                        <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{ app.user.fullName }}
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="profileDropdown">
+                            <a class="dropdown-item" href="{{ path('profile') }}">Modifier mon profil</a>
+                            <a class="dropdown-item" href="{{ path('app_logout') }}">Déconnexion</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{{ path('project', {url: 'assoesaip'}) }}">À propos</a>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <a class="dropdown-item" href="{{ path('espace_admin') }}">Administration</a>
+                            {% endif %}
+                        </div>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('connect_azure_start') }}">Se connecter</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    <!-- /.navbar -->
+
+    <!-- Main Sidebar Container -->
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            {% set url = {url: app.request.get('url', 'no-url')} %}
+            {% set hasUrl = url != {url: 'no-url'} %}
+            {% set route = app.request.get('_route') %}
+
+            <!-- Sidebar choix projet -->
+            {% if noProject is not defined %}
+                <div class="user-panel mt-3 pb-3 mb-3 text-center">
+                    <label for="inputProjet" class="text-white" style="font-weight: normal">Projet sélectionné</label>
+                    <select class="form-control" title="Choix projet" id="inputProjet" onchange="location = this.value">
+                        {{ render(controller(
+                            'App\\Controller\\EspaceAssosController::renderProjectList', url
+                        )) }}
+                    </select>
+                </div>
+            {% endif %}
+
+            <!-- Sidebar Menu -->
+            <nav class="mt-2">
+                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                    {% if noProject is not defined %}
+                        <li class="nav-item">
+                            <a href="{{ path(hasUrl ? 'espace_assos' : 'espace_assos_no_project', url) }}" class="nav-link {{ route == 'espace_assos' ? 'active' }}">
+                                <i class="nav-icon fas fa-th"></i>
+                                <p>Tableau de bord</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path(hasUrl ? 'espace_assos_infos' : 'espace_assos_no_project', url) }}" class="nav-link {{ route == 'espace_assos_infos' ? 'active' }}">
+                                <i class="nav-icon fas fa-project-diagram"></i>
+                                <p>Informations du projet</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path(hasUrl ? 'espace_assos_pages' : 'espace_assos_no_project', url) }}" class="nav-link {{ route == 'espace_assos_pages' ? 'active' }}">
+                                <i class="nav-icon fas fa-pager"></i>
+                                <p>Pages</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path(hasUrl ? 'espace_assos_articles_list' : 'espace_assos_no_project', url) }}" class="nav-link {{ 'espace_assos_articles' in route ? 'active' }}">
+                                <i class="nav-icon fas fa-newspaper"></i>
+                                <p>Articles</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ path(hasUrl ? 'espace_assos_events_list' : 'espace_assos_no_project', url) }}" class="nav-link {{ 'espace_assos_events' in route ? 'active' }}">
+                                <i class="nav-icon fas fa-calendar-alt"></i>
+                                <p>Événements</p>
+                            </a>
+                        </li>
+
+                        {% if app.user.campus == 'Angers' %}
+                            <li class="nav-item">
+                                <a href="{{ path(hasUrl ? 'espace_assos_room_booking' : 'espace_assos_no_project', url) }}" class="nav-link {{ route == 'espace_assos_room_booking' ? 'active' }}">
+                                    <i class="nav-icon fas fa-map-marker-alt"></i>
+                                    <p>
+                                        Réservation de salle
+                                    </p>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                    {% endif %}
+
+                    <li class="nav-header">Ressources</li>
+                    <li class="nav-item">
+                        <a href="{{ path('espace_assos_ressources_summary') }}" class="nav-link {{ route == 'espace_assos_ressources_summary' ? 'active' }}">
+                            <i class="nav-icon fas fa-th"></i>
+                            <p>Sommaire</p>
+                        </a>
+                    </li>
+                    {{ render(controller(
+                        'App\\Controller\\EspaceAssosController::renderRessourcePageList', { 'currentUrl': app.request.get('url', 'abc') }
+                    )) }}
+                </ul>
+            </nav>
+
+        </div>
+        <!-- /.sidebar -->
+    </aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col">
+                        <h1>{% block header %}{% endblock %}</h1>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+
+        {% block body %}{% endblock %}
+    </div>
+    <!-- /.content-wrapper -->
+
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+    </aside>
+    <!-- /.control-sidebar -->
+</div>
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}
+</body>
+</html>

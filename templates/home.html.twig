@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Asso'esaip - Accueil{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('home') }}
+{% endblock %}
+
+{% block body %}
+    <main>
+        <div class="home-header">
+            <div class="text-center">
+                <h1 class="display-4">Bienvenue !</h1>
+                <p class="lead">Découvre les clubs et associations qui font vivre l'<b class="esaip-color">e</b>saip, leurs actualités et les prochains événements sur ton campus</p>
+            </div>
+            <div class="col-lg-10 offset-lg-1">
+                <div class="autocomplete">
+                    <input id="inputSearch" type="text" class="form-control" placeholder="Rechercher un projet par nom, campus ou mot clé" />
+                </div>
+                <hr class="my-4">
+
+                {% if homeMessage['enabled'] %}
+                    <div class="callout callout-info">
+                        <h5>{{ homeMessage['title'] }}</h5>
+                        <p>{{ homeMessage['text'] }}</p>
+                        {% if homeMessage['link'] != '' %}
+                            <a class="btn btn-primary" style="color: white; text-decoration: none;" href="{{ homeMessage['link'] }}">En savoir plus</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                <div class="row equal justify-content-md-center" style="padding-left: 5px; padding-right: 5px;">
+                    {% for categ in categories %}
+                        <div class="col-lg d-flex">
+                            <div class="card flex-fill card-link" style="border-color: #009bc2;">
+                                <div class="card-body d-flex flex-column">
+                                    <h5>{{ categ.name }}</h5>
+                                    <span class="card-text">{{ categ.description }}</span>
+                                    <a class="stretched-link" href="{{ path('category', { 'url': categ.url }) }}/"></a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-1"></div>
+                <div class="col-lg-5 order-2 order-lg-1">
+                    <h1>Actualités</h1>
+                    <hr class="my-4">
+
+                    {% for article in articles|sort((a, b) => a.datePublished < b.datePublished) %}
+                        <div class="d-flex">
+                            <div class="card box-shadow flex-fill card-link">
+                                {# We check if an event property is defined, as articles and events are mixed #}
+                                {% if article.duration is defined %}
+                                    <div class="ribbon-wrapper ribbon-lg">
+                                        <div class="ribbon bg-info">
+                                            Evenement
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                                <div class="row" style="display: flex; margin: 0">
+                                    <div class="col-md-auto my-auto text-center">
+                                        {% if article.project.logoFileName != null %}
+                                            <img class="" src="{{ vich_uploader_asset(article.project, 'logoFile') | imagine_filter('thumbnail') }}" alt="Logo projet">
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="col">
+                                        <div class="card-body d-flex flex-column">
+                                            <h3 class="card-text">{{ article.title }}</h3>
+                                            <p class="card-text">{{ article.abstract }}</p>
+                                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                                <small class="text-muted">{{ article.project.name }}<br>Date : {{ article.datePublished|format_date(locale="fr") }}</small>
+                                                <a href="{{ path((article.duration is defined ? 'event' : 'article'), {'url': article.url}) }}" class="stretched-link"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <button class="btn btn-primary" id="loadArticlesButton" {{ articles|length <= 10 ? 'style="display: none;"' }}>Charger la suite</button>
+                </div>
+
+                <div class="col-lg-5 order-1 order-lg-2">
+                    <h1>Événements</h1>
+                    <hr class="my-4">
+                    <div id='calendar' style="margin-bottom: 25px;"><br><a class="btn btn-primary" href="{{ path('calendar') }}">Tout voir</a></div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('home') }}
+{% endblock %}

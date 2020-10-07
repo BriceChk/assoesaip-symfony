@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Asso'esaip - {{ category.name }}{% endblock %}
+
+{% block body %}
+    <main role="main">
+        <div class="jumbotron text-center bg-light">
+            <h1 class="display-4">{{ category.name }}</h1>
+            <p class="lead">{{ category.description }}</p>
+            <hr class="my-4">
+            <div class="container-fluid text-left">
+                <div class="col-lg-10 offset-lg-1">
+                    {% set notConnected = app.user == null or is_granted('ROLE_ADMIN') %}
+                    {% set campus = notConnected ? 'A' : app.user.campus %}
+
+                    {% for project in category.projects
+                        | filter(project => project.type == "Association")
+                        | filter(project => campus in project.campus)
+                        | filter(project => project.childrenProjects is not empty)
+                    %}
+                        <h2 class="asso-category">
+                            {{ project.name }}
+                            {% if notConnected %}
+                                <span class="text-secondary" style="font-size: small">(Association à {{ project.campus }})</span>
+                            {% endif %}
+                        </h2>
+                        <p>{{ project.description }}</p>
+                        <a class="btn btn-primary btn-sm" href="{{ path('project', {'url': project.url}) }}">Voir la page</a>
+                        <hr>
+                        <div class="row">
+                            {% for childProject in project.childrenProjects %}
+                                <div class="col-md-4 d-flex">
+                                    <div style="border-color: #009bc2;" class="card mb-4 box-shadow flex-fill card-link">
+                                        <div class="card-body d-flex flex-column">
+                                            <h5>{{ childProject.name }}</h5>
+                                            <span class="card-text">{{ childProject.description }}</span>
+                                            <a class="stretched-link" href="{{ path('project', {'url': childProject.url}) }}"></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+
+                    {% set otherAssos = category.projects | filter(project => project.type == "Association") | filter(project => project.childrenProjects is empty) %}
+                    {% if otherAssos is not empty %}
+                        <h2 class="asso-category">Assos sans club</h2>
+                        <hr>
+                        <div class="row">
+                            {% for asso in otherAssos %}
+                                <div class="col-md-4 d-flex">
+                                    <div style="border-color: #009bc2;" class="card mb-4 box-shadow flex-fill card-link">
+                                        <div class="card-body d-flex flex-column">
+                                            <h5>{{ asso.name }} <span class="text-secondary" style="font-size: small">({{ asso.campus }})</span></h5>
+                                            <span class="card-text">{{ asso.description }}</span>
+                                            <a class="stretched-link" href="{{ path('project', {'url': asso.url}) }}"></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

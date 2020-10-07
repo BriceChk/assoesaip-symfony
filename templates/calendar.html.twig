@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Asso'esaip - Calendrier{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('calendar') }}
+{% endblock %}
+
+{% block body %}
+    <main role="main">
+        <div class="jumbotron text-center">
+            <h1 class="display-4">Calendrier</h1>
+            <p class="lead">Les évenements de toutes les clubs de ton campus sont regroupés ici.</p>
+        </div>
+        <div class="album py-5 bg-light">
+            <div class="container">
+                {% if is_granted('ROLE_PROJECT_EDITOR') %}
+                <div class="alert alert-info" role="alert">
+                    En tant que rédacteur d'un projet, tu peux voir les événements non publiés en orange. Cela te permet de voir les dates réservées par les autres clubs.
+                </div>
+                {% endif %}
+                <div id='calendar'></div>
+            </div>
+        </div>
+
+    </main>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('calendar') }}
+{% endblock %}

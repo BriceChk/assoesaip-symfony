@@ -1,0 +1,34 @@
+{% extends 'espace_admin/espadmin_base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('espace_asso_home') }}
+{% endblock %}
+
+{% block header %}Accueil{% endblock %}
+
+{% block body %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col">
+                    <div class="alert alert-primary">
+                        Les pages de gestion des réservations de salle, news de la vie asso, pages ressources fonctionnent. Pour le reste, contacter Brice.
+                    </div>
+                    <p>
+                        Ici plus tard stats sur le nombre de projets, le nombres d'utilisateurs, d'autres stats ...
+                    </p>
+                    <p>
+                        Mais aussi : gestion du mode maintenance, des messages d'accueil et affichage du nombre de reservations de salles à traiter
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

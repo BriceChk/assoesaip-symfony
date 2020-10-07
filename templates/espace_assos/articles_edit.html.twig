@@ -1,0 +1,81 @@
+{% extends 'espace_assos/espasso_base.html.twig' %}
+
+{% block header %}{{ article is defined ? 'Modifier' : 'Rédiger' }} un article <a class="btn btn-link" href="{{ path('espace_assos_articles_list', {url: app.request.get('url')}) }}">Retour à la liste</a> {% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('espace_asso_article') }}
+{% endblock %}
+
+{% block body %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-8" style="max-width: 1140px;">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h1 class="display-4 titre-page" contenteditable="true">{{ article is defined ? article.title : "Titre de l'article" }}</h1>
+                            <span class="lead" contenteditable="true">
+                                {{ article is defined ? article.abstract : "Résumé" }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div id="summernote">{{ article is defined ? article.html | raw }}</div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="categorie">Catégorie</label>
+                                <select class="form-control" id="categorie">
+                                    {% for category in categories %}
+                                        <option value="{{ category.id }}" {{ article is defined ? (article.category == category ? 'selected') }}>{{ category.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Visibilité</label>
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" id="customRadio1" name="customRadio" class="custom-control-input" {{ article is defined ? (not article.private ? 'checked') : 'checked' }}>
+                                    <label class="custom-control-label font-weight-normal" for="customRadio1">Public (visible partout)</label>
+                                </div>
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" id="customRadio2" name="customRadio" class="custom-control-input" {{ article is defined and article.private ? 'checked' }}>
+                                    <label class="custom-control-label font-weight-normal" for="customRadio2">Privé (visible uniquement via le lien)</label>
+                                </div>
+                            </div>
+
+                            {% if article is defined and article.published %}
+                                <span class="badge badge-success">Publié</span>
+                                <p>
+                                    Lien de l'article : <a href="{{ path('article', {url: article.url}) }}" target="_blank">https://asso.esaip.org{{ path('article', {url: article.url}) }}</a> <br>
+                                    <small class="text-muted">L'article doit être re-publié pour mettre à jour le lien.</small>
+                                </p>
+                                <button type="button" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="L'article repassera en brouillon">Annuler la publication</button>
+                            {% else %}
+                                <span class="badge badge-secondary">Brouillon</span>
+                                <p>
+                                    Le lien de l'article sera généré après la publication.
+                                </p>
+                                {% if article is defined %}
+                                    <button type="button" class="btn btn-success">Publier</button>
+                                {% endif %}
+                            {% endif %}
+                            <button type="button" class="btn btn-primary">Enregistrer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('espace_asso_article') }}
+{% endblock %}

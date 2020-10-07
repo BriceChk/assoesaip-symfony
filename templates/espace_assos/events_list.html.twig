@@ -1,0 +1,91 @@
+{% extends 'espace_assos/espasso_base.html.twig' %}
+
+{% block header %}Événements{% endblock %}
+
+{% block body %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Brouillons</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-body p-0" style="max-height: 400px; overflow-y: auto">
+                            <table class="table table-head-fixed table-striped projects">
+                                <thead>
+                                <tr>
+                                    <th>Créé le</th>
+                                    <th>Titre</th>
+                                    <th>Auteur</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for event in project.events | filter(a => not a.published) %}
+                                    <tr>
+                                        <td>{{ event.dateCreated | format_date(pattern="dd/MM/y") }}</td>
+                                        <td>{{ event.title }}</td>
+                                        <td>{{ event.author.fullName }}</td>
+                                        <td class="align-middle text-right">
+                                            <a type="button" class="btn btn-primary" href="{{ path('espace_assos_events_edit', {url: event.project.url, id: event.id}) }}">Modifier</a>
+                                            <button type="button" class="btn btn-danger">Supprimer</button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{{ path('espace_assos_events_write', {url: app.request.get('url')}) }}" class="btn btn-primary btn-sm">Nouvel événement</a>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Événements publiés</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-body p-0" style="max-height: 400px; overflow-y: auto">
+                            <table class="table table-head-fixed table-striped projects">
+                                <thead>
+                                <tr>
+                                    <th>Créé le</th>
+                                    <th>Titre</th>
+                                    <th>Auteur</th>
+                                    <th>Publication</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for event in project.events | filter(a => a.published) %}
+                                    <tr>
+                                        <td>{{ event.dateCreated | format_date(pattern="dd/MM/y") }}</td>
+                                        <td><a target="_blank" href="{{ path('event', {url: event.url}) }}">{{ event.title }}</a></td>
+                                        <td>{{ event.author.fullName }}</td>
+                                        <td><span class="badge badge-{{ event.private ? 'danger' : 'primary' }}">{{ event.private ? 'Privé' : 'Public' }} ({{ event.datePublished | format_datetime(pattern="dd/MM/y h'h'mm") }})</span></td>
+                                        <td class="align-middle text-right">
+                                            <a type="button" class="btn btn-primary" href="{{ path('espace_assos_events_edit', {url: event.project.url, id: event.id}) }}">Modifier</a>
+                                            <button type="button" class="btn btn-danger">Supprimer</button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+{% endblock %}

@@ -1,0 +1,8 @@
+{% for r in ressources %}
+    <li class="nav-item">
+        <a href="{{ path('espace_assos_ressource', {url: r.url}) }}" class="nav-link {{ url == r.url ? 'active' }}">
+            <i class="nav-icon fas fa-chevron-circle-right"></i>
+            <p>{{ r.shortTitle }}</p>
+        </a>
+    </li>
+{% endfor %}

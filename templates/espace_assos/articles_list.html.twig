@@ -1,0 +1,88 @@
+{% extends 'espace_assos/espasso_base.html.twig' %}
+
+{% block header %}Articles{% endblock %}
+
+{% block body %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Brouillons</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-body p-0" style="max-height: 400px; overflow-y: auto">
+                            <table class="table table-head-fixed table-striped projects">
+                                <thead>
+                                <tr>
+                                    <th>Créé le</th>
+                                    <th>Titre</th>
+                                    <th>Auteur</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for article in project.articles | filter(a => not a.published) %}
+                                    <tr>
+                                        <td>{{ article.dateCreated | format_date(pattern="dd/MM/y") }}</td>
+                                        <td>{{ article.title }}</td>
+                                        <td>{{ article.author.fullName }}</td>
+                                        <td class="align-middle text-right">
+                                            <a type="button" class="btn btn-primary" href="{{ path('espace_assos_articles_edit', {url: article.project.url, id: article.id}) }}">Modifier</a>
+                                            <button type="button" class="btn btn-danger">Supprimer</button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-footer">
+                            <a href="{{ path('espace_assos_articles_write', {url: app.request.get('url')}) }}" class="btn btn-primary btn-sm">Nouvel article</a>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Articles publiés</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-body p-0" style="max-height: 400px; overflow-y: auto">
+                            <table class="table table-head-fixed table-striped projects">
+                                <thead>
+                                <tr>
+                                    <th>Créé le</th>
+                                    <th>Titre</th>
+                                    <th>Auteur</th>
+                                    <th>Publication</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for article in project.articles | filter(a => a.published) %}
+                                    <tr>
+                                        <td>{{ article.dateCreated | format_date(pattern="dd/MM/y") }}</td>
+                                        <td><a target="_blank" href="{{ path('article', {url: article.url}) }}">{{ article.title }}</a></td>
+                                        <td>{{ article.author.fullName }}</td>
+                                        <td><span class="badge badge-{{ article.private ? 'danger' : 'primary' }}">{{ article.private ? 'Privé' : 'Public' }} ({{ article.datePublished | format_datetime(pattern="dd/MM/y h'h'mm") }})</span></td>
+                                        <td class="align-middle text-right">
+                                            <a type="button" class="btn btn-primary" href="{{ path('espace_assos_articles_edit', {url: article.project.url, id: article.id}) }}">Modifier</a>
+                                            <button type="button" class="btn btn-danger">Supprimer</button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+{% endblock %}

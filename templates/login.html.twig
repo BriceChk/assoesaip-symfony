@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Asso'esaip - Connexion{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <style>
+        #office-logo {
+            -webkit-border-radius: 8px;
+            -moz-border-radius: 8px;
+            border-radius: 8px;
+            width: 200px;
+            -webkit-transition: .2s ease-in-out;
+            transition: .2s ease-in-out;
+        }
+
+        #office-logo:hover {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+    </style>
+
+{% endblock %}
+
+{% block body %}
+    <main role="main">
+        <div class="jumbotron text-center bg-light">
+            <h1 class="display-4">Connexion</h1>
+            <p class="lead">L'accès à la plateforme est réservé aux étudiants et au personnel de l'<b style="color: #009dc6">e</b>saip. Connectez-vous avec votre compte Office 365 !</p>
+            <hr class="my-4">
+            <div class="container text-center">
+                <div class="row">
+                    <div class="col-md-12">
+                        <a href="{{ path('connect_azure_start') }}"><img id="office-logo" src="{{ asset('build/images/office-365-logo.png') }}" alt="Office 365 logo"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

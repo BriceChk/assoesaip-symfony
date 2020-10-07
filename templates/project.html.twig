@@ -1,0 +1,236 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Asso'esaip - {{ project.name }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('project') }}
+{% endblock %}
+
+{% block body %}
+    <main role="main">
+        <div class="album py-5 bg-light">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-7 offset-lg-1">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h1 class="display-4 titre-page">{{ project.name }}</h1>
+                                <span class="lead">
+                                    {{ project.description }}
+                                </span>
+                            </div>
+                            <div class="card-footer">
+                                <ul class="nav nav-pills justify-content-center">
+                                    <li class="nav-item"><a class="nav-link active" href="#tab_1" data-toggle="tab" aria-controls="home" aria-selected="true">Accueil</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#tab_2" data-toggle="tab" aria-controls="members" aria-selected="false">Membres</a></li>
+                                    {% for page in project.pages | sort((a, b) => a.orderPosition <=> b.orderPosition) %}
+                                        <li class="nav-item"><a class="nav-link" href="#page-{{ page.id }}" data-toggle="tab" aria-controls="page-{{ page.id }}" aria-selected="false">{{ page.name }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                        <div id="contenu">
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="tab_1" role="tabpanel" aria-labelledby="home">
+                                    {{ project.html | raw }}
+                                </div>
+                                <!-- /.tab-pane -->
+                                <div class="tab-pane fade" id="tab_2" role="tabpanel" aria-labelledby="members">
+                                    <div class="row">
+
+
+                                    {% for member in project.members | sort((a,b) => (a.orderPosition > b.orderPosition)) %}
+                                        <div class="col-xl-12">
+                                            <div class="card">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-md-auto text-center">
+                                                        {% if member.user.avatarFileName != null %}
+                                                            <img class="img-circle elevation-2" src="{{ vich_uploader_asset(member.user, 'avatarFile') | imagine_filter('memberPicture') }}" alt="Photo auteur">
+                                                        {% else %}
+                                                            <img class="img-circle elevation-2" src="{{ asset('build/images/placeholder.png') | imagine_filter('memberPicture') }}" alt="Photo auteur">
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="col my-auto">
+                                                        <h4>
+                                                            {{ member.user.fullName }}
+                                                            {% if member.user.promo != '' %}
+                                                                <small class="text-muted">({{ member.user.promo }})</small>
+                                                            {% endif %}
+                                                        </h4>
+                                                        {% if member.role != '' %}
+                                                            <p>{{ member.role }}</p>
+                                                        {% endif %}
+                                                        {# TODO Vérifier que les sauts de lignes fonctionnent dans l'introduction #}
+                                                        <p>{{ member.introduction }}</p>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                    </div>
+                                </div>
+                                <!-- /.tab-pane -->
+                                {% for page in project.pages | sort((a, b) => a.orderPosition <=> b.orderPosition) %}
+                                    <div class="tab-pane fade" id="page-{{ page.id }}" role="tabpanel" aria-labelledby="page-{{ page.id }}">
+                                        {{ page.html | raw }}
+                                    </div>
+                                    <!-- /.tab-pane -->
+                                {% endfor %}
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 side-content">
+
+                        <div class="card">
+                            <div class="card-header">
+                                Informations
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body" style="display: block;">
+                                {% if project.logoFileName != null %}
+                                    <div class="text-center" style="padding-bottom: 1.25rem">
+                                        <img src="{{ vich_uploader_asset(project, 'logoFile') | imagine_filter('medium') }}" alt="Logo {{ project.name }}">
+                                    </div>
+                                {% endif %}
+
+                                <span>{{ project.name }} est {{ project.type == "Association" ? 'une association' : (project.type == 'Club' ? 'un club' : 'un projet') }} à {{ project.campus }} qui compte {{ project.members | length }} membres.</span>
+
+                                {% if project.parentProject != null and project.type != 'Association' %}
+                                    <br><br><span>Ce club est rattaché à l'association <a href="{{ path('project', {'url': project.parentProject.url}) }}">{{ project.parentProject.name }}</a>.</span>
+                                {% endif %}
+
+                                {% if project.email != '' %}
+                                    <br><br><span>Vous pouvez {{ project.type == 'Association' ? 'la' : 'le' }} contacter à l'adresse suivante&nbsp;: <a href="mailto:{{ project.email }}">{{ project.email }}</a></span>
+                                {% endif %}
+                            </div>
+                            <!-- /.card-body -->
+
+                            {% if is_granted('PROJECT_ADMIN', project) %}
+                                <div class="card-footer">
+                                    <a class="btn btn-primary btn-sm mt-auto" href="{{ path('espace_assos_infos', {url: project.url}) }}" role="button">Modifier les infos</a>
+                                    <a class="btn btn-primary btn-sm mt-auto" href="{{ path('espace_assos_pages', {url: project.url}) }}" role="button">Modifier les pages</a>
+                                </div>
+                            {% endif %}
+
+                            <span style="display: none;" id="id-projet">{{ project.id }}</span>
+                        </div>
+
+                        {% if project.social is not empty %}
+                            <div class="card">
+                                <div class="card-header">
+                                    Réseaux sociaux
+                                </div>
+                                <div class="card-body p-0 text-center">
+                                    <div class="social">
+                                        {% for key, val in project.social %}
+                                            {% if key == 'fb' %}
+                                                <a class="fb" target="_blank" href="{{ val }}"><i class="fab fa-facebook"></i></a>
+                                            {% elseif key == 'insta' %}
+                                                <a class="insta" target="_blank" href="https://instagram.com/{{ val }}"><i class="fab fa-instagram"></i></a>
+                                            {% elseif key == 'discord' %}
+                                                <a class="discord" target="_blank" href="{{ val }}"><i class="fab fa-discord"></i></a>
+                                            {% elseif key == 'twt' %}
+                                                <a class="twt" target="_blank" href="https://twitter.com/{{ val }}"><i class="fab fa-twitter"></i></a>
+                                            {% elseif key == 'yt' %}
+                                                <a class="yt" target="_blank" href="{{ val }}"><i class="fab fa-youtube"></i></a>
+                                            {% elseif key == 'snap' %}
+                                                <a class="snap" target="_blank" href="https://snapchat.com/add/{{ val }}"><i class="fab fa-snapchat-square"></i></a>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <div id='calendar'></div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                Actualités
+
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+                                <!-- /.card-tools -->
+                            </div>
+                            <!-- /.card-header -->
+                            {% if project.articles is empty %}
+                                <div class="card-body">
+                                    <p class="card-text">Aucun article</p>
+                                </div>
+                            {% else %}
+                                <div class="card-body p-0" style="max-height: 500px; overflow-y: auto">
+                                    <ul class="list-group list-group-flush">
+                                        {% for article in project.articles | filter(a => a.published) |sort((a, b) => a.datePublished < b.datePublished)|slice(0, 9) %}
+                                            <li class="list-group-item">
+                                                <a href="{{ path('article', {'url': article.url}) }}" class="pas-de-lien">
+                                                    <h3 class="card-text">{{ article.title }}</h3>
+                                                    <p class="card-text">{{ article.abstract }}</p>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <small class="text-muted">{{ article.author.fullName }} | Date publi. : {{ article.datePublished | format_date(locale="fr") }}</small>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            {% endif %}
+                            <!-- /.card-body -->
+
+                            {% if is_granted('PROJECT_ADMIN', project) %}
+                                {# TODO: route espace asso #}
+                                <div class="card-footer">
+                                    <button class="btn btn-primary btn-sm mt-auto" id="loadArticlesButton" {{ project.articles|length <= 10 ? 'style="display: none;"' }}>Charger la suite</button>
+                                    <a class="btn btn-primary btn-sm mt-auto" href="{{ path('espace_assos_articles_write', {url: project.url}) }}" role="button">Rédiger un article</a>
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                        {% if project.type == "Association" and project.childrenProjects is not empty %}
+                            <div class="card">
+                                <div class="card-header">
+                                    Clubs rattachés
+                                    <div class="card-tools">
+                                        <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                                        </button>
+                                    </div>
+                                    <!-- /.card-tools -->
+                                </div>
+                                <!-- /.card-header -->
+                                <div class="card-body p-0" style="max-height: 500px; overflow-y: auto">
+                                    <ul class="list-group list-group-flush">
+                                        {% set childrenProjects = project.childrenProjects | sort((a, b) => a.name <=> b.name) %}
+                                        {% for child in childrenProjects %}
+                                            <li class="list-group-item">
+                                                <a href="{{ path('project', {'url': child.url}) }}" class="pas-de-lien">
+                                                    <h3 class="card-text">{{ child.name }}</h3>
+                                                    <p class="card-text">{{ child.description }}</p>
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('project') }}
+{% endblock %}

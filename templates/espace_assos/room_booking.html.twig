@@ -1,0 +1,193 @@
+{% extends 'espace_assos/espasso_base.html.twig' %}
+
+{% block header %}Réservation de salle{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('espace_asso_roombook') }}
+{% endblock %}
+
+{% block body %}
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <!-- Default box -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Faire une demande de réservation</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>
+                                Votre demande sera enregistrée à votre nom et associée au projet sélectionné. Vous recevrez un mail lorsque elle sera traitée.
+                            </p>
+                            <div class="row">
+                                <div class="col-lg-3 form-group">
+                                    <label for="inputDate">
+                                        Date
+                                    </label>
+
+                                    <div class="input-group date" id="date" data-target-input="nearest">
+                                        <input id="inputDate" type="text" class="form-control datetimepicker-input" data-target="#date"/>
+                                        <div class="input-group-append" data-target="#date" data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 form-group">
+                                    <label for="inputHeureDebut">
+                                        Heure de début
+                                    </label>
+
+                                    <div class="input-group date" id="heure-debut" data-target-input="nearest">
+                                        <input id="inputHeureDebut" type="text" class="form-control datetimepicker-input" data-target="#heure-debut">
+                                        <div class="input-group-append" data-target="#heure-debut" data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="far fa-clock"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 form-group">
+                                    <label for="inputHeureFin">
+                                        Heure de fin
+                                    </label>
+
+                                    <div class="input-group date" id="heure-fin" data-target-input="nearest">
+                                        <input id="inputHeureFin" type="text" class="form-control datetimepicker-input" data-target="#heure-fin">
+                                        <div class="input-group-append" data-target="#heure-fin" data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="far fa-clock"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 form-group">
+                                    <label for="nb-participants">
+                                        Nombre de participants
+                                    </label>
+
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="nb-participants" name="nb-participants" min="1">
+                                        <div class="input-group-append" data-target="#nb-participants">
+                                            <div class="input-group-text"><i class="fas fa-user-friends"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="objet">Objet de la demande</label>
+                                <textarea id="objet" placeholder="Réunion, présentation, ..." class="form-control" rows="3" style="height: 118px;"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="demandes-part">Demandes particulières</label>
+                                <textarea id="demandes-part" placeholder="Possibilité de déjeuner, disposition d'amphi, ..." class="form-control" rows="3" style="height: 118px;"></textarea>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary" onclick="enregistrer()">Envoyer la demande</button>
+                        </div>
+                        <div class="overlay" style="display: none">
+                            <i class="fas fa-2x fa-sync-alt"></i>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Demandes en cours</h3>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                    <i class="fas fa-minus"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-striped projects">
+                                <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Participants</th>
+                                    <th>Objet</th>
+                                    <th>Demandes particulières</th>
+                                    <th>Statut</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody id="listeDemandesEnCours">
+                                {% for rb in roombooks | filter(rb => date(rb.date) >= date()) | sort((a, b) => date(a.date) > date(b.date)) %}
+                                    <tr>
+                                        <td>{{ rb.date | date('d/m/Y') }} {{ rb.startTime | format_time(pattern="H'h'mm") }}-{{ rb.endTime | format_time(pattern="H'h'mm") }}</td>
+                                        <td>{{ rb.nbParticipants }}</td>
+                                        <td>{{ rb.object }}</td>
+                                        <td>{{ rb.needs }}</td>
+                                        {% set badge = (rb.status == 'En attente' ? 'warning' : (rb.status == 'Refusée' ? 'danger' : 'success')) %}
+                                        <td><span class="badge badge-{{ badge }}">{{ rb.status == 'Acceptée' ? rb.room : rb.status}}</span></td>
+                                        <td class="project-actions text-right">
+                                        {% if rb.status == "En attente" %}
+                                            <button class="btn btn-danger btn-sm" onclick="supprimer({{ rb.id }})"><i class="fas fa-trash"></i> Supprimer</button>
+                                        {% endif %}
+                                        </td>
+                                    </tr>
+
+                                {% endfor %}
+
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                        <div class="overlay" style="display: none">
+                            <i class="fas fa-2x fa-sync-alt"></i>
+                        </div>
+                    </div>
+
+                    <div class="card collapsed-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Demandes passées</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body p-0" style="display: none;">
+                            <table class="table table-striped projects">
+                                <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Participants</th>
+                                    <th>Objet</th>
+                                    <th>Demandes particulières</th>
+                                    <th>Statut</th>
+                                </tr>
+                                </thead>
+                                <tbody id="listeDemandesPassees">
+                                {% for rb in roombooks | filter(rb => date(rb.date) < date()) | sort((a, b) => date(a.date) < date(b.date)) %}
+                                    <tr>
+                                        <td>{{ rb.date | date('d/m/Y') }} {{ rb.startTime | format_time(pattern="H'h'mm") }}-{{ rb.endTime | format_time(pattern="H'h'mm") }}</td>
+                                        <td>{{ rb.nbParticipants }}</td>
+                                        <td>{{ rb.object }}</td>
+                                        <td>{{ rb.needs }}</td>
+                                        {% set badge = (rb.status == 'En attente' ? 'secondary' : (rb.status == 'Refusée' ? 'danger' : 'success')) %}
+                                        <td><span class="badge badge-{{ badge }}">{{ (rb.status == "En attente" ? 'Sans réponse' : (rb.status == 'Acceptée' ? rb.room : rb.status)) }}</span></td>
+                                    </tr>
+
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="overlay" style="display: none">
+                            <i class="fas fa-2x fa-sync-alt"></i>
+                        </div>
+                    </div>
+                    <!-- /.card -->
+                </div>
+            </div>
+        </div>
+
+    </section>
+    <!-- /.content -->
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('build/js/moment/moment-with-locales.js') }}"></script>
+    <script src="{{ asset('build/js/tempusdominus-bootstrap.js') }}"></script>
+    {{ encore_entry_script_tags('espace_asso_roombook') }}
+{% endblock %}

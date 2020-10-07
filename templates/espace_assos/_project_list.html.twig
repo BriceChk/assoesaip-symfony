@@ -1,0 +1,6 @@
+{% for p in projects %}
+    <option value="{{ path('espace_assos', {url: p.url}) }}" id="{{ p.id }}" url="{{ p.url }}" {{ p.url == app.request.get('url') ? 'selected' }} >{{ p.name }} {% if is_granted('ROLE_ADMIN') %}({{ p.campus }}){% endif %}</option>
+{% endfor %}
+{% if projects is empty %}
+    <option value="{{ path('espace_assos_no_project') }}">Aucun projet</option>
+{% endif %}

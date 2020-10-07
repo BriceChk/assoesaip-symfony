@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Asso'esaip - Profil{% endblock %}
+
+{% block body %}
+    <main role="main">
+        <div class="jumbotron text-center">
+            <h1 class="display-4">Mon profil</h1>
+            <hr class="my-4">
+
+            <div class="container text-left">
+                {% if user.promo == '' or user.campus == '' %}
+                    <div class="alert alert-warning" role="alert">
+                        Veuillez renseigner <b>votre promotion</b> et <b>votre campus</b> avant de continuer la navigation. Merci !
+                    </div>
+                {% endif %}
+
+                {% for message in app.flashes('success') %}
+                <div class="alert alert-success" role="alert" id="alertSuccess">{{ message }}</div>
+                {% endfor %}
+
+                {{ form_start(form) }}
+                {{ form_rest(form) }}
+
+                {% if user.avatarFileName != null %}
+                    <a role="button" href="{{ path('profile_pic_delete') }}" class="btn btn-danger">Supprimer la photo de profil</a>
+                {% endif %}
+
+                <button class="btn btn-primary">{{ button|default('Enregistrer') }}</button>
+                {{ form_end(form) }}
+
+                <div class="card" style="width: 445px; margin-top: 50px;">
+                    <div class="card-body p-0">
+                        <div class="widget-user-2 text-center" data-html="true">
+                            <!-- Add the bg color to the header using any of the bg-* classes -->
+                            <div class="widget-user-header">
+                                <div class="widget-user-image">
+                                    {% if user.avatarFileName != null %}
+                                        <img id="photo" class="img-circle elevation-2" src="{{ vich_uploader_asset(user, 'avatarFile') | imagine_filter('thumbnail') }}" alt="Photo auteur">
+                                    {% else %}
+                                        <img id="photo" class="img-circle elevation-2" src="{{ asset('build/images/placeholder.png') }}" alt="Photo auteur">
+                                    {% endif %}
+                                </div>
+                                <!-- /.widget-user-image -->
+                                <h3 class="widget-user-username">
+                                    {{ user.fullName }}
+                                    {% if user.promo != '' %}
+                                        <small class="text-muted">({{ user.promo }})</small>
+                                    {% endif %}
+                                </h3>
+                                <span class="description">Futur grand ingénieur</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('profile') }}
+{% endblock %}
