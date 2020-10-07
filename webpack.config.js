@@ -23,7 +23,22 @@ Encore
      * Each entry will result in one JavaScript file (e.g. app.js)
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
-    .addEntry('app', './assets/app.js')
+    .addEntry('app', './assets/js/app.js')
+    .addEntry('home', './assets/js/home.js')
+    .addEntry('profile', './assets/js/profile.js')
+    .addEntry('project', './assets/js/project.js')
+    .addEntry('calendar', './assets/js/calendar.js')
+    .addEntry('espace_asso', './assets/js/espace_asso.js')
+    .addEntry('espace_asso_home', './assets/js/espace_asso_home.js')
+    .addEntry('espace_asso_article', './assets/js/espace_asso_article.js')
+    .addEntry('espace_asso_event', './assets/js/espace_asso_event.js')
+    .addEntry('espace_asso_roombook', './assets/js/espace_asso_roombook.js')
+    .addEntry('espace_asso_infos', './assets/js/espace_asso_infos.js')
+    .addEntry('espace_asso_pages', './assets/js/espace_asso_pages.js')
+    .addEntry('espace_admin_ressources', './assets/js/espace_admin_ressources.js')
+    .addEntry('espace_admin_news_edit', './assets/js/espace_admin_news_edit.js')
+    .addEntry('espace_admin_news_list', './assets/js/espace_admin_news_list.js')
+    .addEntry('espace_admin_roombooks', './assets/js/espace_admin_roombooks.js')
     //.addEntry('page1', './assets/page1.js')
     //.addEntry('page2', './assets/page2.js')
 

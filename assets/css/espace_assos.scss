@@ -1,0 +1,64 @@
+/*
+====================
+ESPACE ASSO
+====================
+*/
+
+.table td {
+  vertical-align: middle;
+}
+
+/* Correction navbar espace assos */
+aside {
+  margin-top: 60px;
+}
+
+[class*=sidebar-dark-] {
+  background-color: #33383e;
+}
+
+/* Correction cards espace assos */
+.card-title {
+  margin-bottom: .2rem;
+}
+
+/* Correction couleurs liens sidebar espace assos */
+.sidebar-dark-primary .nav-sidebar>.nav-item>.nav-link.active {
+  background-color: #009bc2;
+}
+
+/* Fix photos membres widget adminlte (étirement et taille) */
+.widget-user-2 .widget-user-image>img {
+  object-fit: cover;
+  height: 70px;
+  width: 70px;
+}
+
+/* Coloring the button-checkboxes of the members list */
+.role-buttons .btn-success {
+  background-color: #545b62;
+  border-color: #545b62;
+}
+
+.role-buttons .btn-success:not(:disabled):not(.disabled).active {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+/* Add margin to save button on mobile for Infos page */
+@media (max-width: 590px) {
+  .save-button {
+    margin-top: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .role-buttons {
+    margin-top: 15px;
+  }
+}
+
+/* Display line breaks in Asso'esaip News */
+.aenews-content {
+  white-space: pre-line;
+}

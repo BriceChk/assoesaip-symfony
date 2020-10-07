@@ -1,0 +1,10 @@
+$theme-colors: (
+        "primary": #009bc2
+);
+
+$custom-file-text: (
+        en: "Browse",
+        fr: "Ouvrir"
+);
+
+@import "~bootstrap/scss/bootstrap.scss";
