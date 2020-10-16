@@ -2,7 +2,6 @@ import { Calendar } from "@fullcalendar/core";
 import listPlugin from '@fullcalendar/list'
 import bootstrapPlugin from '@fullcalendar/bootstrap';
 
-import "@fullcalendar/core/main.css";
 import "@fullcalendar/bootstrap/main.css";
 import "@fullcalendar/list/main.css";
 

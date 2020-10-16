@@ -4,7 +4,6 @@ import daygridPlugin from '@fullcalendar/daygrid'
 import timegridPlugin from '@fullcalendar/timegrid'
 import bootstrapPlugin from '@fullcalendar/bootstrap';
 
-import "@fullcalendar/core/main.css";
 import "@fullcalendar/bootstrap/main.css";
 import "@fullcalendar/list/main.css";
 import "@fullcalendar/daygrid/main.css";

@@ -4,7 +4,6 @@ import listPlugin from '@fullcalendar/list'
 import bootstrapPlugin from '@fullcalendar/bootstrap';
 
 import "easy-autocomplete/dist/easy-autocomplete.css";
-import "@fullcalendar/core/main.css";
 import "@fullcalendar/bootstrap/main.css";
 import "@fullcalendar/list/main.css";
 
