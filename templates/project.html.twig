@@ -23,7 +23,8 @@
                             <div class="card-footer">
                                 <ul class="nav nav-pills justify-content-center">
                                     <li class="nav-item"><a class="nav-link active" href="#tab_1" data-toggle="tab" aria-controls="home" aria-selected="true">Accueil</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="#tab_2" data-toggle="tab" aria-controls="members" aria-selected="false">Membres</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#tab_2" data-toggle="tab" aria-controls="actu" aria-selected="false">Actu</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="#tab_3" data-toggle="tab" aria-controls="members" aria-selected="false">Membres</a></li>
                                     {% for page in project.pages | sort((a, b) => a.orderPosition <=> b.orderPosition) %}
                                         <li class="nav-item"><a class="nav-link" href="#page-{{ page.id }}" data-toggle="tab" aria-controls="page-{{ page.id }}" aria-selected="false">{{ page.name }}</a></li>
                                     {% endfor %}
@@ -35,8 +36,13 @@
                                 <div class="tab-pane fade show active" id="tab_1" role="tabpanel" aria-labelledby="home">
                                     {{ project.html | raw }}
                                 </div>
+
+                                <div class="tab-pane fade" id="tab_2" role="tabpanel" aria-labelledby="actu">
+                                    L'actu et le calendrier
+                                </div>
+
                                 <!-- /.tab-pane -->
-                                <div class="tab-pane fade" id="tab_2" role="tabpanel" aria-labelledby="members">
+                                <div class="tab-pane fade" id="tab_3" role="tabpanel" aria-labelledby="members">
                                     <div class="row">
 
 
@@ -109,26 +115,9 @@
                                 {% if project.email != '' %}
                                     <br><br><span>Vous pouvez {{ project.type == 'Association' ? 'la' : 'le' }} contacter à l'adresse suivante&nbsp;: <a href="mailto:{{ project.email }}">{{ project.email }}</a></span>
                                 {% endif %}
-                            </div>
-                            <!-- /.card-body -->
 
-                            {% if is_granted('PROJECT_ADMIN', project) %}
-                                <div class="card-footer">
-                                    <a class="btn btn-primary btn-sm mt-auto" href="{{ path('espace_assos_infos', {url: project.url}) }}" role="button">Modifier les infos</a>
-                                    <a class="btn btn-primary btn-sm mt-auto" href="{{ path('espace_assos_pages', {url: project.url}) }}" role="button">Modifier les pages</a>
-                                </div>
-                            {% endif %}
-
-                            <span style="display: none;" id="id-projet">{{ project.id }}</span>
-                        </div>
-
-                        {% if project.social is not empty %}
-                            <div class="card">
-                                <div class="card-header">
-                                    Réseaux sociaux
-                                </div>
-                                <div class="card-body p-0 text-center">
-                                    <div class="social">
+                                {% if project.social is not empty %}
+                                    <div class="social text-center">
                                         {% for key, val in project.social %}
                                             {% if key == 'fb' %}
                                                 <a class="fb" target="_blank" href="{{ val }}"><i class="fab fa-facebook"></i></a>
@@ -145,9 +134,21 @@
                                             {% endif %}
                                         {% endfor %}
                                     </div>
-                                </div>
+                                {% endif %}
                             </div>
-                        {% endif %}
+                            <!-- /.card-body -->
+
+                            {% if is_granted('PROJECT_ADMIN', project) %}
+                                <div class="card-footer">
+                                    <a class="btn btn-primary btn-sm mt-auto" href="{{ path('espace_assos_infos', {url: project.url}) }}" role="button">Modifier les infos</a>
+                                    <a class="btn btn-primary btn-sm mt-auto" href="{{ path('espace_assos_pages', {url: project.url}) }}" role="button">Modifier les pages</a>
+                                </div>
+                            {% endif %}
+
+                            <span style="display: none;" id="id-projet">{{ project.id }}</span>
+                        </div>
+
+
 
                         <div id='calendar'></div>
 

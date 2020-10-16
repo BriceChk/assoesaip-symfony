@@ -25,7 +25,7 @@
                             {% endif %}
                         </h2>
                         <p>{{ project.description }}</p>
-                        <a class="btn btn-primary btn-sm" href="{{ path('project', {'url': project.url}) }}">Voir la page</a>
+                        <a class="btn btn-primary btn-sm" href="{{ path('project', {'url': project.url}) }}">Découvrir l'asso</a>
                         <hr>
                         <div class="row">
                             {% for childProject in project.childrenProjects %}
@@ -44,21 +44,18 @@
 
                     {% set otherAssos = category.projects | filter(project => project.type == "Association") | filter(project => project.childrenProjects is empty) %}
                     {% if otherAssos is not empty %}
-                        <h2 class="asso-category">Assos sans club</h2>
-                        <hr>
-                        <div class="row">
+
                             {% for asso in otherAssos %}
-                                <div class="col-md-4 d-flex">
-                                    <div style="border-color: #009bc2;" class="card mb-4 box-shadow flex-fill card-link">
-                                        <div class="card-body d-flex flex-column">
-                                            <h5>{{ asso.name }} <span class="text-secondary" style="font-size: small">({{ asso.campus }})</span></h5>
-                                            <span class="card-text">{{ asso.description }}</span>
-                                            <a class="stretched-link" href="{{ path('project', {'url': asso.url}) }}"></a>
-                                        </div>
-                                    </div>
-                                </div>
+                                <h2 class="asso-category">
+                                    {{ asso.name }}
+                                    {% if notConnected %}
+                                        <span class="text-secondary" style="font-size: small">(Association à {{ asso.campus }})</span>
+                                    {% endif %}
+                                </h2>
+                                <p>{{ asso.description }}</p>
+                                <a class="btn btn-primary btn-sm" href="{{ path('project', {'url': asso.url}) }}">Découvrir l'asso</a>
+                                <hr>
                             {% endfor %}
-                        </div>
                     {% endif %}
 
                 </div>
