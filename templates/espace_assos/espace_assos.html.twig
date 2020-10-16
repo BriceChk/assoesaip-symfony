@@ -138,6 +138,9 @@
                                         </p>
                                     </li>
                                 {% endfor %}
+                                {% if project.news is empty %}
+                                    <li class="list-group-item">Vous n'avez pas encore publié de news.</li>
+                                {% endif %}
                             </ul>
                         </div>
                         <div class="card-footer">
@@ -166,6 +169,9 @@
                                         <span class="badge badge-{{ article.private ? 'danger' : 'primary' }}">{{ article.private ? 'Privé' : 'Public' }}</span>
                                     </li>
                                 {% endfor %}
+                                {% if project.articles is empty %}
+                                    <li class="list-group-item">Vous n'avez pas encore publié d'article.</li>
+                                {% endif %}
                             </ul>
                         </div>
                         <div class="card-footer">
