@@ -1,10 +1,11 @@
 {% for category in categories | filter(category => category.projects is not empty) | sort((a, b) => a.order > b.order) %}
 
-    <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="{{ category.url }}Dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <li class="dropdown-submenu dropdown-hover">
+        <div id="dropdownSubMenu{{ category.url }}" class="dropdown-item dropdown-toggle">
             {{ category.name }}
-        </a>
-        <div class="dropdown-menu" aria-labelledby="{{ category.url }}Dropdown">
+        </div>
+
+        <div class="dropdown-menu" aria-labelledby="dropdownSubMenu{{ category.url }}">
             <a class="dropdown-item" href="{{ path('category', {url: category.url}) }}">{{ category.name }}</a>
 
             {% set notConnected = app.user == null or is_granted('ROLE_ADMIN') %}
