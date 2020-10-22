@@ -106,31 +106,33 @@
                         </div>
                         <div class="card-body p-0" style="max-height: 250px; overflow-y: auto">
                             <ul class="list-group list-group-flush">
-                                {% for news in project.news | sort((a, b) => a.datePublished < b.datePublished) %}
+                                {% for n in project.news | sort((a, b) => a.datePublished < b.datePublished) %}
                                     <li class="list-group-item">
-                                        <h5 class="card-title">
-                                            {{ news.article != null ? news.article.title }}
-                                            {{ news.event != null ? news.event.title }}
-                                        </h5>
+                                        {% if n.article != null or n.event != null %}
+                                            <h5>
+                                                {{ n.article != null ? n.article.title }}
+                                                {{ n.event != null ? n.event.title }}
+                                            </h5>
+                                        {% endif %}
                                         <p class="card-text">
-                                            {% if news.article != null %}
-                                                {{ news.article.abstract }}
-                                            {% elseif news.event != null %}
-                                                {{ news.event.abstract }}
+                                            {% if n.article != null %}
+                                                {{ n.article.abstract }}
+                                            {% elseif n.event != null %}
+                                                {{ n.event.abstract }}
                                             {% else %}
-                                                {{ news.content }}
+                                                {{ n.content }}
                                             {% endif %}
                                         </p>
                                         <p class="card-text">
                                             <small class="text-muted">
-                                                {{ news.datePublished | format_datetime(pattern="dd/MM/y H'h'mm") }}
+                                                {{ n.datePublished | format_datetime(pattern="dd/MM/y · H'h'mm") }}
                                                 <span class="float-right">
-                                                    {% if news.link != "" %}
-                                                        <a target="_blank" href="{{ news.link }}">Ouvrir le lien</a> |
-                                                    {% elseif news.article != null %}
-                                                        <a target="_blank" href="{{ path('article', {url: news.article.url}) }}">Voir l'article</a> |
-                                                    {% elseif news.event != null %}
-                                                        <a target="_blank" href="{{ path('event', {url: news.event.url}) }}">Voir l'événement</a> |
+                                                    {% if n.link != "" %}
+                                                        <a target="_blank" href="{{ n.link }}">Ouvrir le lien</a> |
+                                                                        {% elseif n.article != null %}
+                                                        <a target="_blank" href="{{ path('article', {url: n.article.url}) }}">Voir l'article</a> |
+                                                                        {% elseif n.event != null %}
+                                                        <a target="_blank" href="{{ path('event', {url: n.event.url}) }}">Voir l'événement</a> |
                                                     {% endif %}
                                                     <a href="#" class="text-red"> Supprimer</a>
                                                 </span>
