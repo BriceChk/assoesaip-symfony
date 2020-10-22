@@ -38,14 +38,73 @@
                                 </div>
 
                                 <div class="tab-pane fade" id="tab_2" role="tabpanel" aria-labelledby="actu">
-                                    L'actu et le calendrier
+                                    <div class="card">
+                                        <div class="card-header">Calendrier</div>
+                                        <div class="card-body">Blabla</div>
+                                    </div>
+
+                                    <div class="card">
+                                        <div class="card-header">Actualités</div>
+
+                                        {% if project.news is empty %}
+                                            <div class="card-body">
+                                                <p class="card-text">Pas de news !</p>
+                                            </div>
+                                        {% else %}
+                                            <div class="card-body p-0">
+                                                <ul class="list-group list-group-flush">
+                                                    {% for n in project.news | sort((a, b) => a.datePublished < b.datePublished)|slice(0, 9) %}
+                                                        <li class="list-group-item">
+                                                            {% if n.article != null or n.event != null %}
+                                                                <h4>
+                                                                    {{ n.article != null ? n.article.title }}
+                                                                    {{ n.event != null ? n.event.title }}
+                                                                </h4>
+                                                            {% endif %}
+                                                            <p class="card-text">
+                                                                {% if n.article != null %}
+                                                                    {{ n.article.abstract }}
+                                                                {% elseif n.event != null %}
+                                                                    {{ n.event.abstract }}
+                                                                {% else %}
+                                                                    {{ n.content }}
+                                                                {% endif %}
+                                                            </p>
+                                                            <p class="card-text">
+                                                                <small class="text-muted">
+                                                                    {{ n.datePublished | format_datetime(pattern="dd/MM/y · H'h'mm") }}
+                                                                    <span class="float-right">
+                                                                        {% if n.link != "" %}
+                                                                            <a target="_blank" href="{{ n.link }}">Ouvrir le lien</a>
+                                                                        {% elseif n.article != null %}
+                                                                            <a href="{{ path('article', {url: n.article.url}) }}">Voir l'article</a>
+                                                                        {% elseif n.event != null %}
+                                                                            <a href="{{ path('event', {url: n.event.url}) }}">Voir l'événement</a>
+                                                                        {% endif %}
+                                                                    </span>
+                                                                </small>
+                                                            </p>
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        {% endif %}
+                                        <!-- /.card-body -->
+
+                                        {% if is_granted('PROJECT_ADMIN', project) %}
+                                            {# TODO: route espace asso #}
+                                            <div class="card-footer">
+                                                <button class="btn btn-primary btn-sm mt-auto" id="loadArticlesButton" {{ project.articles|length <= 10 ? 'style="display: none;"' }}>Charger la suite</button>
+                                                <a class="btn btn-primary btn-sm mt-auto" href="{{ path('espace_assos_articles_write', {url: project.url}) }}" role="button">Rédiger un article</a>
+                                            </div>
+                                        {% endif %}
+
+                                    </div>
                                 </div>
 
                                 <!-- /.tab-pane -->
                                 <div class="tab-pane fade" id="tab_3" role="tabpanel" aria-labelledby="members">
                                     <div class="row">
-
-
                                     {% for member in project.members | sort((a,b) => (a.orderPosition > b.orderPosition)) %}
                                         <div class="col-xl-12">
                                             <div class="card">
@@ -146,54 +205,6 @@
                             {% endif %}
 
                             <span style="display: none;" id="id-projet">{{ project.id }}</span>
-                        </div>
-
-
-
-                        <div id='calendar'></div>
-
-                        <div class="card">
-                            <div class="card-header">
-                                Actualités
-
-                                <div class="card-tools">
-                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
-                                    </button>
-                                </div>
-                                <!-- /.card-tools -->
-                            </div>
-                            <!-- /.card-header -->
-                            {% if project.articles is empty %}
-                                <div class="card-body">
-                                    <p class="card-text">Aucun article</p>
-                                </div>
-                            {% else %}
-                                <div class="card-body p-0" style="max-height: 500px; overflow-y: auto">
-                                    <ul class="list-group list-group-flush">
-                                        {% for article in project.articles | filter(a => a.published) |sort((a, b) => a.datePublished < b.datePublished)|slice(0, 9) %}
-                                            <li class="list-group-item">
-                                                <a href="{{ path('article', {'url': article.url}) }}" class="pas-de-lien">
-                                                    <h3 class="card-text">{{ article.title }}</h3>
-                                                    <p class="card-text">{{ article.abstract }}</p>
-                                                    <div class="d-flex justify-content-between align-items-center">
-                                                        <small class="text-muted">{{ article.author.fullName }} | Date publi. : {{ article.datePublished | format_date(locale="fr") }}</small>
-                                                    </div>
-                                                </a>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                            {% endif %}
-                            <!-- /.card-body -->
-
-                            {% if is_granted('PROJECT_ADMIN', project) %}
-                                {# TODO: route espace asso #}
-                                <div class="card-footer">
-                                    <button class="btn btn-primary btn-sm mt-auto" id="loadArticlesButton" {{ project.articles|length <= 10 ? 'style="display: none;"' }}>Charger la suite</button>
-                                    <a class="btn btn-primary btn-sm mt-auto" href="{{ path('espace_assos_articles_write', {url: project.url}) }}" role="button">Rédiger un article</a>
-                                </div>
-                            {% endif %}
-
                         </div>
 
                         {% if project.type == "Association" and project.childrenProjects is not empty %}
