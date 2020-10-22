@@ -56,6 +56,10 @@
                 <li class="nav-item {{ app.request.get('_route') == 'calendar' ? 'active' }}">
                     <a class="nav-link" href="{{ path('calendar') }}">Calendrier</a>
                 </li>
+
+                <li class="nav-item {{ app.request.get('_route') == 'azdazd' ? 'active' }}">
+                    <a class="nav-link" href="#">La Cafet'</a>
+                </li>
             </ul>
 
             <ul class="navbar-nav">
@@ -63,9 +67,14 @@
             </ul>
 
             <ul class="navbar-nav mr-auto">
-                {{ render(controller(
-                    'App\\Controller\\NavbarController::renderCategories', {onlyVisible: not is_granted('ROLE_ADMIN')}
-                )) }}
+                <li class="nav-item dropdown">
+                    <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">Parcourir les clubs & assos</a>
+                    <ul class="dropdown-menu border-0 shadow" aria-labelledby="navbarDropdownLink">
+                        {{ render(controller(
+                            'App\\Controller\\NavbarController::renderCategories', {onlyVisible: not is_granted('ROLE_ADMIN')}
+                        )) }}
+                    </ul>
+                </li>
             </ul>
 
             <ul class="navbar-nav">
