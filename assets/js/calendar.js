@@ -4,11 +4,7 @@ import daygridPlugin from '@fullcalendar/daygrid'
 import timegridPlugin from '@fullcalendar/timegrid'
 import bootstrapPlugin from '@fullcalendar/bootstrap';
 
-import "@fullcalendar/bootstrap/main.css";
-import "@fullcalendar/list/main.css";
-import "@fullcalendar/daygrid/main.css";
-import "@fullcalendar/timegrid/main.css";
-
+import '@fullcalendar/bootstrap/main.css';
 
 $(document).ready( function () {
     let calendarEl = document.getElementById('calendar');
@@ -24,16 +20,17 @@ $(document).ready( function () {
             day:      'jour',
             list:     'Liste'
         },
-        header: {
+        headerToolbar: {
             left:   'title',
             center: '',
-            right:  'today prev,next dayGridMonth,timeGridWeek,listMonth'
+            right:  'today prev,next timeGridWeek,dayGridMonth,listMonth'
         },
-        allDayText: 'Toute la journée',
-        noEventsMessage: 'Aucun événement',
+        initialView: 'timeGridWeek',
+        allDayContent : 'Toute la journée',
+        noEventsContent: 'Aucun événement',
         events: [],
         //events: 'https://asso.esaip.org/api/api-v1.php?action=get_events',
-        eventRender: function (info) {
+        eventDidMount: function (info) {
             let el = $(info.el);
             el.attr('data-toggle', 'tooltip');
             el.attr('data-placement', 'left');
