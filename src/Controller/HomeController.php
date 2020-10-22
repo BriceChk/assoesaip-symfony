@@ -2,9 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\Article;
 use App\Entity\AssoEsaipSettings;
-use App\Entity\Event;
+use App\Entity\News;
+use App\Entity\Project;
 use App\Entity\ProjectCategory;
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,20 +27,24 @@ class HomeController extends AbstractController
         $user = $this->getUser();
         $campus = $user != null ? $user->getCampus() : 'A';
 
-        $articleRepo = $this->getDoctrine()->getRepository(Article::class);
-        $articles = $articleRepo->findByPage(1, 10, $campus);
+        $projectRepo = $this->getDoctrine()->getRepository(Project::class);
+        if ($campus == 'A') {
+            $projects = $projectRepo->findAll();
+        } else {
+            $projects = $projectRepo->findBy(['campus' => $campus], null, 30, null);
+        }
 
-        $eventRepo = $this->getDoctrine()->getRepository(Event::class);
-        $events = $eventRepo->findByPage(1);
-
-        $merged = array_merge($articles, $events);
+        $news = array();
+        foreach ($projects as $p) {
+            $news = array_merge($news, $p->getNews()->toArray());
+        }
 
         // Home message
         $settingsRepo = $this->getDoctrine()->getRepository(AssoEsaipSettings::class);
 
         return $this->render('home.html.twig', [
             'categories' => $categories,
-            'articles' => $merged,
+            'news' => $news,
             'homeMessage' => $settingsRepo->getHomeMessage()
         ]);
     }
