@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -372,24 +373,24 @@ class Project
         return $this;
     }
 
-    public function getDateAdded(): ?\DateTimeInterface
+    public function getDateAdded(): ?DateTimeInterface
     {
         return $this->dateAdded;
     }
 
-    public function setDateAdded(\DateTimeInterface $dateAdded): self
+    public function setDateAdded(DateTimeInterface $dateAdded): self
     {
         $this->dateAdded = $dateAdded;
 
         return $this;
     }
 
-    public function getDateModified(): ?\DateTimeInterface
+    public function getDateModified(): ?DateTimeInterface
     {
         return $this->dateModified;
     }
 
-    public function setDateModified(\DateTimeInterface $dateModified): self
+    public function setDateModified(DateTimeInterface $dateModified): self
     {
         $this->dateModified = $dateModified;
 
