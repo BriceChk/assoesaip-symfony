@@ -5,6 +5,7 @@
         "php": ">=7.1.3",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "ext-json": "*",
         "composer/package-versions-deprecated": "^1.11",
         "doctrine/annotations": "^1.0",
         "doctrine/doctrine-bundle": "^2.1",
@@ -42,8 +43,10 @@
         "tattali/calendar-bundle": "^1.2",
         "thenetworg/oauth2-azure": "^2.0",
         "twig/extra-bundle": "^2.12|^3.0",
+        "twig/intl-extra": "^3.1",
         "twig/twig": "^2.12|^3.0",
-        "vich/uploader-bundle": "^1.15"
+        "vich/uploader-bundle": "^1.15",
+        "zircote/swagger-php": "^3.1"
     },
     "require-dev": {
         "symfony/browser-kit": "^4.4",
