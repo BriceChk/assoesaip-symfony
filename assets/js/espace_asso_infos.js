@@ -116,6 +116,7 @@ window.save = function () {
             $('.overlay').hide();
         },
         error: function (data) {
+            console.log(data);
             toastr.error(data.responseJSON.message);
             $('.overlay').hide();
         }

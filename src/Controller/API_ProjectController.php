@@ -2,14 +2,19 @@
 namespace App\Controller;
 
 use App\Entity\Project;
+use App\Entity\ProjectCategory;
+use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\Controller\Annotations\Route;
 use FOS\RestBundle\Controller\Annotations\View;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class API_ProjectController extends AbstractController {
+class API_ProjectController extends AbstractFOSRestController {
     /**
      * Get a Project from its id.
      * @Rest\Get(
@@ -60,20 +65,21 @@ class API_ProjectController extends AbstractController {
         return $response;
     }
 
+    //TODO API pour modifier l'URL (admin)
+
     /**
+     *
      * @Rest\Post(
      *     path = "/api/project/{id}",
      *     name = "api_project_update",
      *     requirements = { "id"="\d+" }
      * )
      * @View(statusCode=201)
-     * @ParamConverter("updatedProject", converter="fos_rest.request_body")
-     * @IsGranted("ROLE_PROJECT_EDITOR")
+     * @IsGranted("ROLE_USER")
      */
-    public function updateProject(Project $updatedProject, $id) {
-        //TODO check si l'user est admin du projet / si admin site pour url
+    public function updateProject($id, Request $request) {
         $response = new Response();
-
+//TODO some kind of data validation?
         $rep = $this->getDoctrine()->getRepository(Project::class);
         $project = $rep->find($id);
         if ($project == null) {
@@ -88,7 +94,21 @@ class API_ProjectController extends AbstractController {
             return $response;
         }
 
-        $project->setName($updatedProject->getName());
+        // The json received as PHP array
+        $uProject = $request->request->all();
+
+        $project->setName($uProject['name']);
+        $project->setType($uProject['type']);
+        $project->setDescription($uProject['description']);
+        $project->setKeywords($uProject['keywords']);
+        $project->setEmail($uProject['email']);
+        $project->setSocial(json_encode($uProject['social']));
+
+
+        $errors = $this->get('validator')->validate($project);
+        if (count($errors)) {
+            return $this->view($errors, Response::HTTP_BAD_REQUEST);
+        }
 
         //TODO update all properties, validate
 
@@ -125,5 +145,10 @@ class API_ProjectController extends AbstractController {
 
     private function jsonMsg($text) {
         return '{ "message": "'.$text.'" }';
+    }
+
+    private function getCategory($id) {
+        $rep = $this->getDoctrine()->getRepository(ProjectCategory::class);
+        return $rep->find($id);
     }
 }

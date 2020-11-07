@@ -6,6 +6,8 @@ use App\Entity\AENews;
 use DateTime;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\View;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,7 +15,19 @@ use Symfony\Component\HttpFoundation\Response;
 
 class API_AENewsController extends AbstractController
 {
+
     /**
+     * @OA\Response () (
+     *     response = 200,
+     *     description = "Returns an Asso'esaip News",
+     *     @Model(type=AENews::class)
+     * )
+     * @OA\Parameter (
+     *     name = "id",
+     *     in="query",
+     *     description="The AENews unique identifier",
+     *     @OA\Schema(type="string")
+     * )
      * Get a AENews from its id.
      * @Rest\Get(
      *     path = "/api/assoesaip-news/{id}",
@@ -22,8 +36,10 @@ class API_AENewsController extends AbstractController
      * )
      * @View
      * @IsGranted("ROLE_USER")
+     * @param $id integer The AENews unique identifier.
+     * @return AENews|Response
      */
-    public function showAENews($id) {
+    public function showAENews(int $id) {
         $em = $this->getDoctrine()->getRepository(AENews::class);
         $aeNews = $em->find($id);
         if ($aeNews == null) {
