@@ -17,18 +17,23 @@ class API_AENewsController extends AbstractController
 {
 
     /**
-     * @OA\Response () (
+     * Get an AENews from its ID.
+     * @OA\Response (
      *     response = 200,
-     *     description = "Returns an Asso'esaip News",
-     *     @Model(type=AENews::class)
+     *     description = "Returns the requested Asso'esaip News",
+     *     @OA\JsonContent(ref=@Model(type=AENews::class))
+     * )
+     * @OA\Response (
+     *     response = 404,
+     *     description = "The requested AENews doesn't exist"
      * )
      * @OA\Parameter (
      *     name = "id",
-     *     in="query",
+     *     in="path",
      *     description="The AENews unique identifier",
-     *     @OA\Schema(type="string")
+     *     @OA\Schema(type="integer")
      * )
-     * Get a AENews from its id.
+     * @OA\Tag(name="Asso'esaip News")
      * @Rest\Get(
      *     path = "/api/assoesaip-news/{id}",
      *     name = "api_ae_news_show",
@@ -36,7 +41,6 @@ class API_AENewsController extends AbstractController
      * )
      * @View
      * @IsGranted("ROLE_USER")
-     * @param $id integer The AENews unique identifier.
      * @return AENews|Response
      */
     public function showAENews(int $id) {
@@ -52,6 +56,21 @@ class API_AENewsController extends AbstractController
     }
 
     /**
+     * Create a new AENews. The user must be a site admin.
+     * @OA\Response (
+     *     response = 201,
+     *     description = "Returns the created Asso'esaip News",
+     *     @OA\JsonContent(ref=@Model(type=AENews::class))
+     * )
+     * @OA\Response (
+     *     response = 500,
+     *     description = "An error occured while saving the object"
+     * )
+     * @OA\RequestBody(
+     *     description="The AENews as a JSON object",
+     *     @OA\JsonContent(ref=@Model(type=AENews::class))
+     * )
+     * @OA\Tag(name="Asso'esaip News")
      * @Rest\Put(
      *     path = "/api/assoesaip-news",
      *     name = "api_ae_news_create"
@@ -79,12 +98,33 @@ class API_AENewsController extends AbstractController
     }
 
     /**
+     * Update an AENews. The user must be a site admin.
+     * @OA\Response (
+     *     response = 200,
+     *     description = "Returns the updated Asso'esaip News",
+     *     @OA\JsonContent(ref=@Model(type=AENews::class))
+     * )
+     * @OA\Response (
+     *     response = 404,
+     *     description = "The requested AENews doesn't exist"
+     * )
+     * @OA\RequestBody(
+     *     description="The AENews as a JSON object",
+     *     @OA\JsonContent(ref=@Model(type=AENews::class))
+     * )
+     * @OA\Parameter (
+     *     name = "id",
+     *     in="path",
+     *     description="The AENews unique identifier",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Tag(name="Asso'esaip News")
      * @Rest\Post(
      *     path = "/api/assoesaip-news/{id}",
      *     name = "api_ae_news_update",
      *     requirements = { "id"="\d+" }
      * )
-     * @View(statusCode=201)
+     * @View(statusCode=200)
      * @ParamConverter("updatedNews", converter="fos_rest.request_body")
      * @IsGranted("ROLE_ADMIN")
      */
@@ -117,6 +157,22 @@ class API_AENewsController extends AbstractController
     }
 
     /**
+     * Delete an AENews. The user must be a site admin.
+     * @OA\Response (
+     *     response = 200,
+     *     description = "The requested Asso'esaip News has been deleted"
+     * )
+     * @OA\Response (
+     *     response = 404,
+     *     description = "The requested AENews doesn't exist"
+     * )
+     * @OA\Parameter (
+     *     name = "id",
+     *     in="path",
+     *     description="The AENews unique identifier",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Tag(name="Asso'esaip News")
      * @Rest\Delete(
      *     path = "/api/assoesaip-news/{id}",
      *     name = "api_ae_news_delete",

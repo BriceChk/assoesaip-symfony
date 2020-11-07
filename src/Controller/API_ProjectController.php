@@ -5,18 +5,33 @@ use App\Entity\Project;
 use App\Entity\ProjectCategory;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
-use FOS\RestBundle\Controller\Annotations\Route;
 use FOS\RestBundle\Controller\Annotations\View;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Annotations as OA;
 
 class API_ProjectController extends AbstractFOSRestController {
     /**
-     * Get a Project from its id.
+     * Get a Project from its ID.
+     * @OA\Response (
+     *     response = 200,
+     *     description = "Returns the requested Project",
+     *     @OA\JsonContent(ref=@Model(type=Project::class))
+     * )
+     * @OA\Response (
+     *     response = 404,
+     *     description = "The requested Project doesn't exist"
+     * )
+     * @OA\Parameter (
+     *     name = "id",
+     *     in="path",
+     *     description="The Project unique identifier",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Tag(name="Project")
      * @Rest\Get(
      *     path = "/api/project/{id}",
      *     name = "api_project_show",
@@ -27,7 +42,7 @@ class API_ProjectController extends AbstractFOSRestController {
      * @param Integer $id The Project ID
      * @return Project|Response
      */
-    public function showProject($id) {
+    public function showProject(int $id) {
         $em = $this->getDoctrine()->getRepository(Project::class);
         $rb = $em->find($id);
         if ($rb == null) {
@@ -40,6 +55,21 @@ class API_ProjectController extends AbstractFOSRestController {
     }
 
     /**
+     * Create a new Project. The user must be a site admin.
+     * @OA\Response (
+     *     response = 201,
+     *     description = "Returns the created Project",
+     *     @OA\JsonContent(ref=@Model(type=Project::class))
+     * )
+     * @OA\Response (
+     *     response = 500,
+     *     description = "An error occured while saving the object"
+     * )
+     * @OA\RequestBody(
+     *     description="The Project as a JSON object",
+     *     @OA\JsonContent(ref=@Model(type=Project::class))
+     * )
+     * @OA\Tag(name="Project")
      * @Rest\Put(
      *     path = "/api/project",
      *     name = "api_project_create"
@@ -47,6 +77,8 @@ class API_ProjectController extends AbstractFOSRestController {
      * @View(statusCode=201)
      * @ParamConverter("project", converter="fos_rest.request_body")
      * @IsGranted("ROLE_ADMIN")
+     * @param Project $project
+     * @return Project|Response
      */
     public function newProject(Project $project)
     {
@@ -68,7 +100,27 @@ class API_ProjectController extends AbstractFOSRestController {
     //TODO API pour modifier l'URL (admin)
 
     /**
-     *
+     * Update a Project. The user must be a Project admin.
+     * @OA\Response (
+     *     response = 200,
+     *     description = "Returns the updated Project",
+     *     @OA\JsonContent(ref=@Model(type=Project::class))
+     * )
+     * @OA\Response (
+     *     response = 404,
+     *     description = "The requested Project doesn't exist"
+     * )
+     * @OA\Parameter (
+     *     name = "id",
+     *     in="path",
+     *     description="The Project unique identifier",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\RequestBody(
+     *     description="The Project as a JSON object",
+     *     @OA\JsonContent(ref=@Model(type=Project::class))
+     * )
+     * @OA\Tag(name="Project")
      * @Rest\Post(
      *     path = "/api/project/{id}",
      *     name = "api_project_update",
@@ -76,6 +128,9 @@ class API_ProjectController extends AbstractFOSRestController {
      * )
      * @View(statusCode=201)
      * @IsGranted("ROLE_USER")
+     * @param $id
+     * @param Request $request
+     * @return Project|\FOS\RestBundle\View\View|object|Response
      */
     public function updateProject($id, Request $request) {
         $response = new Response();
@@ -120,12 +175,30 @@ class API_ProjectController extends AbstractFOSRestController {
     }
 
     /**
+     * Delete a Project. The user must be a site admin.
+     * @OA\Response (
+     *     response = 200,
+     *     description = "The requested Project has been deleted"
+     * )
+     * @OA\Response (
+     *     response = 404,
+     *     description = "The requested Project doesn't exist"
+     * )
+     * @OA\Parameter (
+     *     name = "id",
+     *     in="path",
+     *     description="The Project unique identifier",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Tag(name="Project")
      * @Rest\Delete(
      *     path = "/api/project/{id}",
      *     name = "api_project_delete",
      *     requirements = { "id"="\d+" }
      * )
      * @IsGranted("ROLE_ADMIN")
+     * @param Project $project
+     * @return Response
      */
     public function deleteProject(Project $project) {
         $response = new Response();
