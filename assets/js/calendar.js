@@ -4,8 +4,6 @@ import daygridPlugin from '@fullcalendar/daygrid'
 import timegridPlugin from '@fullcalendar/timegrid'
 import bootstrapPlugin from '@fullcalendar/bootstrap';
 
-import '@fullcalendar/bootstrap/main.css';
-
 $(document).ready( function () {
     let calendarEl = document.getElementById('calendar');
     let calendar = new Calendar(calendarEl, {
