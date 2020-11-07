@@ -172,7 +172,7 @@
                                 {% endif %}
 
                                 {% if project.email != '' %}
-                                    <br><br><span>Vous pouvez {{ project.type == 'Association' ? 'la' : 'le' }} contacter à l'adresse suivante&nbsp;: <a href="mailto:{{ project.email }}">{{ project.email }}</a></span>
+                                    <br><br><span>Vous pouvez {{ project.type == 'Association' or project.type == 'Liste BDE' ? 'la' : 'le' }} contacter à l'adresse suivante&nbsp;: <a href="mailto:{{ project.email }}">{{ project.email }}</a></span>
                                 {% endif %}
 
                                 {% if project.social is not empty %}

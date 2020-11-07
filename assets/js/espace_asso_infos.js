@@ -63,9 +63,9 @@ window.previewLogo = function(input) {
     }
 }
 
-/* Show and hide parent project seletion if Club is selected */
+/* Show and hide parent project seletion if Club or Project is selected */
 $('#inputType').focus().change(function () {
-    if ($(this).val() === "Club") {
+    if ($(this).val() === "Club" || $(this).val() === "Projet") {
         $('#parentProjectGroup').show();
     } else {
         $('#parentProjectGroup').hide();
