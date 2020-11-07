@@ -25,27 +25,50 @@ class Project
     private $id;
 
     /**
+     * @Assert\NotBlank(
+     *     message="Le nom du projet ne peut pas être vide"
+     * )
+     * @Assert\Length(
+     *     max = 50,
+     *     maxMessage = "Le nom du projet ne doit pas dépasser {{ limit }} caractères"
+     * )
      * @ORM\Column(type="string", length=50)
      */
     private $name;
 
     /**
+     * @Assert\NotBlank(
+     *     message="L'URL ne peut pas être vide"
+     * )
+     * @Assert\Length(
+     *     max = 30,
+     *     maxMessage = "L'URL ne doit pas dépasser {{ limit }} caractères"
+     * )
      * @ORM\Column(type="string", length=30, unique=true)
      */
     private $url;
 
     /**
+     * @Assert\Choice(
+     *     choices = {"Association", "Club", "Projet", "Liste BDE"},
+     *     message = "Le type de projet est invalide"
+     * )
      * @ORM\Column(type="string", length=15)
      */
     private $type;
 
     /**
+     * @Assert\NotNull
      * @ORM\ManyToOne(targetEntity="App\Entity\ProjectCategory", inversedBy="projects")
      */
     private $category;
 
     /**
-     * @ORM\Column(type="string", length=35)
+     * @Assert\Choice(
+     *     choices = {"Angers", "Aix", "Reims"},
+     *     message = "Le campus est invalide"
+     * )
+     * @ORM\Column(type="string", length=6)
      */
     private $campus;
 
@@ -62,11 +85,18 @@ class Project
     private $childrenProjects;
 
     /**
+     * @Assert\Length(
+     *     max = 255,
+     *     maxMessage = "La totalité des mots clés ne peut pas dépasser 255 caractères"
+     * )
      * @ORM\Column(type="string", length=255)
      */
     private $keywords;
 
     /**
+     * @Assert\Email(
+     *     message = "Cette adresse mail n'est pas valide"
+     * )
      * @ORM\Column(type="string", length=255)
      */
     private $email;
@@ -77,6 +107,10 @@ class Project
     private $social = [];
 
     /**
+     * @Assert\Length(
+     *     max = 180,
+     *     maxMessage="La description ne doit pas dépasser 180 caractères"
+     * )
      * @ORM\Column(type="string", length=180)
      */
     private $description;
