@@ -1,6 +1,8 @@
 import Sortable from 'sortablejs';
 import 'easy-autocomplete/dist/easy-autocomplete.css';
 import toastr from "toastr";
+import 'toastr/toastr.scss'
+global.toastr = toastr;
 
 $(document).ready(function () {
     // Sortable members list
@@ -116,8 +118,12 @@ window.save = function () {
             $('.overlay').hide();
         },
         error: function (data) {
-            console.log(data);
-            toastr.error(data.responseJSON.message);
+            let errors = data.responseJSON;
+            let s = '';
+            for (let i = 0; i < errors.length; i++) {
+                s += errors[i].message + '<br>';
+            }
+            toastr.error(s, 'Erreur', {timeOut: 5000});
             $('.overlay').hide();
         }
     });

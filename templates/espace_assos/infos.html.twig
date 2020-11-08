@@ -53,7 +53,7 @@
                                         <label for="inputParentProject">Association mère</label>
                                         <select class="form-control" id="inputParentProject">
                                             {% for asso in assos %}
-                                                <option value="{{ asso.id }}" {{ project.type == 'Club' or project.type == 'Projet' and project.parentProject == asso ? 'selected' }}>{{ asso.name }}</option>
+                                                <option value="{{ asso.id }}" {{ (project.type == 'Club' or project.type == 'Projet') and project.parentProject == asso ? 'selected' }}>{{ asso.name }}</option>
                                             {% endfor %}
                                         </select>
                                     </div>

@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations as OA;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class API_ProjectController extends AbstractFOSRestController {
     /**
@@ -110,6 +111,10 @@ class API_ProjectController extends AbstractFOSRestController {
      *     response = 404,
      *     description = "The requested Project doesn't exist"
      * )
+     * @OA\Response (
+     *     response = 400,
+     *     description = "The request body is not valid"
+     * )
      * @OA\Parameter (
      *     name = "id",
      *     in="path",
@@ -126,15 +131,15 @@ class API_ProjectController extends AbstractFOSRestController {
      *     name = "api_project_update",
      *     requirements = { "id"="\d+" }
      * )
-     * @View(statusCode=201)
+     * @View(statusCode=200)
      * @IsGranted("ROLE_USER")
      * @param $id
      * @param Request $request
+     * @param ValidatorInterface $validator
      * @return Project|\FOS\RestBundle\View\View|object|Response
      */
-    public function updateProject($id, Request $request) {
+    public function updateProject($id, Request $request, ValidatorInterface $validator) {
         $response = new Response();
-//TODO some kind of data validation?
         $rep = $this->getDoctrine()->getRepository(Project::class);
         $project = $rep->find($id);
         if ($project == null) {
@@ -157,15 +162,22 @@ class API_ProjectController extends AbstractFOSRestController {
         $project->setDescription($uProject['description']);
         $project->setKeywords($uProject['keywords']);
         $project->setEmail($uProject['email']);
-        $project->setSocial(json_encode($uProject['social']));
+        $project->setSocial($uProject['social']);
 
+        $cat = $this->getDoctrine()->getRepository(ProjectCategory::class)->find($uProject['category']);
+        $project->setCategory($cat);
 
-        $errors = $this->get('validator')->validate($project);
+        if ($project->getType() == 'Club' || $project->getType() == 'Projet') {
+            $parent = $this->getDoctrine()->getRepository(Project::class)->find($uProject['parentProject']);
+            $project->setParentProject($parent);
+        }  else {
+            $project->setParentProject(null);
+        }
+
+        $errors = $validator->validate($project);
         if (count($errors)) {
             return $this->view($errors, Response::HTTP_BAD_REQUEST);
         }
-
-        //TODO update all properties, validate
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($project);

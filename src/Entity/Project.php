@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DateTime;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -195,14 +196,14 @@ class Project
      * @ORM\PrePersist()
      */
     public function onPrePersist() {
-        $this->dateAdded = $this->dateModified = date('Y-m-d');
+        $this->dateAdded = $this->dateModified = new DateTime();
     }
 
     /**
      * @ORM\PreUpdate()
      */
     public function onPreUpdate() {
-        $this->dateModified = date('Y-m-d');
+        $this->dateModified = new DateTime();
     }
 
     public function getId(): ?int
