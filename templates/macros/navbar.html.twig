@@ -58,7 +58,13 @@
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{ path('project', {url: 'assoesaip'}) }}">À propos</a>
                     {% if is_granted('ROLE_ADMIN') %}
-                    <a class="dropdown-item" href="{{ path('espace_admin') }}">Administration</a>
+                        <a class="dropdown-item" href="{{ path('espace_admin') }}">Administration</a>
+                        {% if not is_granted('IS_IMPERSONATOR') %}
+                            <a class="dropdown-item" href="{{ path('home', {'_switch_user': 'fake@user.com'}) }}">Imiter un étudiant</a>
+                        {% endif %}
+                    {% endif %}
+                    {% if is_granted('IS_IMPERSONATOR') %}
+                        <a class="dropdown-item" href="{{ path('home', {'_switch_user': '_exit'}) }}">Sortir de l'imitation</a>
                     {% endif %}
                 </div>
             </li>
