@@ -77,7 +77,7 @@ class AzureAuthenticator extends SocialAuthenticator
         return $this->clientRegistry->getClient('azure');
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey)
     {
         $homeUrl = $this->router->generate('home');
         $session = new Session();
@@ -106,6 +106,9 @@ class AzureAuthenticator extends SocialAuthenticator
     /**
      * Called when authentication is needed, but it's not sent.
      * This redirects to the 'login'.
+     * @param Request $request
+     * @param AuthenticationException|null $authException
+     * @return RedirectResponse
      */
     public function start(Request $request, AuthenticationException $authException = null)
     {
