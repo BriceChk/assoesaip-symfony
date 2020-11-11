@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
@@ -120,7 +121,7 @@ class Project
     /**
      * @var File|null
      * @Vich\UploadableField(mapping="project_logo", fileNameProperty="logoFileName")
-     * @Assert\Image()
+     * @Assert\Image(mimeTypesMessage="Le format du logo est invalide")
      */
     private $logoFile;
 
@@ -362,6 +363,9 @@ class Project
      */
     public function setLogoFile(?File $logoFile): Project {
         $this->logoFile = $logoFile;
+        if ($logoFile instanceof UploadedFile) {
+            $this->dateModified = new DateTime('now');
+        }
         return $this;
     }
 

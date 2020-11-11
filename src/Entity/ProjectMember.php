@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ProjectMemberRepository")
@@ -19,22 +21,27 @@ class ProjectMember
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="projects")
      * @ORM\JoinColumn(nullable=false)
+     * @Assert\NotNull(message="User invalide")
      */
     private $user;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Project", inversedBy="members")
      * @ORM\JoinColumn(nullable=false)
+     * @Assert\NotNull(message="Projet invalide")
+     * @Serializer\Exclude()
      */
     private $project;
 
     /**
      * @ORM\Column(type="string", length=40)
+     * @Assert\Length(max=40, maxMessage="Le rôle ne doit pas dépasser 40 caractères")
      */
     private $role;
 
     /**
      * @ORM\Column(type="string", length=500)
+     * @Assert\Length(max=500, maxMessage="L'introduction ne doit pas faire plus de 500 caractères")
      */
     private $introduction;
 

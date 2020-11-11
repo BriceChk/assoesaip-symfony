@@ -107,29 +107,67 @@ window.save = function () {
     if (snap !== "")
         json['social']['snap'] = snap;
 
+    let members = [];
+    $('#members-list li').each(function (i) {
+        let item = $(this);
+        let m = {
+            user: item.attr('id'),
+            orderPosition: i,
+            role: item.find('.role-input').val(),
+            admin: item.find('.boutonAdmin').hasClass("active"),
+            introduction: item.find('.intro-ta').val()
+        };
+        members.push(m);
+    });
+
+    // Upload logo si modifié
+    if($('#inputLogo').get(0).files.length !== 0){
+        let formData = new FormData();
+
+        formData.append('project[logoFile]', $('input[id=inputLogo]')[0].files[0])
+        $.ajax({
+            url: '/api/project/' + id + '/logo',
+            type: 'POST',
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            enctype: 'multipart/form-data',
+            data: formData,
+            success: function () {
+                toastr.success('Le logo a été enregistré !');
+            },
+            error: function (data) {
+                error(data);
+            }
+        });
+    }
+
+    ajaxRequest('/api/project/' + id, json, () => {
+        ajaxRequest('/api/project/' + id + '/members', members, () => {
+            toastr.success('Les modifications ont été enregistrées !');
+            $('.overlay').hide();
+        }, error);
+    }, error);
+}
+
+window.error = function(data) {
+    let errors = data.responseJSON;
+    let s = '';
+    for (let i = 0; i < errors.length; i++) {
+        s += errors[i].message + '<br>';
+    }
+    toastr.error(s, 'Erreur', {timeOut: 5000});
+    $('.overlay').hide();
+}
+
+window.ajaxRequest = function(uri, json, success, error) {
     $.ajax({
-        url: '/api/project/' + id,
+        url: uri,
         type: 'POST',
         dataType: 'json',
         contentType: 'application/json',
         data: JSON.stringify(json),
-        success: function () {
-            toastr.success('Les modifications ont été enregistrées !');
-            $('.overlay').hide();
-        },
-        error: function (data) {
-            let errors = data.responseJSON;
-            let s = '';
-            for (let i = 0; i < errors.length; i++) {
-                s += errors[i].message + '<br>';
-            }
-            toastr.error(s, 'Erreur', {timeOut: 5000});
-            $('.overlay').hide();
-        }
+        success: function (data) { success(data) },
+        error: function (data) { error(data) }
     });
-
-    // Save le logo
-    // TODO: utiliser LiipImagine
-
-    //TODO Save la liste des membres
 }
