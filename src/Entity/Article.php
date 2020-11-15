@@ -3,10 +3,10 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ArticleRepository")
- * @ORM\HasLifecycleCallbacks
  */
 class Article
 {
@@ -20,10 +20,11 @@ class Article
     /**
      * @ORM\Column(type="string")
      */
-    private $url;
+    private $url = "";
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=50)
+     * @Assert\Length(max="50", maxMessage="Le titre ne doit pas dépasser 50 caractères")
      */
     private $title;
 
@@ -41,6 +42,7 @@ class Article
 
     /**
      * @ORM\Column(type="string", length=180)
+     * @Assert\Length(max="180", maxMessage="Le résumé ne doit pas dépasser 180 caractères")
      */
     private $abstract;
 
@@ -50,13 +52,17 @@ class Article
     private $html;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="datetime")
      */
     private $dateCreated;
 
     /**
-     * @ORM\Column(type="date", nullable=true)
-     *
+     * @ORM\Column(type="datetime")
+     */
+    private $dateEdited;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $datePublished;
 
@@ -75,20 +81,6 @@ class Article
      * @ORM\JoinColumn(nullable=false)
      */
     private $category;
-
-    /**
-     * @ORM\PrePersist()
-     */
-    public function onPrePersist() {
-        $this->datePublished = $this->dateEdited = date('Y-m-d');
-    }
-
-    /**
-     * @ORM\PreUpdate()
-     */
-    public function onPreUpdate() {
-        $this->dateEdited = date('Y-m-d');
-    }
 
     public function getId(): ?int
     {
@@ -170,6 +162,15 @@ class Article
         return $this;
     }
 
+    public function getDateEdited() {
+        return $this->dateEdited;
+    }
+
+    public function setDateEdited($dateEdited) {
+        $this->dateEdited = $dateEdited;
+        return $this;
+    }
+
     public function getDateCreated(): ?\DateTimeInterface
     {
         return $this->dateCreated;
@@ -192,7 +193,7 @@ class Article
         return $this;
     }
 
-    public function getPrivate() {
+    public function isPrivate() {
         return $this->private;
     }
 

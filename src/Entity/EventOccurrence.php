@@ -27,6 +27,15 @@ class EventOccurrence
      */
     private $date;
 
+    /**
+     * EventOccurrence constructor.
+     * @param $date
+     */
+    public function __construct($date) {
+        $this->date = $date;
+    }
+
+
     public function getId(): ?int
     {
         return $this->id;

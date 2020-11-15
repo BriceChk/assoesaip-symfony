@@ -2,9 +2,6 @@ import 'summernote/dist/summernote-bs4'
 import 'summernote/dist/summernote-bs4.css'
 import 'summernote/dist/lang/summernote-fr-FR'
 
-import toastr from "toastr";
-import 'toastr/build/toastr.css'
-
 let summernote = $('#summernote');
 summernote.summernote({
     placeholder: "Rédigez ici le contenu de la News",
@@ -47,7 +44,7 @@ window.save = function (id) {
     let json = {
         title: $('#inputTitle').val(),
         content: $('#inputContent').val(),
-        hasHTML: $('#inputLongNews').is(':checked'),
+        has_html: $('#inputLongNews').is(':checked'),
         link: $('#inputLink').val(),
         published: $('#inputPublished').is(':checked'),
         html: $('#summernote').summernote('code')

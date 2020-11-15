@@ -71,6 +71,7 @@ class User implements UserInterface
      * @var File|null
      * @Vich\UploadableField(mapping="profile_pic", fileNameProperty="avatarFileName")
      * @Assert\Image()
+     * @Serializer\Exclude()
      */
     private $avatarFile;
 
@@ -82,11 +83,13 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="date")
+     * @Serializer\Exclude()
      */
     private $firstLogin;
 
     /**
      * @ORM\Column(type="date")
+     * @Serializer\Exclude()
      */
     private $lastLogin;
 
@@ -151,6 +154,14 @@ class User implements UserInterface
 
     public function getFullName() {
         return $this->firstName . ' ' . $this->lastName;
+    }
+
+    /**
+     * @Serializer\VirtualProperty()
+     * @return string
+     */
+    public function getFullNameAndEmail() {
+        return $this->getFullName() . ' (' . $this->email . ')';
     }
 
     public function getUsername() {

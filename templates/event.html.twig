@@ -55,15 +55,15 @@
                                 Date{{ event.occurrencesCount != 1 ? 's' }}
                             </div>
                             <!-- /.card-header -->
-                            <div class="card-body p-0">
-                                <ul class="list-group list-group-flush" style="max-height: 300px; overflow-y: auto">
+                            <div class="card-body p-0" style="max-height: 300px; overflow-y: auto">
+                                <ul class="list-group list-group-flush">
                                     {% if event.occurrencesCount == 1 %}
                                         {% if event.allDay %}
                                             {% set start = event.dateStart|format_date(pattern="EEEE dd MMM",locale='fr') ~ ', toute la journée'|capitalize %}
                                             {% set end = event.dateEnd|format_date(locale='fr') ~ ', toute la journée' %}
                                         {% else %}
-                                            {% set start = event.dateStart|format_datetime(pattern="EEEE dd MMM, H'h'mm", locale='fr')|capitalize %}
-                                            {% set end = event.dateEnd|format_datetime(pattern="EEEE dd MMM, H'h'mm", locale='fr')|capitalize %}
+                                            {% set start = event.dateStart|format_datetime(pattern="EEEE dd MMM H'h'mm", locale='fr')|capitalize %}
+                                            {% set end = event.dateEnd|format_datetime(pattern="EEEE dd MMM H'h'mm", locale='fr')|capitalize %}
                                         {% endif %}
 
                                         {% if start == end %}
@@ -82,7 +82,7 @@
                                                 {% endfor %}
                                             {% else %}
                                                 {% for occur in occurrences %}
-                                                    <li class="list-group-item">{{ occur.date|format_datetime(pattern="EEEE dd MMM, H'h'mm", locale='fr')|capitalize }} - {{ occur.date|date_modify('+' ~ event.duration ~ ' minute')|format_datetime(pattern="H'h'mm") }} </li>
+                                                    <li class="list-group-item">{{ occur.date|format_datetime(pattern="EEEE dd MMM H'h'mm", locale='fr')|capitalize }} - {{ occur.date|date_modify('+' ~ event.duration ~ ' minute')|format_datetime(pattern="H'h'mm") }} </li>
                                                 {% endfor %}
                                             {% endif %}
                                         {% endif %}

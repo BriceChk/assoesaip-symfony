@@ -1,8 +1,5 @@
 import Sortable from 'sortablejs';
 import 'easy-autocomplete/dist/easy-autocomplete.css';
-import toastr from "toastr";
-import 'toastr/toastr.scss'
-global.toastr = toastr;
 
 $(document).ready(function () {
     // Sortable members list
@@ -15,24 +12,23 @@ $(document).ready(function () {
     // Add member search
     let options = {
         url: function (phrase) {
-            return "URL-API-USER-SEARCH?query=" + phrase;
+            return "/api/user/search/" + phrase;
         },
-        getValue: "text",
+        getValue: "full_name_and_email",
         theme: 'bootstrap',
         requestDelay: 500,
         list: {
             onChooseEvent: function () {
                 let inputMembre = $("#inputMembre");
-                let id = inputMembre.getSelectedItemData().value;
-                let texte = inputMembre.val();
+                let user = inputMembre.getSelectedItemData();
 
                 let newLi = $('#member-template').clone();
-                newLi.attr('id', id);
-                newLi.html(newLi.html().replace('%id%', id).replace('%name%', texte.split(' (')[0]).replace('%email%', texte.split(' (')[1].replace(')', '')));
+                newLi.attr('id', user.id);
+                newLi.html(newLi.html().replace('%id%', user.id).replace('%name%', user.first_name + ' ' + user.last_name).replace('%email%', user.email));
 
                 let itemFound = false;
                 $('#members-list li').each(function () {
-                    if ($(this).attr('id') === id) {
+                    if ($(this).attr('id') == user.id) {
                         itemFound = true;
                     }
                 });
@@ -81,7 +77,7 @@ window.save = function () {
         'description': $('#inputDescription').val(),
         'category': parseInt($('#inputCategorie').val()),
         'type': $('#inputType').val(),
-        'parentProject': parseInt($('#inputParentProject').val()),
+        'parent_project': parseInt($('#inputParentProject').val()),
         'keywords': $('#inputKeywords').val(),
         'email': $('#inputEmail').val(),
         'social': {}
@@ -148,16 +144,6 @@ window.save = function () {
             $('.overlay').hide();
         }, error);
     }, error);
-}
-
-window.error = function(data) {
-    let errors = data.responseJSON;
-    let s = '';
-    for (let i = 0; i < errors.length; i++) {
-        s += errors[i].message + '<br>';
-    }
-    toastr.error(s, 'Erreur', {timeOut: 5000});
-    $('.overlay').hide();
 }
 
 window.ajaxRequest = function(uri, json, success, error) {

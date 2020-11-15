@@ -27,13 +27,13 @@
                                 </thead>
                                 <tbody>
                                 {% for article in project.articles | filter(a => not a.published) %}
-                                    <tr>
+                                    <tr id="article-{{ article.id }}">
                                         <td>{{ article.dateCreated | format_date(pattern="dd/MM/y") }}</td>
                                         <td>{{ article.title }}</td>
                                         <td>{{ article.author.fullName }}</td>
                                         <td class="align-middle text-right">
                                             <a type="button" class="btn btn-primary" href="{{ path('espace_assos_articles_edit', {url: article.project.url, id: article.id}) }}">Modifier</a>
-                                            <button type="button" class="btn btn-danger">Supprimer</button>
+                                            <button type="button" class="btn btn-danger" onclick="deleteArticle({{ article.id }}, '{{ article.title | e('js') }}')">Supprimer</button>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -69,7 +69,7 @@
                                         <td>{{ article.dateCreated | format_date(pattern="dd/MM/y") }}</td>
                                         <td><a target="_blank" href="{{ path('article', {url: article.url}) }}">{{ article.title }}</a></td>
                                         <td>{{ article.author.fullName }}</td>
-                                        <td><span class="badge badge-{{ article.private ? 'danger' : 'primary' }}">{{ article.private ? 'Privé' : 'Public' }} ({{ article.datePublished | format_datetime(pattern="dd/MM/y h'h'mm") }})</span></td>
+                                        <td><span class="badge badge-{{ article.private ? 'danger' : 'primary' }}">{{ article.private ? 'Privé' : 'Public' }} ({{ article.datePublished | format_datetime(pattern="dd/MM/y H'h'mm") }})</span></td>
                                         <td class="align-middle text-right">
                                             <a type="button" class="btn btn-primary" href="{{ path('espace_assos_articles_edit', {url: article.project.url, id: article.id}) }}">Modifier</a>
                                             <button type="button" class="btn btn-danger">Supprimer</button>
@@ -84,5 +84,29 @@
             </div>
         </div>
     </section>
-    <!-- /.content -->
+
+    <div class="modal fade" data-backdrop="static" id="deleteArticleModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Supprimer une page</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Voulez-vous vraiment supprimer l'article <i class="delete-article-title"></i> ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary modal-btn" data-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger delete-article-btn modal-btn">Supprimer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('espace_asso_article_list') }}
 {% endblock %}

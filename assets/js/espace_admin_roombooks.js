@@ -1,6 +1,3 @@
-import toastr from "toastr";
-import 'toastr/build/toastr.css'
-
 window.reponse = function (id) {
     let choix = $('input[name=choix-' + id + ']:checked').val();
     let statut = "Acceptée";

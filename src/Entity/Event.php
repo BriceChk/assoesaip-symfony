@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\EventRepository")
@@ -21,10 +22,11 @@ class Event
     /**
      * @ORM\Column(type="string")
      */
-    private $url;
+    private $url = "";
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=50)
+     * @Assert\Length(max="50", maxMessage="Le titre ne doit pas dépasser 50 caractères")
      */
     private $title;
 
@@ -42,6 +44,7 @@ class Event
 
     /**
      * @ORM\Column(type="string", length=180)
+     * @Assert\Length(max="180", maxMessage="Le résumé ne doit pas dépasser 180 caractères")
      */
     private $abstract;
 
@@ -51,14 +54,19 @@ class Event
     private $html;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="datetime")
      */
-    private $datePublished;
+    private $dateCreated;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $dateCreated;
+    private $dateEdited;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $datePublished;
 
     /**
      * @ORM\Column(type="boolean")
@@ -98,7 +106,7 @@ class Event
     private $allDay;
 
     /**
-     * @ORM\Column(type="array")
+     * @ORM\Column(type="json")
      */
     private $daysOfWeek = [];
 
@@ -118,7 +126,7 @@ class Event
     private $occurrencesCount;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\EventOccurrence", mappedBy="event", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\EventOccurrence", mappedBy="event", orphanRemoval=true, cascade={"persist"})
      */
     private $occurrences;
 
@@ -213,6 +221,15 @@ class Event
         return $this;
     }
 
+    public function getDateEdited() {
+        return $this->dateEdited;
+    }
+
+    public function setDateEdited($dateEdited) {
+        $this->dateEdited = $dateEdited;
+        return $this;
+    }
+
     public function getDateCreated(): ?\DateTimeInterface
     {
         return $this->dateCreated;
@@ -236,7 +253,7 @@ class Event
         return $this;
     }
 
-    public function getPrivate() {
+    public function isPrivate() {
         return $this->private;
     }
 

@@ -49,23 +49,24 @@
                                 </div>
                             </div>
 
-                            {% if article is defined and article.published %}
+                            {% set def = article is defined %}
+                            {% set published = def and article.published %}
+
+                            <span id="published-div" {{ not published ? 'style="display: none"' }}>
                                 <span class="badge badge-success">Publié</span>
                                 <p>
-                                    Lien de l'article : <a href="{{ path('article', {url: article.url}) }}" target="_blank">https://asso.esaip.org{{ path('article', {url: article.url}) }}</a> <br>
+                                    Lien de l'article : <a id="link-a" href="{{ published ? path('article', {url: article.url}) }}" target="_blank">https://asso.esaip.org{{ published ? path('article', {url: article.url}) }}</a> <br>
                                     <small class="text-muted">L'article doit être re-publié pour mettre à jour le lien.</small>
                                 </p>
-                                <button type="button" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="L'article repassera en brouillon">Annuler la publication</button>
-                            {% else %}
+                                <button type="button" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="L'article repassera en brouillon" onclick="save(false)">Annuler la publication</button>
+                            </span>
+                            <span id="draft-div" {{ published ? 'style="display: none"' }}>
                                 <span class="badge badge-secondary">Brouillon</span>
-                                <p>
-                                    Le lien de l'article sera généré après la publication.
-                                </p>
-                                {% if article is defined %}
-                                    <button type="button" class="btn btn-success">Publier</button>
-                                {% endif %}
-                            {% endif %}
-                            <button type="button" class="btn btn-primary">Enregistrer</button>
+                                <p>Le lien de l'article sera généré après la publication.</p>
+                                <button id="pub-btn" type="button" class="btn btn-success" onclick="save(true)" {{ not def ? 'style="display: none"' }}>Publier</button>
+                            </span>
+                            <button id="save-btn" type="button" class="btn btn-primary" onclick="save({{ article is defined and article.published ? 'true' : 'false' }})">Enregistrer</button>
+
                         </div>
                     </div>
                 </div>
@@ -77,5 +78,9 @@
 
 {% block javascripts %}
     {{ parent() }}
+    <script>
+        const id = {{ projectId }};
+        let articleId = {{ articleId }}
+    </script>
     {{ encore_entry_script_tags('espace_asso_article') }}
 {% endblock %}

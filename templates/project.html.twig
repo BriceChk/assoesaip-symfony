@@ -25,7 +25,7 @@
                                     <li class="nav-item"><a class="nav-link active" href="#tab_1" data-toggle="tab" aria-controls="home" aria-selected="true">Accueil</a></li>
                                     <li class="nav-item"><a class="nav-link" href="#tab_2" data-toggle="tab" aria-controls="actu" aria-selected="false">Actu</a></li>
                                     <li class="nav-item"><a class="nav-link" href="#tab_3" data-toggle="tab" aria-controls="members" aria-selected="false">Membres</a></li>
-                                    {% for page in project.pages | sort((a, b) => a.orderPosition <=> b.orderPosition) %}
+                                    {% for page in project.pages | filter(p => p.published) | sort((a, b) => a.orderPosition <=> b.orderPosition) %}
                                         <li class="nav-item"><a class="nav-link" href="#page-{{ page.id }}" data-toggle="tab" aria-controls="page-{{ page.id }}" aria-selected="false">{{ page.name }}</a></li>
                                     {% endfor %}
                                 </ul>
@@ -139,7 +139,7 @@
                                     </div>
                                 </div>
                                 <!-- /.tab-pane -->
-                                {% for page in project.pages | sort((a, b) => a.orderPosition <=> b.orderPosition) %}
+                                {% for page in project.pages | filter(p => p.published) | sort((a, b) => a.orderPosition <=> b.orderPosition) %}
                                     <div class="tab-pane fade" id="page-{{ page.id }}" role="tabpanel" aria-labelledby="page-{{ page.id }}">
                                         {{ page.html | raw }}
                                     </div>

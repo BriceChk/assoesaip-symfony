@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
+use JMS\Serializer\Annotation\Groups;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -24,6 +25,7 @@ class Project
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"basic"})
      */
     private $id;
 
@@ -36,6 +38,7 @@ class Project
      *     maxMessage = "Le nom du projet ne doit pas dépasser {{ limit }} caractères"
      * )
      * @ORM\Column(type="string", length=50)
+     * @Groups({"basic"})
      */
     private $name;
 
@@ -48,6 +51,7 @@ class Project
      *     maxMessage = "L'URL ne doit pas dépasser {{ limit }} caractères"
      * )
      * @ORM\Column(type="string", length=30, unique=true)
+     * @Groups({"basic"})
      */
     private $url;
 
@@ -57,6 +61,7 @@ class Project
      *     message = "Le type de projet est invalide"
      * )
      * @ORM\Column(type="string", length=15)
+     * @Groups({"basic"})
      */
     private $type;
 
@@ -72,6 +77,7 @@ class Project
      *     message = "Le campus est invalide"
      * )
      * @ORM\Column(type="string", length=6)
+     * @Groups({"basic"})
      */
     private $campus;
 

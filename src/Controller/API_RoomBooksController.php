@@ -10,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use OpenApi\Annotations as OA;
 
 class API_RoomBooksController extends AbstractController
 {
@@ -20,6 +21,7 @@ class API_RoomBooksController extends AbstractController
      *     name = "api_roombook_show",
      *     requirements = { "id"="\d+" }
      * )
+     * @OA\Tag(name="RoomBook")
      * @View
      * @IsGranted("ROLE_USER")
      * @param Integer $id The RoomBooks ID
@@ -44,6 +46,7 @@ class API_RoomBooksController extends AbstractController
      *     path = "/api/roombook",
      *     name = "api_roombook_create"
      * )
+     * @OA\Tag(name="RoomBook")
      * @View(statusCode=201)
      * @ParamConverter("rb", converter="fos_rest.request_body")
      * @IsGranted("ROLE_PROJECT_EDITOR")
@@ -71,6 +74,7 @@ class API_RoomBooksController extends AbstractController
      *     name = "api_roombook_update",
      *     requirements = { "id"="\d+" }
      * )
+     * @OA\Tag(name="RoomBook")
      * @View(statusCode=201)
      * @ParamConverter("updatedRb", converter="fos_rest.request_body")
      * @IsGranted("ROLE_ADMIN")
@@ -101,6 +105,7 @@ class API_RoomBooksController extends AbstractController
      *     name = "api_roombooks_delete",
      *     requirements = { "id"="\d+" }
      * )
+     * @OA\Tag(name="RoomBook")
      * @View(statusCode=200)
      * @IsGranted("ROLE_PROJECT_EDITOR")
      */

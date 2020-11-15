@@ -4,9 +4,6 @@ import 'summernote/dist/summernote-bs4'
 import 'summernote/dist/summernote-bs4.css'
 import 'summernote/dist/lang/summernote-fr-FR'
 
-import toastr from 'toastr'
-import 'toastr/build/toastr.css'
-
 const summernoteOptions = {
     placeholder: "Rédigez ici le contenu de la page",
     tabsize: 2,
@@ -186,12 +183,4 @@ window.savePage = function (id) {
             $('.overlay').hide();
         }
     });
-}
-
-function disableModalButtons() {
-    $('.modal-btn').prop('disabled', true);
-}
-
-function enableModalButtons() {
-    $('.modal-btn').prop('disabled', false);
 }

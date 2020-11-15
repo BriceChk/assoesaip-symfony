@@ -11,8 +11,11 @@ use App\Entity\Project;
 use App\Entity\ProjectCategory;
 use App\Entity\RessourcePage;
 use App\Entity\User;
+use App\Utils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class EspaceAssosController extends AbstractController
@@ -42,6 +45,8 @@ class EspaceAssosController extends AbstractController
     /**
      * @Route("/espace-assos/ressources/{url}", name="espace_assos_ressource")
      * @IsGranted("ROLE_USER")
+     * @param $url
+     * @return Response
      */
     public function ressourcePage($url) {
         $rep = $this->getDoctrine()->getRepository(RessourcePage::class);
@@ -70,30 +75,34 @@ class EspaceAssosController extends AbstractController
      */
     public function indexRedirect()
     {
-        if ($this->isGranted('ROLE_ADMIN')) {
-            $projectsList = $this->getAllProjects();
-            return $this->redirectToRoute('espace_assos', ['url' => $projectsList[0]->getUrl()]);
-        }
-
         $user = $this->getGoodUser();
         $projectsList = $this->isGranted('ROLE_ADMIN') ? $this->getAllProjects() : $user->getProjectsIfAdmin();
 
         // The user has no project
-        if ($projectsList->count() == 0) {
+        if (count($projectsList) == 0) {
             return $this->render('espace_assos/espace_assos_no_project.html.twig', ['noProject' => true]);
         }
 
-        // Else, select the first one in the list
-        $projectUrl = $projectsList[0]->getUrl();
+        // Else, retrieve selected project or select the first one in the list
+        $projectUrl = $this->get('session')->get('selectedProject', $projectsList[0]->getUrl());
+
+        // Just check if the user is still a project admin or if the project exists. If not, just take the first one
+        if ($projectUrl != $projectsList[0]->getUrl()) {
+            $rep = $this->getDoctrine()->getRepository(Project::class);
+            $proj = $rep->findOneByUrl($projectUrl);
+            if ($proj == null || !$this->isGranted('PROJECT_ADMIN', $proj)) {
+                $projectUrl = $projectsList[0]->getUrl();
+            }
+        }
 
         return $this->redirectToRoute('espace_assos', ['url' => $projectUrl]);
     }
 
-    // TODO: CHECK IF USER HAS ROLE_ADMIN SO THAT HE CAN EDIT ANY PROJECT
-
     /**
      * @Route("/espace-assos/{url}", name="espace_assos")
      * @IsGranted("ROLE_USER")
+     * @param $url
+     * @return RedirectResponse|Response
      */
     public function index($url)
     {
@@ -106,6 +115,8 @@ class EspaceAssosController extends AbstractController
 
         $aenewsRepo = $this->getDoctrine()->getRepository(AENews::class);
         $aenews = $aenewsRepo->findBy(['published' => true]);
+
+        $this->get('session')->set('selectedProject', $url);
 
         return $this->render('espace_assos/espace_assos.html.twig', [
             'project' => $proj,
@@ -122,6 +133,8 @@ class EspaceAssosController extends AbstractController
     /**
      * @Route("/espace-assos/{url}/infos", name="espace_assos_infos")
      * @IsGranted("ROLE_USER")
+     * @param $url
+     * @return RedirectResponse|Response
      */
     public function projectInfos($url)
     {
@@ -135,7 +148,7 @@ class EspaceAssosController extends AbstractController
         $rep = $this->getDoctrine()->getRepository(ProjectCategory::class);
         $categories = $rep->findAll();
         $assRep = $this->getDoctrine()->getRepository(Project::class);
-        $assos = $assRep->findBy(['type' => 'Association', 'campus' => $this->getUser()->getCampus()]);
+        $assos = $assRep->findBy(['type' => 'Association', 'campus' => $this->getGoodUser()->getCampus()]);
 
         return $this->render('espace_assos/infos.html.twig', [
             'project' => $proj,
@@ -153,6 +166,8 @@ class EspaceAssosController extends AbstractController
     /**
      * @Route("/espace-assos/{url}/pages", name="espace_assos_pages")
      * @IsGranted("ROLE_USER")
+     * @param $url
+     * @return RedirectResponse|Response
      */
     public function projectPages($url)
     {
@@ -178,6 +193,8 @@ class EspaceAssosController extends AbstractController
     /**
      * @Route("/espace-assos/{url}/articles", name="espace_assos_articles_list")
      * @IsGranted("ROLE_USER")
+     * @param $url
+     * @return RedirectResponse|Response
      */
     public function articlesList($url)
     {
@@ -196,6 +213,8 @@ class EspaceAssosController extends AbstractController
     /**
      * @Route("/espace-assos/{url}/articles/nouveau", name="espace_assos_articles_write")
      * @IsGranted("ROLE_USER")
+     * @param $url
+     * @return RedirectResponse|Response
      */
     public function articleNew($url)
     {
@@ -206,21 +225,24 @@ class EspaceAssosController extends AbstractController
             return $this->redirectToRoute('espace_assos_no_project');
         }
 
-        //TODO Ajouter un moyen de connaitre l'ID du projet pour créer l'article ??
-
         $rep = $this->getDoctrine()->getRepository(ArticleCategory::class);
         $categories = $rep->findAll();
 
         return $this->render('espace_assos/articles_edit.html.twig', [
-            'categories' => $categories
+            'categories' => $categories,
+            'articleId' => -1,
+            'projectId' => $proj->getId()
         ]);
     }
 
     /**
      * @Route("/espace-assos/{url}/articles/{id}", name="espace_assos_articles_edit")
      * @IsGranted("ROLE_USER")
+     * @param $url
+     * @param $id
+     * @return RedirectResponse|Response
      */
-    public function articleWrite($url,$id)
+    public function articleWrite($url, $id)
     {
         $rep = $this->getDoctrine()->getRepository(Project::class);
         $proj = $rep->findOneByUrl($url);
@@ -241,7 +263,9 @@ class EspaceAssosController extends AbstractController
 
         return $this->render('espace_assos/articles_edit.html.twig', [
             'article' => $article,
-            'categories' => $categories
+            'categories' => $categories,
+            'articleId' => $article->getId(),
+            'projectId' => $proj->getId()
         ]);
     }
 
@@ -254,6 +278,8 @@ class EspaceAssosController extends AbstractController
     /**
      * @Route("/espace-assos/{url}/evenements", name="espace_assos_events_list")
      * @IsGranted("ROLE_USER")
+     * @param $url
+     * @return RedirectResponse|Response
      */
     public function eventsList($url)
     {
@@ -272,6 +298,8 @@ class EspaceAssosController extends AbstractController
     /**
      * @Route("/espace-assos/{url}/evenements/nouveau", name="espace_assos_events_write")
      * @IsGranted("ROLE_USER")
+     * @param $url
+     * @return RedirectResponse|Response
      */
     public function eventNew($url)
     {
@@ -285,16 +313,19 @@ class EspaceAssosController extends AbstractController
         $rep = $this->getDoctrine()->getRepository(EventCategory::class);
         $categories = $rep->findAll();
 
-        //TODO Ajouter un moyen de connaitre l'ID du projet pour créer l'article ??
-
         return $this->render('espace_assos/events_edit.html.twig', [
-            'categories' => $categories
+            'categories' => $categories,
+            'eventId' => -1,
+            'projectId' => $proj->getId()
         ]);
     }
 
     /**
      * @Route("/espace-assos/{url}/evenements/{id}", name="espace_assos_events_edit")
      * @IsGranted("ROLE_USER")
+     * @param $url
+     * @param $id
+     * @return RedirectResponse|Response
      */
     public function eventWrite($url, $id)
     {
@@ -304,8 +335,6 @@ class EspaceAssosController extends AbstractController
         if ($proj == null || !$this->isGranted('PROJECT_ADMIN', $proj)) {
             return $this->redirectToRoute('espace_assos_no_project');
         }
-
-        //TODO Ajouter un moyen de connaitre l'ID du projet pour créer l'article ??
 
         // Check event
         $em = $this->getDoctrine()->getRepository(Event::class);
@@ -317,9 +346,21 @@ class EspaceAssosController extends AbstractController
         $rep = $this->getDoctrine()->getRepository(EventCategory::class);
         $categories = $rep->findAll();
 
+        $time = "";
+        if ($event->getOccurrencesCount() > 1 && !$event->isAllDay()) {
+            $hours = $event->getDuration() / 60;
+            $rhours = floor($hours);
+            $minutes = ($hours - $rhours) * 60;
+            $rminutes = round($minutes);
+            $time = Utils::twoDigits($rhours) . ':' . Utils::twoDigits($rminutes);
+        }
+
         return $this->render('espace_assos/events_edit.html.twig', [
             'event' => $event,
-            'categories' => $categories
+            'categories' => $categories,
+            'eventId' => $event->getId(),
+            'projectId' => $proj->getId(),
+            'time' => $time
         ]);
     }
 
@@ -332,6 +373,8 @@ class EspaceAssosController extends AbstractController
     /**
      * @Route("/espace-assos/{url}/reservation-salle", name="espace_assos_room_booking")
      * @IsGranted("ROLE_USER")
+     * @param $url
+     * @return RedirectResponse|Response
      */
     public function roomBook($url) {
         $rep = $this->getDoctrine()->getRepository(Project::class);

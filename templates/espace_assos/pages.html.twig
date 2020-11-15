@@ -1,6 +1,6 @@
 {% extends 'espace_assos/espasso_base.html.twig' %}
 
-{% block header %}Modifier les pages <span class="float-sm-right"><button class="btn btn-primary save-button">Enregistrer les modifications</button> </span>{% endblock %}
+{% block header %}Modifier les pages <span class="float-sm-right"><button class="btn btn-primary save-button" onclick="save()">Enregistrer les modifications</button> </span>{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -26,6 +26,8 @@
                         </div>
                     </div>
 
+                    <div class="alert alert-info">Clique sur le nom d'une page pour la renommer.</div>
+
                     <div class="card">
                         <div class="card-header">
                             Liste des pages <i class="float-right text-muted">Glisser-déplacer pour réorganiser</i>
@@ -34,7 +36,7 @@
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item list-group-item-secondary d-flex justify-content-between align-items-center">
                                     <span>Accueil</span>
-                                    <button class="btn btn-primary btn-page" onclick="changePage('home', this)" disabled>Modif. en cours</button>
+                                    <button id="home-modif-btn" class="btn btn-primary btn-page" onclick="changePage('home', this)" disabled>Modif. en cours</button>
                                 </li>
                                 <li class="list-group-item list-group-item-secondary d-flex justify-content-between align-items-center">
                                     <span>Actu</span>
@@ -51,11 +53,16 @@
                                 </li>
                                 {% for page in project.pages | sort((a, b) => a.orderPosition <=> b.orderPosition) %}
                                     <li class="list-group-item d-flex justify-content-between align-items-center page-list-item" id="page-list-{{ page.id }}">
-                                        {{ page.name }}
+                                        <span class="page-name" contenteditable="true">{{ page.name }}</span>
                                         <a href="#page-{{ page.id }}" data-toggle="tab" aria-controls="page-{{ page.id }}" aria-selected="false"></a>
                                         <div class="float-right">
-                                            <button class="btn btn-danger" onclick="removePage({{ page.id }})">Supprimer</button>
-                                            <button class="btn btn-primary btn-page" onclick="changePage({{ page.id }}, this)">Modifier</button>
+                                            <div class="btn-group-toggle btn-group-sm role-buttons" data-toggle="buttons">
+                                                <label class="btn btn-success boutonPublier">
+                                                    <input type="checkbox" {{ page.published ? 'checked' }}> Publier
+                                                </label>
+                                                <button class="btn btn-primary btn-page" onclick="changePage({{ page.id }}, this)">Modifier</button>
+                                                <button class="btn btn-danger" onclick="removePage({{ page.id }})"><i class="fas fa-times"></i></button>
+                                            </div>
                                         </div>
                                     </li>
                                 {% endfor %}
@@ -63,11 +70,14 @@
                         </div>
                         <ul style="display: none">
                             <li class="list-group-item d-flex justify-content-between align-items-center" id="list-template">
-                                %name%
+                                <span contenteditable="true">%name%</span>
                                 <a href="#page-%id%" data-toggle="tab" aria-controls="page-%id%" aria-selected="false"></a>
-                                <div class="float-right">
-                                    <button class="btn btn-danger" onclick="removePage('%id%')">Supprimer</button>
+                                <div class="btn-group-toggle btn-group-sm role-buttons" data-toggle="buttons">
+                                    <label class="btn btn-success boutonPublier">
+                                        <input type="checkbox"> Publier
+                                    </label>
                                     <button class="btn btn-primary btn-page" onclick="changePage('%id%', this)" disabled>Modif. en cours</button>
+                                    <button class="btn btn-danger" onclick="removePage('%id%')"><i class="fas fa-times"></i></button>
                                 </div>
                             </li>
                         </ul>
@@ -99,10 +109,32 @@
             </div>
         </div>
     </section>
-    <!-- /.content -->
+
+    <div class="modal fade" data-backdrop="static" id="deletePageModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Supprimer une page</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Voulez-vous vraiment supprimer la page <i class="delete-page-title"></i> ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary modal-btn" data-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger delete-page-btn modal-btn">Supprimer</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
+    <script>
+        const id = {{ project.id }};
+    </script>
     {{ encore_entry_script_tags('espace_asso_pages') }}
 {% endblock %}

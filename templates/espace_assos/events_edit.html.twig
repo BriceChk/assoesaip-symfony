@@ -4,11 +4,18 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    {{ encore_entry_link_tags('espace_asso_article') }}
+    {{ encore_entry_link_tags('espace_asso_event') }}
     {{ encore_entry_link_tags('espace_asso_event') }}
 {% endblock %}
 
 {% block body %}
+    {% set def = event is defined %}
+    {% if def %}
+        {% set dtStart = event.dateStart | format_datetime(pattern='y-MM-dd HH:mm:ss') %}
+        {% if event.dateEnd is not null %}
+            {% set dtEnd = event.dateEnd | format_datetime(pattern='y-MM-dd HH:mm:ss') %}
+        {% endif %}
+    {% endif %}
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
@@ -16,14 +23,14 @@
                 <div class="col-xl-8" style="max-width: 1140px;">
                     <div class="card">
                         <div class="card-body text-center">
-                            <h1 class="display-4 titre-page" contenteditable="true">{{ event is defined ? event.title : "Titre de l'événement" }}</h1>
+                            <h1 class="display-4 titre-page" contenteditable="true">{{ def ? event.title : "Titre de l'événement" }}</h1>
                             <span class="lead" contenteditable="true">
-                                {{ event is defined ? event.abstract : "Résumé" }}
+                                {{ def ? event.abstract : "Résumé" }}
                             </span>
                         </div>
                     </div>
 
-                    <div id="summernote">{{ event is defined ? event.html | raw }}</div>
+                    <div id="summernote">{{ def ? event.html | raw }}</div>
                 </div>
 
                 {# TODO: Charger les propriétés événement #}
@@ -33,7 +40,7 @@
                         <div class="card-body">
                             <div class="form-group">
                                 <label>Date de début</label>
-                                <div class="input-group date" id="inputStartDate" data-target-input="nearest">
+                                <div class="input-group date" id="inputStartDate" data-target-input="nearest" {% if def %}data-date="{{ dtStart }}"{% endif %}>
                                     <input type="text" class="form-control datetimepicker-input" data-target="#inputStartDate"/>
                                     <div class="input-group-append" data-target="#inputStartDate" data-toggle="datetimepicker">
                                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
@@ -41,26 +48,26 @@
                                 </div>
                             </div>
                             <div class="custom-control custom-checkbox my-1 mr-sm-2">
-                                <input type="checkbox" class="custom-control-input" id="allDay">
+                                <input type="checkbox" class="custom-control-input" id="allDay" {{ def and event.allDay ? 'checked' }}>
                                 <label class="custom-control-label" for="allDay">Toute la journée</label>
                             </div>
                             <div class="form-group">
                                 <label for="inputRepeat">Répétition</label>
                                 <select class="form-control" id="inputRepeat">
-                                    <option value="0" selected="selected">1 fois</option>
-                                    <option value="1">Plusieurs fois</option>
+                                    <option value="0" {{ def and event.occurrencesCount == 1 ? 'selected' }}>1 fois</option>
+                                    <option value="1" {{ def and event.occurrencesCount != 1 ? 'selected' }}>Plusieurs fois</option>
                                 </select>
                             </div>
                             <div class="form-inline" id="repeatOptions" style="display: none;">
                                 <label class="my-1 mr-2" for="inputInterval">Répéter tous les</label>
-                                <input style="width: 100px" type="number" min="1" class="form-control repeat-option" id="inputInterval" value="1">
+                                <input style="width: 100px" type="number" min="1" class="form-control repeat-option" id="inputInterval" value="{{ def ? event.intervalCount : 1 }}">
                                 <select class="custom-select my-1 mr-sm-2 repeat-option" id="inputIntervalType">
                                     <!--<option value="daily">jours</option>-->
-                                    <option value="weekly" selected="selected">semaines</option>
-                                    <option value="monthly">mois</option>
+                                    <option value="weekly" {{ def and event.intervalType == 'weekly' ? 'selected' }}>semaines</option>
+                                    <option value="monthly" {{ def and event.intervalType == 'monthly' ? 'selected' }}>mois</option>
                                 </select>
                                 <label class="my-1 mr-2" for="inputIntervalType">et terminer après</label>
-                                <input style="width: 100px" type="number" min="2" class="form-control repeat-option" id="inputOccurrences" value="2">
+                                <input style="width: 100px" type="number" min="2" class="form-control repeat-option" id="inputOccurrences" value="{{ def ? event.occurrencesCount : 2 }}">
                                 <label style="margin-left: 5px" class="my-1 mr-2" for="inputOccurrences">occurrences</label>
                             </div>
 
@@ -69,45 +76,45 @@
                                     <label for="inputIntervalType">Jours de la semaine</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" id="weekdayCheckbox-mo" value="mo">
+                                    <input class="form-check-input" type="checkbox" id="weekdayCheckbox-mo" value="mo" {{ def and 'mo' in event.daysOfWeek ? 'checked' }}>
                                     <label class="form-check-label" for="weekdayCheckbox-mo">Lun</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" id="weekdayCheckbox-tu" value="tu">
+                                    <input class="form-check-input" type="checkbox" id="weekdayCheckbox-tu" value="tu" {{ def and 'tu' in event.daysOfWeek ? 'checked' }}>
                                     <label class="form-check-label" for="weekdayCheckbox-tu">Mar</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" id="weekdayCheckbox-we" value="we">
+                                    <input class="form-check-input" type="checkbox" id="weekdayCheckbox-we" value="we" {{ def and 'we' in event.daysOfWeek ? 'checked' }}>
                                     <label class="form-check-label" for="weekdayCheckbox-we">Mer</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" id="weekdayCheckbox-th" value="th">
+                                    <input class="form-check-input" type="checkbox" id="weekdayCheckbox-th" value="th" {{ def and 'th' in event.daysOfWeek ? 'checked' }}>
                                     <label class="form-check-label" for="weekdayCheckbox-th">Jeu</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" id="weekdayCheckbox-fr" value="fr">
+                                    <input class="form-check-input" type="checkbox" id="weekdayCheckbox-fr" value="fr" {{ def and 'fr' in event.daysOfWeek ? 'checked' }}>
                                     <label class="form-check-label" for="weekdayCheckbox-fr">Ven</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" id="weekdayCheckbox-sa" value="sa">
+                                    <input class="form-check-input" type="checkbox" id="weekdayCheckbox-sa" value="sa" {{ def and 'sa' in event.daysOfWeek ? 'checked' }}>
                                     <label class="form-check-label" for="weekdayCheckbox-sa">Sam</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" id="weekdayCheckbox-su" value="su">
+                                    <input class="form-check-input" type="checkbox" id="weekdayCheckbox-su" value="su" {{ def and 'su' in event.daysOfWeek ? 'checked' }}>
                                     <label class="form-check-label" for="weekdayCheckbox-su">Dim</label>
                                 </div>
                             </div>
                             <div class="form-group" id="inputHoursGroup" style="display: none">
                                 <label for="inputHoursDuration">Durée (hh:mm)</label>
-                                <input type="time" class="form-control" id="inputHoursDuration">
+                                <input type="time" class="form-control" id="inputHoursDuration" value="{{ def and time != '' ? time }}">
                             </div>
                             <div class="form-group" id="inputDaysGroup" style="display: none;">
                                 <label for="inputDaysDuration">Durée (jours)</label>
-                                <input type="number" min="1" class="form-control" id="inputDaysDuration" value="1">
+                                <input type="number" min="1" class="form-control" id="inputDaysDuration" value="{{ def and event.allDay ? event.duration / 1440 : 1 }}">
                             </div>
                             <div class="form-group" id="inputEndDateGroup">
                                 <label>Date de fin</label>
-                                <div class="input-group date" id="inputEndDate" data-target-input="nearest">
+                                <div class="input-group date" id="inputEndDate" data-target-input="nearest" {% if dtEnd is defined %}data-date="{{ dtEnd }}"{% endif %}>
                                     <input type="text" class="form-control datetimepicker-input" data-target="#inputEndDate"/>
                                     <div class="input-group-append" data-target="#inputEndDate" data-toggle="datetimepicker">
                                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
@@ -141,43 +148,14 @@
                                     </tr>
                                     </thead>
                                     <tbody id="tableBody">
-                                    <tr>
-                                        <td class="occurrence" id="2020-06-04 21:00:00">Jeudi 04/06/2020</td>
-                                        <td onclick="$(this).parent().remove()"><i class="fas fa-trash-alt"></i></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="occurrence" id="2020-06-08 21:00:00">Lundi 08/06/2020</td>
-                                        <td onclick="$(this).parent().remove()"><i class="fas fa-trash-alt"></i></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="occurrence" id="2020-06-08 21:00:00">Lundi 08/06/2020</td>
-                                        <td onclick="$(this).parent().remove()"><i class="fas fa-trash-alt"></i></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="occurrence" id="2020-06-08 21:00:00">Lundi 08/06/2020</td>
-                                        <td onclick="$(this).parent().remove()"><i class="fas fa-trash-alt"></i></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="occurrence" id="2020-06-08 21:00:00">Lundi 08/06/2020</td>
-                                        <td onclick="$(this).parent().remove()"><i class="fas fa-trash-alt"></i></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="occurrence" id="2020-06-08 21:00:00">Lundi 08/06/2020</td>
-                                        <td onclick="$(this).parent().remove()"><i class="fas fa-trash-alt"></i></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="occurrence" id="2020-06-08 21:00:00">Lundi 08/06/2020</td>
-                                        <td onclick="$(this).parent().remove()"><i class="fas fa-trash-alt"></i></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="occurrence" id="2020-06-08 21:00:00">Lundi 08/06/2020</td>
-                                        <td onclick="$(this).parent().remove()"><i class="fas fa-trash-alt"></i></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="occurrence" id="2020-06-08 21:00:00">Lundi 08/06/2020</td>
-                                        <td onclick="$(this).parent().remove()"><i class="fas fa-trash-alt"></i></td>
-                                    </tr>
-
+                                        {% if def %}
+                                            {% for occ in event.occurrences %}
+                                                <tr>
+                                                    <td class="occurrence" id="{{ occ.date | format_datetime(pattern='y-MM-dd HH:mm:ss') }}">{{ occ.date | format_date(pattern="EEEE dd/MM/y", locale="fr") | capitalize }}</td>
+                                                    <td onclick="$(this).parent().remove()"><i class="fas fa-trash-alt"></i></td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% endif %}
                                     </tbody>
                                 </table>
                             </div>
@@ -195,6 +173,7 @@
                                     {% endfor %}
                                 </select>
                             </div>
+
                             <div class="form-group">
                                 <label>Visibilité</label>
                                 <div class="custom-control custom-radio">
@@ -206,20 +185,24 @@
                                     <label class="custom-control-label font-weight-normal" for="customRadio2">Privé (visible uniquement via le lien)</label>
                                 </div>
                             </div>
-                            {% if event is defined and event.published %}
+
+                            {% set published = def and event.published %}
+
+                            <span id="published-div" {{ not published ? 'style="display: none"' }}>
                                 <span class="badge badge-success">Publié</span>
                                 <p>
-                                    Lien de l'event : <a href="{{ path('event', {url: 'test'}) }}" target="_blank">https://asso.esaip.org{{ path('event', {url: 'test'}) }}</a> <br>
+                                    Lien de l'event : <a id="link-a" href="{{ published ? path('event', {url: event.url}) }}" target="_blank">https://asso.esaip.org{{ published ? path('event', {url: event.url}) }}</a> <br>
                                     <small class="text-muted">L'événement doit être re-publié pour mettre à jour le lien.</small>
                                 </p>
-                                <button type="button" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="L'événement repassera en brouillon">Annuler la publication</button>
-                            {% else %}
+                                <button type="button" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="L'event repassera en brouillon" onclick="save(false)">Annuler la publication</button>
+                            </span>
+                            <span id="draft-div" {{ published ? 'style="display: none"' }}>
                                 <span class="badge badge-secondary">Brouillon</span>
-                                <p>
-                                    Le lien de l'événement sera généré après la publication.
-                                </p>
-                                <button type="button" class="btn btn-success">Publier</button>
-                            {% endif %}
+                                <p>Le lien de l'événement sera généré après la publication.</p>
+                                <button id="pub-btn" type="button" class="btn btn-success" onclick="save(true)" {{ not def ? 'style="display: none"' }}>Publier</button>
+                            </span>
+                            <button id="save-btn" type="button" class="btn btn-primary" onclick="save({{ event is defined and event.published ? 'true' : 'false' }})">Enregistrer</button>
+
                         </div>
                     </div>
                 </div>
@@ -231,7 +214,10 @@
 
 {% block javascripts %}
     {{ parent() }}
-    {{ encore_entry_script_tags('espace_asso_article') }}
+    <script>
+        const id = {{ projectId }};
+        let eventId = {{ eventId }}
+    </script>
     <script src="{{ asset('build/js/moment/moment-with-locales.js') }}"></script>
     <script src="{{ asset('build/js/tempusdominus-bootstrap.js') }}"></script>
     {{ encore_entry_script_tags('espace_asso_event') }}

@@ -4,8 +4,9 @@ namespace App\Controller;
 use App\Entity\Project;
 use App\Entity\ProjectCategory;
 use App\Entity\ProjectMember;
+use App\Entity\ProjectPage;
 use App\Entity\User;
-use App\Form\ProjectLogoType;
+use App\Utils;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\View;
@@ -53,7 +54,7 @@ class API_ProjectController extends AbstractFOSRestController {
         if ($rb == null) {
             $response = new Response();
             $response->setStatusCode(Response::HTTP_NOT_FOUND);
-            $response->setContent($this->jsonMsg("Aucun projet n'a été trouvé avec cet ID."));
+            $response->setContent(Utils::jsonMsg("Aucun projet n'a été trouvé avec cet ID."));
             return $response;
         }
         return $rb;
@@ -65,6 +66,10 @@ class API_ProjectController extends AbstractFOSRestController {
      *     response = 201,
      *     description = "Returns the created Project",
      *     @OA\JsonContent(ref=@Model(type=Project::class))
+     * )
+     * @OA\Response (
+     *     response = 400,
+     *     description = "The request is not valid"
      * )
      * @OA\Response (
      *     response = 500,
@@ -87,8 +92,19 @@ class API_ProjectController extends AbstractFOSRestController {
      */
     public function newProject(Project $project)
     {
-        //TODO Check si l'URL est bien unique
         $em = $this->getDoctrine()->getManager();
+        $rep = $em->getRepository(Project::class);
+
+        $p = $rep->findOneByUrl($project->getUrl());
+        if ($p != null) {
+            $response = new Response();
+            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
+            $response->setContent(Utils::jsonMsg("Un projet utilisant cet URL existe déjà"));
+            return $response;
+        }
+
+        //TODO remplacer param converter (ça va surement pas marcher)
+
         $em->persist($project);
         $em->flush();
 
@@ -98,7 +114,7 @@ class API_ProjectController extends AbstractFOSRestController {
 
         $response = new Response();
         $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
-        $response->setContent($this->jsonMsg("Une erreur s'est produite lors de l'enregistrement."));
+        $response->setContent(Utils::jsonMsg("Une erreur s'est produite lors de l'enregistrement."));
         return $response;
     }
 
@@ -114,6 +130,10 @@ class API_ProjectController extends AbstractFOSRestController {
      * @OA\Response (
      *     response = 404,
      *     description = "The requested Project doesn't exist"
+     * )
+     * @OA\Response (
+     *     response = 403,
+     *     description = "The user is not a Project admin"
      * )
      * @OA\Response (
      *     response = 400,
@@ -148,13 +168,13 @@ class API_ProjectController extends AbstractFOSRestController {
         $project = $rep->find($id);
         if ($project == null) {
             $response->setStatusCode(Response::HTTP_NOT_FOUND);
-            $response->setContent($this->jsonMsg("Aucun projet trouvé avec cet ID."));
+            $response->setContent(Utils::jsonMsg("Aucun projet trouvé avec cet ID."));
             return $response;
         }
 
         if (!$this->isGranted('PROJECT_ADMIN', $project)) {
             $response->setStatusCode(Response::HTTP_FORBIDDEN);
-            $response->setContent($this->jsonMsg("Vous n'êtes pas administrateur de ce projet."));
+            $response->setContent(Utils::jsonMsg("Vous n'êtes pas administrateur de ce projet."));
             return $response;
         }
 
@@ -169,10 +189,15 @@ class API_ProjectController extends AbstractFOSRestController {
         $project->setSocial($uProject['social']);
 
         $cat = $this->getDoctrine()->getRepository(ProjectCategory::class)->find($uProject['category']);
+        if ($cat == null) {
+            $response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $response->setContent(Utils::jsonMsg("Aucune catégorie trouvée avec cet ID."));
+            return $response;
+        }
         $project->setCategory($cat);
 
         if ($project->getType() == 'Club' || $project->getType() == 'Projet') {
-            $parent = $this->getDoctrine()->getRepository(Project::class)->find($uProject['parentProject']);
+            $parent = $this->getDoctrine()->getRepository(Project::class)->find($uProject['parent_project']);
             $project->setParentProject($parent);
         }  else {
             $project->setParentProject(null);
@@ -224,16 +249,16 @@ class API_ProjectController extends AbstractFOSRestController {
             $em->remove($project);
             $em->flush();
             $response->setStatusCode(Response::HTTP_OK);
-            $response->setContent($this->jsonMsg("Le projet a été supprimée."));
+            $response->setContent(Utils::jsonMsg("Le projet a été supprimée."));
             return $response;
         }
         $response->setStatusCode(Response::HTTP_NOT_FOUND);
-        $response->setContent($this->jsonMsg("Aucun projet n'a été trouvé avec cet ID."));
+        $response->setContent(Utils::jsonMsg("Aucun projet n'a été trouvé avec cet ID."));
         return $response;
     }
 
     /**
-     * Get a Project's list of ProjectMember from its ID.
+     * Get a Project's list of ProjectMembers from its ID.
      * @OA\Response (
      *     response = 200,
      *     description = "Returns the ProjectMember array",
@@ -266,7 +291,7 @@ class API_ProjectController extends AbstractFOSRestController {
         if ($project == null) {
             $response = new Response();
             $response->setStatusCode(Response::HTTP_NOT_FOUND);
-            $response->setContent($this->jsonMsg("Aucun projet trouvé avec cet ID."));
+            $response->setContent(Utils::jsonMsg("Aucun projet trouvé avec cet ID."));
             return $response;
         }
 
@@ -283,6 +308,10 @@ class API_ProjectController extends AbstractFOSRestController {
      * @OA\Response (
      *     response = 404,
      *     description = "The requested Project doesn't exist"
+     * )
+     * @OA\Response (
+     *     response = 403,
+     *     description = "The user is not a Project admin"
      * )
      * @OA\Response (
      *     response = 400,
@@ -318,13 +347,13 @@ class API_ProjectController extends AbstractFOSRestController {
         $project = $rep->find($id);
         if ($project == null) {
             $response->setStatusCode(Response::HTTP_NOT_FOUND);
-            $response->setContent($this->jsonMsg("Aucun projet trouvé avec cet ID."));
+            $response->setContent(Utils::jsonMsg("Aucun projet trouvé avec cet ID."));
             return $response;
         }
 
         if (!$this->isGranted('PROJECT_ADMIN', $project)) {
             $response->setStatusCode(Response::HTTP_FORBIDDEN);
-            $response->setContent($this->jsonMsg("Vous n'êtes pas administrateur de ce projet."));
+            $response->setContent(Utils::jsonMsg("Vous n'êtes pas administrateur de ce projet."));
             return $response;
         }
 
@@ -338,7 +367,7 @@ class API_ProjectController extends AbstractFOSRestController {
             $m = new ProjectMember();
             $m->setIntroduction($member['introduction']);
             $m->setAdmin($member['admin']);
-            $m->setOrderPosition($member['orderPosition']);
+            $m->setOrderPosition($member['order_position']);
             $m->setRole($member['role']);
             $m->setProject($project);
             $user = $usersRep->find($member['user']);
@@ -385,6 +414,10 @@ class API_ProjectController extends AbstractFOSRestController {
      *     description = "The requested Project doesn't exist"
      * )
      * @OA\Response (
+     *     response = 403,
+     *     description = "The user is not a Project admin"
+     * )
+     * @OA\Response (
      *     response = 400,
      *     description = "The request is not valid"
      * )
@@ -409,6 +442,7 @@ class API_ProjectController extends AbstractFOSRestController {
      * @IsGranted("ROLE_USER")
      * @param $id
      * @param Request $request
+     * @param ValidatorInterface $validator
      * @return \FOS\RestBundle\View\View|Response
      */
     public function saveLogo($id, Request $request, ValidatorInterface $validator) {
@@ -418,13 +452,13 @@ class API_ProjectController extends AbstractFOSRestController {
         $project = $rep->find($id);
         if ($project == null) {
             $response->setStatusCode(Response::HTTP_NOT_FOUND);
-            $response->setContent($this->jsonMsg("Aucun projet trouvé avec cet ID."));
+            $response->setContent(Utils::jsonMsg("Aucun projet trouvé avec cet ID."));
             return $response;
         }
 
         if (!$this->isGranted('PROJECT_ADMIN', $project)) {
             $response->setStatusCode(Response::HTTP_FORBIDDEN);
-            $response->setContent($this->jsonMsg("Vous n'êtes pas administrateur de ce projet."));
+            $response->setContent(Utils::jsonMsg("Vous n'êtes pas administrateur de ce projet."));
             return $response;
         }
 
@@ -440,16 +474,123 @@ class API_ProjectController extends AbstractFOSRestController {
         $em->persist($project);
         $em->flush();
 
-        $response->setContent($this->jsonMsg("Le logo a été enregistré !"));
+        $response->setContent(Utils::jsonMsg("Le logo a été enregistré !"));
         return $response;
     }
 
-    private function jsonMsg($text) {
-        return '[{ "message": "'.$text.'" }]';
+    /**
+     * Get a list of a Project's ProjectPages
+     * @OA\Response (
+     *     response = 200,
+     *     description = "The list of ProjectPages",
+     *     @OA\JsonContent(type="array", @OA\Items(ref=@Model(type=ProjectPage::class)))
+     * )
+     * @OA\Response (
+     *     response = 404,
+     *     description = "The requested Project doesn't exist"
+     * )
+     * @OA\Parameter (
+     *     name = "id",
+     *     in="path",
+     *     description="The Project unique identifier",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Tag(name="ProjectPage")
+     * @Rest\Get(
+     *     path = "/api/project/{id}/pages",
+     *     name = "api_project_show_pages",
+     *     requirements = { "id"="\d+" }
+     * )
+     * @View(serializerGroups={"list"})
+     * @IsGranted("ROLE_USER")
+     * @param $id
+     * @return ProjectPage[]|Response
+     */
+    public function showPages($id) {
+        $response = new Response();
+        $em = $this->getDoctrine();
+        $rep = $em->getRepository(Project::class);
+        $project = $rep->find($id);
+        if ($project == null) {
+            $response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $response->setContent(Utils::jsonMsg("Aucun projet trouvé avec cet ID."));
+            return $response;
+        }
+
+        return $project->getPages()->toArray();
     }
 
-    private function getCategory($id) {
-        $rep = $this->getDoctrine()->getRepository(ProjectCategory::class);
-        return $rep->find($id);
+    /**
+     * Update a Project's Home page. The user must be a Project admin.
+     * @OA\Response (
+     *     response = 200,
+     *     description = "The home page has been updated"
+     * )
+     * @OA\Response (
+     *     response = 404,
+     *     description = "The requested Project doesn't exist"
+     * )
+     * @OA\Response (
+     *     response = 403,
+     *     description = "The user is not a Project admin"
+     * )
+     * @OA\Response (
+     *     response = 400,
+     *     description = "The request is not valid"
+     * )
+     * @OA\Parameter (
+     *     name = "id",
+     *     in="path",
+     *     description="The Project unique identifier",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\RequestBody(
+     *     description="The home page as a JSON object : { html: 'value' }",
+     *     @OA\JsonContent()
+     * )
+     * @OA\Tag(name="ProjectPage")
+     * @Rest\Post(
+     *     path = "/api/project/{id}/pages/home",
+     *     name = "api_project_update_homepage",
+     *     requirements = { "id"="\d+" }
+     * )
+     * @IsGranted("ROLE_USER")
+     * @View()
+     * @param $id
+     * @param Request $request
+     * @param ValidatorInterface $validator
+     * @param \HTMLPurifier $purifier
+     * @return Project|\FOS\RestBundle\View\View|Response
+     */
+    public function updateHomePage($id, Request $request, ValidatorInterface $validator, \HTMLPurifier $purifier) {
+        $response = new Response();
+        $em = $this->getDoctrine();
+        $rep = $em->getRepository(Project::class);
+        $project = $rep->find($id);
+        if ($project == null) {
+            $response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $response->setContent(Utils::jsonMsg("Aucun projet trouvé avec cet ID."));
+            return $response;
+        }
+
+        if (!$this->isGranted('PROJECT_ADMIN', $project)) {
+            $response->setStatusCode(Response::HTTP_FORBIDDEN);
+            $response->setContent(Utils::jsonMsg("Vous n'êtes pas administrateur de ce projet."));
+            return $response;
+        }
+
+        $json = $request->request->all();
+        $project->setHtml($purifier->purify($json['html']));
+
+        $errors = $validator->validate($project);
+        if (count($errors)) {
+            return $this->view($errors, Response::HTTP_BAD_REQUEST);
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($project);
+        $em->flush();
+
+        return $project;
     }
 }

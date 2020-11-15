@@ -2,14 +2,12 @@
 
 namespace App\Controller;
 
-use App\Entity\AENews;
 use App\Entity\RessourcePage;
 use App\Form\RessourcePageType;
-use DateTime;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\View;
+use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +21,7 @@ class API_RessourcePageController extends AbstractController
      *     name = "api_ressource_page_show",
      *     requirements = { "id"="\d+" }
      * )
+     * @OA\Tag(name="RessourcePage")
      * @View
      * @IsGranted("ROLE_USER")
      */
@@ -44,6 +43,7 @@ class API_RessourcePageController extends AbstractController
      *     path = "/api/ressource-pages/{url}",
      *     name = "api_ressource_page_show_url"
      * )
+     * @OA\Tag(name="RessourcePage")
      * @View
      * @IsGranted("ROLE_USER")
      */
@@ -65,6 +65,7 @@ class API_RessourcePageController extends AbstractController
      *     path = "/api/ressource-pages",
      *     name = "api_ressource_page_create"
      * )
+     * @OA\Tag(name="RessourcePage")
      * @View(statusCode=201)
      * @IsGranted("ROLE_ADMIN")
      */
@@ -104,6 +105,7 @@ class API_RessourcePageController extends AbstractController
      *     name = "api_ressource_page_update",
      *     requirements = { "id"="\d+" }
      * )
+     * @OA\Tag(name="RessourcePage")
      * @View(statusCode=201)
      * @IsGranted("ROLE_ADMIN")
      */
@@ -145,6 +147,7 @@ class API_RessourcePageController extends AbstractController
      *     name = "api_ressource_page_delete",
      *     requirements = { "id"="\d+" }
      * )
+     * @OA\Tag(name="RessourcePage")
      * @View(statusCode=200)
      * @IsGranted("ROLE_ADMIN")
      */

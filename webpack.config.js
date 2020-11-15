@@ -31,6 +31,7 @@ Encore
     .addEntry('espace_asso', './assets/js/espace_asso.js')
     .addEntry('espace_asso_home', './assets/js/espace_asso_home.js')
     .addEntry('espace_asso_article', './assets/js/espace_asso_article.js')
+    .addEntry('espace_asso_article_list', './assets/js/espace_asso_article_list.js')
     .addEntry('espace_asso_event', './assets/js/espace_asso_event.js')
     .addEntry('espace_asso_roombook', './assets/js/espace_asso_roombook.js')
     .addEntry('espace_asso_infos', './assets/js/espace_asso_infos.js')

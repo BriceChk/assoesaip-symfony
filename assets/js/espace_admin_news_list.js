@@ -1,6 +1,3 @@
-import toastr from "toastr";
-import 'toastr/build/toastr.css'
-
 window.confirmRemove = function (id, title) {
     let modal = $('#deleteNewsModal');
     modal.find('.delete-news-title').text(title);
@@ -26,10 +23,3 @@ window.confirmRemove = function (id, title) {
     modal.modal('show')
 }
 
-function disableModalButtons() {
-    $('.modal-btn').prop('disabled', true);
-}
-
-function enableModalButtons() {
-    $('.modal-btn').prop('disabled', false);
-}
