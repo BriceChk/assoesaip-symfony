@@ -117,6 +117,11 @@ class User implements UserInterface
      */
     private $roomBooks;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=FcmTokens::class, inversedBy="user")
+     */
+    private $fcmTokens;
+
     public function __construct()
     {
         $this->projects = new ArrayCollection();
@@ -393,6 +398,18 @@ class User implements UserInterface
                 $roomBook->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getFcmTokens(): ?FcmTokens
+    {
+        return $this->fcmTokens;
+    }
+
+    public function setFcmTokens(?FcmTokens $fcmTokens): self
+    {
+        $this->fcmTokens = $fcmTokens;
 
         return $this;
     }

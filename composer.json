@@ -16,6 +16,7 @@
         "friendsofsymfony/rest-bundle": "^3.0",
         "jms/serializer-bundle": "^3.7",
         "knpuniversity/oauth2-client-bundle": "^2.4",
+        "kreait/firebase-php": "^5.11",
         "liip/imagine-bundle": "^2.3",
         "nelmio/api-doc-bundle": "^4.0",
         "phpdocumentor/reflection-docblock": "^5.2",
