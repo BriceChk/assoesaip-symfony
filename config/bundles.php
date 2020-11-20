@@ -22,4 +22,5 @@ return [
     Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle::class => ['all' => true],
     Exercise\HTMLPurifierBundle\ExerciseHTMLPurifierBundle::class => ['all' => true],
     Cocur\Slugify\Bridge\Symfony\CocurSlugifyBundle::class => ['all' => true],
+    Kreait\Firebase\Symfony\Bundle\FirebaseBundle::class => ['all' => true],
 ];

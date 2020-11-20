@@ -2,15 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\FcmTokensRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Repository\FcmTokenRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=FcmTokensRepository::class)
+ * @ORM\Entity(repositoryClass=FcmTokenRepository::class)
  */
-class FcmTokens
+class FcmToken
 {
     /**
      * @ORM\Id
@@ -20,7 +18,8 @@ class FcmTokens
     private $id;
 
     /**
-     * @ORM\OneToMany(targetEntity=User::class, mappedBy="fcmTokens")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="fcmTokens")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $user;
 
@@ -34,42 +33,19 @@ class FcmTokens
      */
     private $token;
 
-    public function __construct()
-    {
-        $this->user = new ArrayCollection();
-    }
-
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return Collection|User[]
-     */
-    public function getUser(): Collection
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function addUser(User $user): self
+    public function setUser(?User $user): self
     {
-        if (!$this->user->contains($user)) {
-            $this->user[] = $user;
-            $user->setFcmTokens($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(User $user): self
-    {
-        if ($this->user->removeElement($user)) {
-            // set the owning side to null (unless already changed)
-            if ($user->getFcmTokens() === $this) {
-                $user->setFcmTokens(null);
-            }
-        }
+        $this->user = $user;
 
         return $this;
     }

@@ -1,0 +1,29 @@
+kreait_firebase:
+    projects:
+        assoesaip:
+            # Optional: Path to the project's Service Account credentials file
+            # If omitted, the credentials will be auto-dicovered as described
+            # in https://firebase-php.readthedocs.io/en/stable/setup.html#with-autodiscovery
+            credentials: '%kernel.project_dir%/config/assoesaip-firebase.json'
+            # Optional: If set to true, this project will be used when
+            # type hinting the component classes of the Firebase SDK,
+            # e.g. Kreait\Firebase\Auth, Kreait\Firebase\Database,
+            # Kreait\Firebase\Messaging, etc.
+            default: true
+            # Optional: If set to false, the service and its alias can only be
+            # used via dependency injection, and not be retrieved from the
+            # container directly.
+            public: true
+            # Optional: Should only be used if the URL of your Realtime
+            # Database can not be generated with the project id of the
+            # given Service Account
+            database_uri: 'https://assoesaip.firebaseio.com'
+            # Optional: Default domain for Dynamic Links
+            #default_dynamic_links_domain: 'https://my_project.page.link'
+            # Optional: Used to cache Google's public keys. Must implement
+            # \Psr\SimpleCache\CacheInterface (PSR-16)
+            #verifier_cache: null # Example: cache.app
+            # If set, logs simple HTTP request and response statuses
+            #http_request_logger:  null # Example: monolog.logger.firebase
+            # If set, logs detailed HTTP request and response statuses
+            #http_request_debug_logger: null # Example: monolog.logger.firebase_debug

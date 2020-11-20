@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Entity\ArticleCategory;
+use App\Entity\FcmToken;
 use App\Entity\News;
 use App\Entity\Project;
 use App\Utils;
@@ -14,6 +15,8 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\View;
 use HTMLPurifier;
+use Kreait\Firebase\Messaging;
+use Kreait\Firebase\Messaging\CloudMessage;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -22,7 +25,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-//TODO Image upload + Discord integration
+//TODO Image upload + Discord integration + notifications
 
 class API_ArticleController extends AbstractFOSRestController {
     /**
@@ -249,9 +252,10 @@ class API_ArticleController extends AbstractFOSRestController {
      * @param ValidatorInterface $validator
      * @param HTMLPurifier $purifier
      * @param SluggerInterface $slugger
+     * @param Messaging $messaging
      * @return Article|\FOS\RestBundle\View\View|object|Response
      */
-    public function updateArticle($id, Request $request, ValidatorInterface $validator, HTMLPurifier $purifier, SluggerInterface $slugger) {
+    public function updateArticle($id, Request $request, ValidatorInterface $validator, HTMLPurifier $purifier, SluggerInterface $slugger, Messaging $messaging) {
         $response = new Response();
 
         $rep = $this->getDoctrine()->getRepository(Article::class);
@@ -338,6 +342,17 @@ class API_ArticleController extends AbstractFOSRestController {
             $news->setDatePublished($article->getDatePublished());
             $news->setProject($article->getProject());
             $em->persist($news);
+
+            /* TODO notifications
+            $rep = $this->getDoctrine()->getRepository(FcmToken::class);
+            $all = $rep->findAll();
+
+            foreach ($all as $a) {
+                $message = CloudMessage::withTarget('token', $a->getToken())
+                    ->withData(['type' => 'article', 'id' => $article->getId()]);
+                $messaging->send($message);
+            }
+            */
         }
 
         $em->flush();

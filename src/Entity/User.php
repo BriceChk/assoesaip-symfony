@@ -118,7 +118,7 @@ class User implements UserInterface
     private $roomBooks;
 
     /**
-     * @ORM\ManyToOne(targetEntity=FcmTokens::class, inversedBy="user")
+     * @ORM\OneToMany(targetEntity=FcmToken::class, mappedBy="user", orphanRemoval=true)
      */
     private $fcmTokens;
 
@@ -128,6 +128,7 @@ class User implements UserInterface
         $this->articles = new ArrayCollection();
         $this->events = new ArrayCollection();
         $this->roomBooks = new ArrayCollection();
+        $this->fcmTokens = new ArrayCollection();
     }
 
     /**
@@ -402,14 +403,32 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getFcmTokens(): ?FcmTokens
+    /**
+     * @return Collection|FcmToken[]
+     */
+    public function getFcmTokens(): Collection
     {
         return $this->fcmTokens;
     }
 
-    public function setFcmTokens(?FcmTokens $fcmTokens): self
+    public function addFcmToken(FcmToken $fcmToken): self
     {
-        $this->fcmTokens = $fcmTokens;
+        if (!$this->fcmTokens->contains($fcmToken)) {
+            $this->fcmTokens[] = $fcmToken;
+            $fcmToken->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFcmToken(FcmToken $fcmToken): self
+    {
+        if ($this->fcmTokens->removeElement($fcmToken)) {
+            // set the owning side to null (unless already changed)
+            if ($fcmToken->getUser() === $this) {
+                $fcmToken->setUser(null);
+            }
+        }
 
         return $this;
     }
