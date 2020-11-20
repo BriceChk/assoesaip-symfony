@@ -2,6 +2,7 @@
 namespace App\Security;
 
 use App\Entity\User;
+use App\Utils;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Client\Provider\AzureClient;
@@ -108,10 +109,18 @@ class AzureAuthenticator extends SocialAuthenticator
      * This redirects to the 'login'.
      * @param Request $request
      * @param AuthenticationException|null $authException
-     * @return RedirectResponse
+     * @return RedirectResponse|Response
      */
     public function start(Request $request, AuthenticationException $authException = null)
     {
+        // JSON Response for API calls
+        if (str_contains($request->getUri(), 'api')) {
+            $r = new Response();
+            $r->setStatusCode(Response::HTTP_UNAUTHORIZED);
+            $r->setContent(Utils::jsonMsg("Vous n'êtes pas connecté."));
+            return $r;
+        }
+
         // Save current URL in session to redirect later
         $session = new Session();
         $uri = $request->getUri();
