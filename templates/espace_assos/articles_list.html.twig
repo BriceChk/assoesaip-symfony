@@ -65,14 +65,14 @@
                                 </thead>
                                 <tbody>
                                 {% for article in project.articles | filter(a => a.published) %}
-                                    <tr>
+                                    <tr id="article-{{ article.id }}">
                                         <td>{{ article.dateCreated | format_date(pattern="dd/MM/y") }}</td>
                                         <td><a target="_blank" href="{{ path('article', {url: article.url}) }}">{{ article.title }}</a></td>
                                         <td>{{ article.author.fullName }}</td>
                                         <td><span class="badge badge-{{ article.private ? 'danger' : 'primary' }}">{{ article.private ? 'Privé' : 'Public' }} ({{ article.datePublished | format_datetime(pattern="dd/MM/y H'h'mm") }})</span></td>
                                         <td class="align-middle text-right">
                                             <a type="button" class="btn btn-primary" href="{{ path('espace_assos_articles_edit', {url: article.project.url, id: article.id}) }}">Modifier</a>
-                                            <button type="button" class="btn btn-danger">Supprimer</button>
+                                            <button type="button" class="btn btn-danger" onclick="deleteArticle({{ article.id }}, '{{ article.title | e('js') }}')">Supprimer</button>
                                         </td>
                                     </tr>
                                 {% endfor %}
