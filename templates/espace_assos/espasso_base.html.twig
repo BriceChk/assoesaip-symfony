@@ -118,11 +118,19 @@
             {% if noProject is not defined %}
                 <div class="user-panel mt-3 pb-3 mb-3 text-center">
                     <label for="inputProjet" class="text-white" style="font-weight: normal">Projet sélectionné</label>
-                    <select class="form-control" title="Choix projet" id="inputProjet" onchange="location = this.value">
-                        {{ render(controller(
-                            'App\\Controller\\EspaceAssosController::renderProjectList', url
-                        )) }}
-                    </select>
+                    <div class="row">
+                        <div class="col" style="padding-right: 2px">
+                            <select class="form-control" title="Choix projet" id="inputProjet" onchange="location = this.value">
+                                {{ render(controller(
+                                    'App\\Controller\\EspaceAssosController::renderProjectList', url
+                                )) }}
+                            </select>
+                        </div>
+                        <div class="col-auto" style="padding-left: 2px">
+                            <a href="{{ path('project', url) }}" target="_blank" class="btn btn-primary" style="color: white"><i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                    </div>
+
                 </div>
             {% endif %}
 
