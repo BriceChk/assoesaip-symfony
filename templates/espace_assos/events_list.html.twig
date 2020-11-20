@@ -27,13 +27,13 @@
                                 </thead>
                                 <tbody>
                                 {% for event in project.events | filter(a => not a.published) %}
-                                    <tr>
+                                    <tr id="event-{{ event.id }}">
                                         <td>{{ event.dateCreated | format_date(pattern="dd/MM/y") }}</td>
                                         <td>{{ event.title }}</td>
                                         <td>{{ event.author.fullName }}</td>
                                         <td class="align-middle text-right">
                                             <a type="button" class="btn btn-primary" href="{{ path('espace_assos_events_edit', {url: event.project.url, id: event.id}) }}">Modifier</a>
-                                            <button type="button" class="btn btn-danger">Supprimer</button>
+                                            <button type="button" class="btn btn-danger" onclick="deleteEvent({{ event.id }}, '{{ event.title | e('js') }}')">Supprimer</button>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -65,14 +65,14 @@
                                 </thead>
                                 <tbody>
                                 {% for event in project.events | filter(a => a.published) %}
-                                    <tr>
+                                    <tr id="event-{{ event.id }}">
                                         <td>{{ event.dateCreated | format_date(pattern="dd/MM/y") }}</td>
                                         <td><a target="_blank" href="{{ path('event', {url: event.url}) }}">{{ event.title }}</a></td>
                                         <td>{{ event.author.fullName }}</td>
                                         <td><span class="badge badge-{{ event.private ? 'danger' : 'primary' }}">{{ event.private ? 'Privé' : 'Public' }} ({{ event.datePublished | format_datetime(pattern="dd/MM/y h'h'mm") }})</span></td>
                                         <td class="align-middle text-right">
                                             <a type="button" class="btn btn-primary" href="{{ path('espace_assos_events_edit', {url: event.project.url, id: event.id}) }}">Modifier</a>
-                                            <button type="button" class="btn btn-danger">Supprimer</button>
+                                            <button type="button" class="btn btn-danger" onclick="deleteEvent({{ event.id }}, '{{ event.title | e('js') }}')">Supprimer</button>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -87,5 +87,29 @@
             </div>
         </div>
     </section>
-    <!-- /.content -->
+
+    <div class="modal fade" data-backdrop="static" id="deleteEventModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Supprimer une page</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Voulez-vous vraiment supprimer l'événement <i class="delete-event-title"></i> ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary modal-btn" data-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger delete-event-btn modal-btn">Supprimer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('espace_asso_event_list') }}
 {% endblock %}
