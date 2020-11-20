@@ -266,4 +266,46 @@ class API_ProjectPageController extends AbstractFOSRestController {
 
         return $page;
     }
+
+    /**
+     * Get a list of a Project's ProjectPages
+     * @OA\Response (
+     *     response = 200,
+     *     description = "The list of ProjectPages",
+     *     @OA\JsonContent(type="array", @OA\Items(ref=@Model(type=ProjectPage::class)))
+     * )
+     * @OA\Response (
+     *     response = 404,
+     *     description = "The requested Project doesn't exist"
+     * )
+     * @OA\Parameter (
+     *     name = "id",
+     *     in="path",
+     *     description="The Project unique identifier",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Tag(name="ProjectPage")
+     * @Rest\Get(
+     *     path = "/api/project/{id}/pages",
+     *     name = "api_project_show_pages",
+     *     requirements = { "id"="\d+" }
+     * )
+     * @View(serializerGroups={"list"})
+     * @IsGranted("ROLE_USER")
+     * @param $id
+     * @return ProjectPage[]|Response
+     */
+    public function showPages($id) {
+        $response = new Response();
+        $em = $this->getDoctrine();
+        $rep = $em->getRepository(Project::class);
+        $project = $rep->find($id);
+        if ($project == null) {
+            $response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $response->setContent(Utils::jsonMsg("Aucun projet trouvé avec cet ID."));
+            return $response;
+        }
+
+        return $project->getPages()->toArray();
+    }
 }
