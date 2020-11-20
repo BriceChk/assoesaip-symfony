@@ -49,7 +49,7 @@ $(document).ready( function () {
 
 window.deleteNews = function (id) {
     let modal = $('#deleteNewsModal');
-    modal.find('.delete-news-btn').click(function () {
+    modal.find('.delete-news-btn').off('click').click(function () {
         disableModalButtons();
         $.ajax({
             url: '/api/news/' + id,

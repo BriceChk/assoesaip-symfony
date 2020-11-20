@@ -128,7 +128,7 @@ window.newPage = function () {
 window.confirmRemove = function (id, title) {
     let modal = $('#deletePageModal');
     modal.find('.delete-page-title').text(title);
-    modal.find('.delete-page-btn').click(function () {
+    modal.find('.delete-page-btn').off('click').click(function () {
         disableModalButtons();
         $.ajax({
             url: '/api/ressource-pages/' + id,

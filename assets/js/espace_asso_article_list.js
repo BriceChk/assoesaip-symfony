@@ -1,7 +1,7 @@
 window.deleteArticle = function (id, name) {
     let modal = $('#deleteArticleModal');
     modal.find('.delete-article-title').text(name);
-    modal.find('.delete-article-btn').click(function () {
+    modal.find('.delete-article-btn').off('click').click(function () {
         disableModalButtons();
         $.ajax({
             url: '/api/article/' + id,

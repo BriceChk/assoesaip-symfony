@@ -95,7 +95,7 @@ window.newPage = function () {
 window.removePage = function (pageId) {
     let modal = $('#deletePageModal');
     modal.find('.delete-page-title').text($('#page-list-' + pageId + ' .page-name').text());
-    modal.find('.delete-page-btn').click(function () {
+    modal.find('.delete-page-btn').off('click').click(function () {
         disableModalButtons();
         $.ajax({
             url: '/api/project-page/' + pageId,
@@ -122,8 +122,6 @@ window.removePage = function (pageId) {
 window.save = function () {
     let count = 0;
 
-    //todo update la page Home
-
     let html = $('#summernote-home').summernote('code');
     let json = {
         html: html
@@ -135,7 +133,7 @@ window.save = function () {
         dataType: 'json',
         contentType: 'application/json',
         data: JSON.stringify(json),
-        success: function (data) {
+        success: function () {
             count++;
             if (count === $('#nav-list li').length) {
                 toastr.success('Les pages ont été enregistrées !');
@@ -150,7 +148,6 @@ window.save = function () {
             let pageName = $(this).find('.page-name').text();
             let html = $('#summernote-' + pageId).summernote('code');
             let published = $(this).find('.boutonPublier').hasClass('active');
-
 
             let json = {
                 name: pageName,

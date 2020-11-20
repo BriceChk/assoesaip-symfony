@@ -1,7 +1,7 @@
 window.confirmRemove = function (id, title) {
     let modal = $('#deleteNewsModal');
     modal.find('.delete-news-title').text(title);
-    modal.find('.delete-news-btn').click(function () {
+    modal.find('.delete-news-btn').off('click').click(function () {
         disableModalButtons();
         $.ajax({
             url: '/api/assoesaip-news/' + id,
