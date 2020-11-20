@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\NewsRepository")
@@ -18,11 +19,14 @@ class News
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\Length(max="240", maxMessage="Le message ne doit pas dépasser 240 caractères")
      */
     private $content = "";
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\Length(max="255", maxMessage="Le lien ne doit pas dépasser 255 caractères")
+     * @Assert\Url(message="L'url est invalide")
      */
     private $link;
 

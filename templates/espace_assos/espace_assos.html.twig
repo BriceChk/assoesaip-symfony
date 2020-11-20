@@ -99,17 +99,17 @@
                     <!-- Default box -->
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">News rapides</h3>
+                            <h3 class="card-title">Actus</h3>
                             <div class="card-tools">
-                                <button type="button" id="newsButton" class="btn btn-tool" data-toggle="tooltip" data-placement="left" title="Les news rapides sont des petits message que vous pouvez publier pour tenir les Esaipiens de votre actualité immédiate (à la manière d'un tweet). Plus tard elles serviront aussi à envoyer des notifications sur l'appli Asso'esaip.">
+                                <button type="button" id="newsButton" class="btn btn-tool" data-toggle="tooltip" data-placement="left" title="Les actus sont des petits message que vous pouvez publier pour informer les Esaipiens de votre actualité immédiate (un peu comme un tweet), de vos nouveaux articles ou événements.">
                                     <i class="fas fa-question"></i>
                                 </button>
                             </div>
                         </div>
                         <div class="card-body p-0" style="max-height: 250px; overflow-y: auto">
-                            <ul class="list-group list-group-flush">
+                            <ul class="list-group list-group-flush" id="news-list">
                                 {% for n in project.news | sort((a, b) => a.datePublished < b.datePublished) %}
-                                    <li class="list-group-item">
+                                    <li class="list-group-item" id="news-{{ n.id }}">
                                         {% if n.article != null or n.event != null %}
                                             <h5>
                                                 {{ n.article != null ? n.article.title }}
@@ -136,19 +136,19 @@
                                                                         {% elseif n.event != null %}
                                                         <a target="_blank" href="{{ path('event', {url: n.event.url}) }}">Voir l'événement</a> |
                                                     {% endif %}
-                                                    <a href="#" class="text-red"> Supprimer</a>
+                                                    <a href="#" class="text-red" onclick="deleteNews({{ n.id }})"> Supprimer</a>
                                                 </span>
                                             </small>
                                         </p>
                                     </li>
                                 {% endfor %}
                                 {% if project.news is empty %}
-                                    <li class="list-group-item">Vous n'avez pas encore publié de news.</li>
+                                    <li class="list-group-item">Vous n'avez pas encore publié d'actu.</li>
                                 {% endif %}
                             </ul>
                         </div>
                         <div class="card-footer">
-                            <button class="btn btn-primary btn-sm mt-auto" data-toggle="modal" data-target="#newNewsModal">Écrire une news</button>
+                            <button class="btn btn-primary btn-sm mt-auto" data-toggle="modal" data-target="#newNewsModal">Écrire une actu</button>
                         </div>
                     </div>
                 </div>
@@ -194,12 +194,28 @@
     </section>
     <!-- /.content -->
 
+    <!-- News template -->
+    <li class="list-group-item" id="news-template" style="display: none">
+        <p class="card-text">%news-content%</p>
+        <p class="card-text">
+            <small class="text-muted">
+                %news-date%
+                <span class="float-right">
+                    <span class="news-link-container">
+                        <a target="_blank" href="">Ouvrir le lien</a> |
+                    </span>
+                    <a href="#" class="text-red" onclick="deleteNews('%id%')"> Supprimer</a>
+                </span>
+            </small>
+        </p>
+    </li>
+
     <!-- New news modal -->
     <div class="modal fade" id="newNewsModal" tabindex="-1" role="dialog" aria-labelledby="newNewsLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Écrire une news</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Écrire une actu</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -207,24 +223,47 @@
                 <div class="modal-body">
                     <form>
                         <div class="form-group">
-                            <label for="news-title" class="col-form-label">Titre</label>
-                            <input type="text" class="form-control" id="news-title">
-                            <small class="form-text text-muted">(Facultatif)</small>
-                        </div>
-                        <div class="form-group">
                             <label for="news-message" class="col-form-label">Message</label>
-                            <textarea class="form-control" id="news-message"></textarea>
+                            <textarea class="form-control" id="news-message" maxlength="240" rows="3"></textarea>
                         </div>
                         <div class="form-group">
                             <label for="news-link" class="col-form-label">Lien</label>
                             <input type="text" class="form-control" id="news-link">
                             <small class="form-text text-muted">(Facultatif)</small>
                         </div>
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="news-notif">
+                                <label for="news-notif" class="form-check-label">Envoyer une notification</label>
+                            </div>
+                            <small class="form-text text-muted">Notifiera les étudiants abonnés à votre {{ project.type | lower }} ou sa catégorie.</small>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-                    <button type="button" class="btn btn-primary">Publier</button>
+                    <button type="button" class="btn btn-primary" onclick="createNews()">Publier</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete news modal -->
+    <div class="modal fade" data-backdrop="static" id="deleteNewsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Voulez-vous supprimer l'actu ?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Supprimer une actu liée à un article ou un événement le passera en privé, mais ne le supprimera pas.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary modal-btn" data-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger delete-news-btn modal-btn">Supprimer</button>
                 </div>
             </div>
         </div>
@@ -255,6 +294,7 @@
     <script>
         const eventsListRoute = "{{ path('espace_assos_events_list', {url: project.url}) }}";
         const newEventRoute = "{{ path('espace_assos_events_write', {url: project.url}) }}";
+        const projectId = {{ project.id }};
     </script>
     {{ encore_entry_script_tags('espace_asso_home') }}
 {% endblock %}

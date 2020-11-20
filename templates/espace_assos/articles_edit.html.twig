@@ -62,7 +62,7 @@
                             </span>
                             <span id="draft-div" {{ published ? 'style="display: none"' }}>
                                 <span class="badge badge-secondary">Brouillon</span>
-                                <p>Le lien de l'article sera généré après la publication.</p>
+                                <p>Publier l'article générera un lien vers celui-ci et publiera une actu visible sur la page d'accueil et l'appli.</p>
                                 <button id="pub-btn" type="button" class="btn btn-success" onclick="save(true)" {{ not def ? 'style="display: none"' }}>Publier</button>
                             </span>
                             <button id="save-btn" type="button" class="btn btn-primary" onclick="save({{ article is defined and article.published ? 'true' : 'false' }})">Enregistrer</button>

@@ -46,3 +46,68 @@ $(document).ready( function () {
     $('#questionButton').tooltip();
     $('#newsButton').tooltip();
 });
+
+window.deleteNews = function (id) {
+    let modal = $('#deleteNewsModal');
+    modal.find('.delete-news-btn').click(function () {
+        disableModalButtons();
+        $.ajax({
+            url: '/api/news/' + id,
+            type: 'DELETE',
+            contentType: 'application/json',
+            success: function () {
+                $('#news-' + id).remove();
+                toastr.success("L'actu a été supprimée.");
+                modal.modal('hide');
+                enableModalButtons();
+            },
+            error: function (data) {
+                error(data);
+                modal.modal('hide');
+                enableModalButtons();
+            }
+        });
+    });
+    modal.modal('show')
+}
+
+window.createNews = function () {
+    let json = {
+        content: $('#news-message').val(),
+        link: $('#news-link').val(),
+        notify: $('#news-notif').is(':checked')
+    };
+
+    $.ajax({
+        url: '/api/project/' + projectId + '/news',
+        type: 'PUT',
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify(json),
+        success: function (data) {
+            let dateA = data.date_published.split('T')[0].split('-');
+            let timeA = data.date_published.split('T')[1].split(':');
+            let date = dateA[2] + '/' + dateA[1] + '/' + dateA[0] + ' · ' + timeA[0] + 'h' + timeA[1];
+
+            let newTab = $('#news-template').clone();
+            newTab.attr('id', 'news-' + data.id)
+                .html(newTab.html()
+                    .replace('%id%', data.id)
+                    .replace('%news-date%', date)
+                    .replace('%news-content%', data.content)
+                ).show();
+            if (data.link !== '') {
+                newTab.find('a').first().attr('href', data.link);
+            } else {
+                newTab.find('.news-link-container').remove();
+            }
+            $('#news-list').prepend(newTab);
+
+            toastr.success("L'actu a été publiée !");
+            $('#newNewsModal').modal('hide');
+        },
+        error: function (data) { error(data) }
+    });
+
+
+}
