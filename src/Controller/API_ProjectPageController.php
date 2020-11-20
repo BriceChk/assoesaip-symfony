@@ -216,6 +216,10 @@ class API_ProjectPageController extends AbstractFOSRestController {
      *     description="The ProjectPage unique identifier",
      *     @OA\Schema(type="integer")
      * )
+     * @OA\RequestBody(
+     *     description="The ProjectPage as a JSON object",
+     *     @OA\JsonContent(ref=@Model(type=ProjectPage::class))
+     * )
      * @OA\Tag(name="ProjectPage")
      * @Rest\Post(
      *     path = "/api/project-page/{id}",

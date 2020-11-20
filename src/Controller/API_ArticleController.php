@@ -113,7 +113,7 @@ class API_ArticleController extends AbstractFOSRestController {
      * @param HTMLPurifier $purifier
      * @return Article|\FOS\RestBundle\View\View|Response
      */
-    public function newPage($id, Request $request, ValidatorInterface $validator, HTMLPurifier $purifier) {
+    public function newArticle($id, Request $request, ValidatorInterface $validator, HTMLPurifier $purifier) {
         $response = new Response();
         $rep = $this->getDoctrine()->getRepository(Project::class);
         $project = $rep->find($id);
@@ -238,6 +238,10 @@ class API_ArticleController extends AbstractFOSRestController {
      *     in="path",
      *     description="The Article unique identifier",
      *     @OA\Schema(type="integer")
+     * )
+     * @OA\RequestBody(
+     *     description="The Article JSON object",
+     *     @OA\JsonContent(ref=@Model(type=Article::class))
      * )
      * @OA\Tag(name="Article")
      * @Rest\Post(

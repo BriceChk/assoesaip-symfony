@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class API_AENewsController extends AbstractController
 {
+    //TODO Validation and no body converter
 
     /**
      * Get an AENews from its ID.

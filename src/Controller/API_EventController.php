@@ -210,6 +210,10 @@ class API_EventController extends AbstractFOSRestController {
      *     description="The Event unique identifier",
      *     @OA\Schema(type="integer")
      * )
+     * @OA\RequestBody(
+     *     description="The Event JSON object",
+     *     @OA\JsonContent(ref=@Model(type=Event::class))
+     * )
      * @OA\Tag(name="Event")
      * @Rest\Post(
      *     path = "/api/event/{id}",
