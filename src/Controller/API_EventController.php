@@ -9,6 +9,7 @@ use App\Entity\EventCategory;
 use App\Entity\EventOccurrence;
 use App\Entity\News;
 use App\Entity\Project;
+use App\Entity\User;
 use App\Utils;
 use DateTime;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -409,5 +410,91 @@ class API_EventController extends AbstractFOSRestController {
 
         $response->setContent(Utils::jsonMsg("L'événement a été supprimé."));
         return $response;
+    }
+
+    /**
+     * Get Events in the FullCalendar data format.
+     * https://fullcalendar.io/docs/event-object
+     * @OA\Response (
+     *     response = 200,
+     *     description = "Returns the array of FullCalendar Events",
+     * )
+     * @OA\Parameter (
+     *     name = "start",
+     *     in="path",
+     *     description="The start date",
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter (
+     *     name = "end",
+     *     in="path",
+     *     description="The end date",
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Tag(name="Event")
+     * @Rest\Get(
+     *     path = "/api/event/fullcalendar",
+     *     name = "api_event_show_fc"
+     * )
+     * @IsGranted("ROLE_USER")
+     * @param Request $request
+     * @return \FOS\RestBundle\View\View|Response
+     */
+    public function showFullCalEvents(Request $request) {
+        $start = explode(' ', $request->query->get('start'))[0];
+        $end = explode(' ', $request->query->get('end'))[0];
+
+        $rep = $this->getDoctrine()->getRepository(EventOccurrence::class);
+
+        try {
+            $startDate = new DateTime($start);
+            $endDate = new DateTime($end);
+        } catch (\Exception $e) {
+            $response = new Response();
+            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
+            $response->setContent(Utils::jsonMsg("Date invalide"));
+            return $response;
+        }
+
+        $result = $rep->findBetweenDates($startDate, $endDate);
+        $events = array();
+
+        $admin = $this->isGranted("ROLE_ADMIN");
+        $editor = $this->isGranted("ROLE_PROJECT_EDITOR");
+        /** @var User $user */
+        $user = $this->getUser();
+
+        foreach ($result as $r) {
+            $e = $r->getEvent();
+
+            if ((!$admin && $e->getCampus() != $user->getCampus()) || (!$editor && !$e->isPublished())) {
+                continue;
+            }
+
+            $a = array(
+                "title" => $e->getTitle(),
+                "allDay" => $e->isAllDay(),
+                "url" => '/evenement/' . $e->getUrl(),
+                "description" => $e->getAbstract(),
+                "backgroundColor" => $e->getCategory()->getColor(),
+                "borderColor" => $e->getCategory()->getColor(),
+                "start" => $r->getDate()->format('Y-m-d\TH:m:00')
+            );
+
+            if ($e->getOccurrencesCount() == 1) {
+                $a['end'] = $e->getDateEnd()->format('Y-m-d\TH:m:00');
+            } else {
+                $a['duration'] = array("minutes" => $e->getDuration());
+            }
+
+            if (!$e->isPublished()) {
+                $a['backgroundColor'] = '#fca503';
+                $a['borderColor'] = '#fca503';
+            }
+
+            $events[] = $a;
+        }
+
+        return $this->view($events);
     }
 }

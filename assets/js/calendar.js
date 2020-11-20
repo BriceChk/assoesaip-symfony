@@ -26,8 +26,7 @@ $(document).ready( function () {
         initialView: 'timeGridWeek',
         allDayContent : 'Toute la journée',
         noEventsContent: 'Aucun événement',
-        events: [],
-        //events: 'https://asso.esaip.org/api/api-v1.php?action=get_events',
+        events: 'https://asso-esaip.bricechk.fr/api/event/fullcalendar',
         eventDidMount: function (info) {
             let el = $(info.el);
             el.attr('data-toggle', 'tooltip');

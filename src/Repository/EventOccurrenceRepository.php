@@ -38,6 +38,25 @@ class EventOccurrenceRepository extends ServiceEntityRepository
         ;
     }
 
+    /**
+     * @param $start
+     * @param $end
+     * @return EventOccurrence[] Returns an array of EventOccurrence objects
+     */
+    public function findBetweenDates($start, $end)
+    {
+        return $this->createQueryBuilder('e')
+            ->andWhere('e.date >= :start')
+            ->setParameter('start', $start)
+            ->andWhere('e.date <= :end')
+            ->setParameter('end', $end)
+            ->orderBy('e.id', 'ASC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
 
     /*
     public function findOneBySomeField($value): ?EventOccurrence

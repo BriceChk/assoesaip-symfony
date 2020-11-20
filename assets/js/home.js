@@ -14,8 +14,7 @@ $(document).ready( function () {
         headerToolbar: false,
         allDayContent: 'Toute la journée',
         noEventsContent: 'Aucun événement',
-        events: [],
-        //events: 'https://asso.esaip.org/api/api-v1.php?action=get_events',
+        events: 'https://asso-esaip.bricechk.fr/api/event/fullcalendar',
         visibleRange: function (currentDate) {
             // Generate a new date for manipulating in the next step
             let startDate = new Date(currentDate.valueOf());
