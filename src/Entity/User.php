@@ -119,6 +119,7 @@ class User implements UserInterface
 
     /**
      * @ORM\OneToMany(targetEntity=FcmToken::class, mappedBy="user", orphanRemoval=true)
+     * @Serializer\Exclude()
      */
     private $fcmTokens;
 
