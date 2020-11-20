@@ -1,0 +1,22 @@
+Bonjour, <br><br>
+
+<p>Une nouvelle demande de réservation de salle a été effectuée.</p>
+
+<ul>
+    <li><b>Projet :</b> {{ rb.project.name }}</li>
+    <li><b>Responsable de la demande :</b> {{ rb.user.fullName}} (<a href="mailto:{{ rb.user.email }}">{{ rb.user.email }}</a>)</li>
+    <li><b>Nombre de participants :</b> {{ rb.nbParticipants }}</li>
+    <li><b>Date :</b> le {{ rb.date | date('d/m/Y') }} de {{ rb.startTime | format_time(pattern="H'h'mm") }} à {{ rb.endTime | format_time(pattern="H'h'mm") }}</li>
+</ul>
+
+<h4>Objet de la demande :</h4>
+<p>{{ rb.object }}</p>
+
+{% if rb.needs != "" %}
+    <h4>Demandes particulières :</h4>
+    <p>{{ rb.needs }}</p>
+{% endif %}
+
+<p>
+    <a href="{{ app.request.getSchemeAndHttpHost() }}{{ path('espace_admin_roombooks') }}">Cliquez ici pour répondre aux demandes de réservation</a>
+</p>

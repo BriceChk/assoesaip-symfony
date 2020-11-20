@@ -1,0 +1,24 @@
+Bonjour {{ rb.user.firstName }},<br><br>
+
+<p>Ta demande de réservation de salle a reçu une réponse.</p>
+
+<ul>
+    <li><b>Projet :</b> {{ rb.project.name }}</li>
+    <li><b>Nombre de participants :</b> {{ rb.nbParticipants }}</li>
+    <li><b>Date :</b> le {{ rb.date | date('d/m/Y') }} de {{ rb.startTime | format_time(pattern="H'h'mm") }} à {{ rb.endTime | format_time(pattern="H'h'mm") }}</li>
+</ul>
+
+<h4>Objet de la demande :</h4>
+<p>{{ rb.object }}</p>
+
+
+{% if rb.needs != "" %}
+    <h4>Demandes particulières :</h4>
+    <p>{{ rb.needs }}</p>
+{% endif %}
+
+<h4>Ta demande a été {{ rb.status | lower }}{{ rb.status == 'Acceptée' ? ', salle attribuée : ' ~ rb.room }}.</h4>
+
+<p>
+    <a href="{{ app.request.getSchemeAndHttpHost() }}{{ path('espace_assos_room_booking', {url: rb.project.url}) }}">Cliquez ici pour gérer tes demandes de réservation</a>
+</p>

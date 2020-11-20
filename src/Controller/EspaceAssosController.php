@@ -385,7 +385,8 @@ class EspaceAssosController extends AbstractController
         }
 
         return $this->render('espace_assos/room_booking.html.twig', [
-            'roombooks' => $proj->getRoomBooks()
+            'roombooks' => $proj->getRoomBooks(),
+            'projectId' => $proj->getId()
         ]);
     }
 

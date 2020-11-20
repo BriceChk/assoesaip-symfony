@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\RoomBookRepository")
@@ -21,6 +22,7 @@ class RoomBook
      * @ORM\ManyToOne(targetEntity="App\Entity\Project", inversedBy="roomBooks")
      * @ORM\JoinColumn(nullable=false)
      * @MaxDepth(1)
+     * @Assert\NotNull(message="Le projet associé n'est pas valide")
      */
     private $project;
 
@@ -28,11 +30,13 @@ class RoomBook
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="roomBooks")
      * @ORM\JoinColumn(nullable=false)
      * @MaxDepth(1)
+     * @Assert\NotNull(message="L'utilisateur associé n'est pas valide")
      */
     private $user;
 
     /**
      * @ORM\Column(type="date")
+     * @Assert\GreaterThan(value="+ 4 days", message="La date doit être éloignée d'au moins 5 jours")
      */
     private $date;
 
@@ -48,28 +52,37 @@ class RoomBook
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\GreaterThanOrEqual(value="1", message="Le nombre de participants doit être supérieur ou égal à 1")
      */
     private $nbParticipants;
 
     /**
      * @ORM\Column(type="string", length=1000)
+     * @Assert\Length(max="1000", maxMessage="L'objet ne doit pas dépaser 1000 caractères")
+     * @Assert\NotBlank(message="L'objet ne peut pas être vide")
      */
     private $object;
 
     /**
      * @ORM\Column(type="string", length=1000)
+     * @Assert\Length(max="1000", maxMessage="La section demandes ne doit pas dépaser 1000 caractères")
      */
     private $needs;
 
     /**
      * @ORM\Column(type="string", length=20)
+     * @Assert\Choice(
+     *     choices = {"En attente", "Acceptée", "Refusée"},
+     *     message = "Le statut doit être un des suivants : {{ choices }}"
+     * )
      */
-    private $status;
+    private $status = 'En attente';
 
     /**
      * @ORM\Column(type="string", length=10)
+     * @Assert\Length(max=10, maxMessage="La salle ne doit pas dépasser 10 caractères")
      */
-    private $room;
+    private $room = '';
 
     public function getId(): ?int
     {

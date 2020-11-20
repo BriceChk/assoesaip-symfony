@@ -2,20 +2,50 @@
 
 namespace App\Controller;
 
+use App\Entity\AssoEsaipSettings;
+use App\Entity\Project;
 use App\Entity\RoomBook;
+use App\Utils;
+use DateTime;
+use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\View;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Annotations as OA;
 use phpDocumentor\Reflection\Types\Integer;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use OpenApi\Annotations as OA;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class API_RoomBooksController extends AbstractController
+class API_RoomBooksController extends AbstractFOSRestController
 {
+    //TODO Serializer groups
+
     /**
-     * Get a RoomBook from its id.
+     * Get a RoomBook from its id. The user must be a Project admin.
+     * @OA\Response (
+     *     response = 200,
+     *     description = "Returns the requested RoomBook",
+     *     @OA\JsonContent(ref=@Model(type=RoomBook::class))
+     * )
+     * @OA\Response (
+     *     response = 404,
+     *     description = "The requested Project doesn't exist"
+     * )
+     * @OA\Response (
+     *     response = 403,
+     *     description = "The user is not a Project admin"
+     * )
+     * @OA\Parameter (
+     *     name = "id",
+     *     in="path",
+     *     description="The RoomBook unique identifier",
+     *     @OA\Schema(type="integer")
+     * )
      * @Rest\Get(
      *     path = "/api/roombook/{id}",
      *     name = "api_roombook_show",
@@ -28,105 +58,334 @@ class API_RoomBooksController extends AbstractController
      * @return RoomBook|Response
      */
     public function showRoombook($id) {
-        //TODO Blacklist some properties on all entities to avoid circular reference using serializer @Groups
-
-        $em = $this->getDoctrine()->getRepository(RoomBook::class);
-        $rb = $em->find($id);
+        $response = new Response();
+        $rep = $this->getDoctrine()->getRepository(RoomBook::class);
+        $rb = $rep->find($id);
         if ($rb == null) {
-            $response = new Response();
             $response->setStatusCode(Response::HTTP_NOT_FOUND);
-            $response->setContent($this->jsonMsg("Aucune réservation de salle n'a été trouvée avec cet ID."));
+            $response->setContent(Utils::jsonMsg("Aucune réservation de salle trouvée avec cet ID."));
             return $response;
         }
+
+        if (!$this->isGranted('PROJECT_ADMIN', $rb->getProject())) {
+            $response->setStatusCode(Response::HTTP_FORBIDDEN);
+            $response->setContent(Utils::jsonMsg("Vous n'êtes pas administrateur de ce projet."));
+            return $response;
+        }
+
         return $rb;
     }
 
     /**
+     * Get all RoomBooks of a Project from its id. The user must be a Project admin.
+     * @OA\Response (
+     *     response = 200,
+     *     description = "The list of RoomBooks",
+     *     @OA\JsonContent(type="array", @OA\Items(ref=@Model(type=RoomBook::class)))
+     * )
+     * @OA\Response (
+     *     response = 404,
+     *     description = "The requested Project doesn't exist"
+     * )
+     * @OA\Response (
+     *     response = 403,
+     *     description = "The user is not a Project admin"
+     * )
+     * @OA\Parameter (
+     *     name = "id",
+     *     in="path",
+     *     description="The Project unique identifier",
+     *     @OA\Schema(type="integer")
+     * )
+     * @Rest\Get(
+     *     path = "/api/project/{id}/roombooks",
+     *     name = "api_roombook_show_all",
+     *     requirements = { "id"="\d+" }
+     * )
+     * @OA\Tag(name="RoomBook")
+     * @View
+     * @IsGranted("ROLE_USER")
+     * @param Integer $id The RoomBooks ID
+     * @return RoomBook[]|Response
+     */
+    public function showAllRoombooks($id) {
+        $response = new Response();
+        $rep = $this->getDoctrine()->getRepository(Project::class);
+        $project = $rep->find($id);
+        if ($project == null) {
+            $response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $response->setContent(Utils::jsonMsg("Aucun projet trouvé avec cet ID."));
+            return $response;
+        }
+
+        if (!$this->isGranted('PROJECT_ADMIN', $project)) {
+            $response->setStatusCode(Response::HTTP_FORBIDDEN);
+            $response->setContent(Utils::jsonMsg("Vous n'êtes pas administrateur de ce projet."));
+            return $response;
+        }
+
+        return $project->getRoomBooks();
+    }
+
+    /**
+     * Create a new RoomBook. The user must be a Project admin.
+     * @OA\Response (
+     *     response = 201,
+     *     description = "Returns the created RoomBook",
+     *     @OA\JsonContent(ref=@Model(type=RoomBook::class))
+     * )
+     * @OA\Response (
+     *     response = 404,
+     *     description = "The requested Project doesn't exist"
+     * )
+     * @OA\Response (
+     *     response = 403,
+     *     description = "The user is not a Project admin"
+     * )
+     * @OA\Response (
+     *     response = 400,
+     *     description = "The request body is not valid"
+     * )
+     * @OA\Parameter (
+     *     name = "id",
+     *     in="path",
+     *     description="The Project unique identifier",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\RequestBody(
+     *     description="The RoomBook as a JSON object",
+     *     @OA\JsonContent(ref=@Model(type=RoomBook::class))
+     * )
      * @Rest\Put(
-     *     path = "/api/roombook",
+     *     path = "/api/project/{id}/roombooks",
      *     name = "api_roombook_create"
      * )
      * @OA\Tag(name="RoomBook")
      * @View(statusCode=201)
-     * @ParamConverter("rb", converter="fos_rest.request_body")
-     * @IsGranted("ROLE_PROJECT_EDITOR")
+     * @IsGranted("ROLE_USER")
+     * @param $id
+     * @param Request $request
+     * @param ValidatorInterface $validator
+     * @param MailerInterface $mailer
+     * @return RoomBook|\FOS\RestBundle\View\View|Response
      */
-    public function newRoombook(RoomBook $rb)
-    {
-        //TODO Check if the user is an admin of the project
+    public function newRoombook($id, Request $request, ValidatorInterface $validator, MailerInterface $mailer) {
+        $response = new Response();
+        $rep = $this->getDoctrine()->getRepository(Project::class);
+        $project = $rep->find($id);
+        if ($project == null) {
+            $response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $response->setContent(Utils::jsonMsg("Aucun projet trouvé avec cet ID."));
+            return $response;
+        }
+
+        if (!$this->isGranted('PROJECT_ADMIN', $project)) {
+            $response->setStatusCode(Response::HTTP_FORBIDDEN);
+            $response->setContent(Utils::jsonMsg("Vous n'êtes pas administrateur de ce projet."));
+            return $response;
+        }
+
+        $json = $request->request->all();
+
+        $rb = new RoomBook();
+        $rb->setProject($project);
+        $rb->setUser($this->getUser());
+        $rb->setObject($json['object']);
+        $rb->setNeeds($json['needs']);
+        $rb->setNbParticipants($json['nb_participants']);
+        try {
+            $rb->setStartTime(new DateTime($json['start_time']));
+            $rb->setEndTime(new DateTime($json['end_time']));
+            $rb->setDate(new DateTime($json['date']));
+        } catch (\Exception $e) {
+            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
+            $response->setContent(Utils::jsonMsg("Le format de l'heure ou de la date est invalide."));
+            return $response;
+        }
+
+        $errors = $validator->validate($rb);
+        if (count($errors)) {
+            return $this->view($errors, Response::HTTP_BAD_REQUEST);
+        }
+
         $em = $this->getDoctrine()->getManager();
         $em->persist($rb);
         $em->flush();
 
-        if ($em->contains($rb)) {
-            return $rb;
+        $settRep = $this->getDoctrine()->getRepository(AssoEsaipSettings::class);
+        $mailsList = $settRep->getRoombooksRecipients();
+
+        if (count($mailsList) != 0) {
+            $email = (new TemplatedEmail())
+                ->from('asso@esaip.org')
+                ->to(...$mailsList)
+                ->subject('Nouvelle demande de réservation de salle')
+                ->htmlTemplate('emails/roombook_new.html.twig')
+                ->context([
+                    'rb' => $rb
+                ]);
+
+            $email->getHeaders()->addTextHeader('X-Auto-Response-Suppress', 'OOF, DR, RN, NRN, AutoReply');
+
+            try {
+                $mailer->send($email);
+            } catch (TransportExceptionInterface $e) {
+                error_log($e->getMessage());
+                $response->setStatusCode(Response::HTTP_BAD_REQUEST);
+                $response->setContent(Utils::jsonMsg("Erreur interne (email). La demande a quand même été enregistrée mais sera peut être ignorée."));
+                return $response;
+            }
         }
 
-        $response = new Response();
-        $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
-        $response->setContent($this->jsonMsg("Une erreur s'est produite lors de l'enregistrement."));
-        return $response;
+        return $rb;
     }
 
     /**
+     * Update (answer) a RoomBook. The user must be a site admin.
+     * @OA\Response (
+     *     response = 200,
+     *     description = "The requested RoomBook has been modified",
+     *     @OA\JsonContent(ref=@Model(type=RoomBook::class))
+     * )
+     * @OA\Response (
+     *     response = 404,
+     *     description = "The requested RoomBook doesn't exist"
+     * )
+     * @OA\Response (
+     *     response = 403,
+     *     description = "The user is not a site admin"
+     * )
+     * @OA\Parameter (
+     *     name = "id",
+     *     in="path",
+     *     description="The RoomBook unique identifier",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\RequestBody(
+     *     description="The RoomBook as a JSON object",
+     *     @OA\JsonContent(ref=@Model(type=RoomBook::class))
+     * )
      * @Rest\Post(
      *     path = "/api/roombook/{id}",
      *     name = "api_roombook_update",
      *     requirements = { "id"="\d+" }
      * )
      * @OA\Tag(name="RoomBook")
-     * @View(statusCode=201)
-     * @ParamConverter("updatedRb", converter="fos_rest.request_body")
-     * @IsGranted("ROLE_ADMIN")
+     * @View()
+     * @IsGranted("ROLE_USER")
+     * @param $id
+     * @param Request $request
+     * @param ValidatorInterface $validator
+     * @param MailerInterface $mailer
+     * @return RoomBook|object|Response
      */
-    public function updateRoombook(RoomBook $updatedRb, $id) {
+    public function updateRoombook($id, Request $request, ValidatorInterface $validator, MailerInterface $mailer) {
+        $response = new Response();
+
         $rep = $this->getDoctrine()->getRepository(RoomBook::class);
         $rb = $rep->find($id);
+
         if ($rb == null) {
-            $response = new Response();
             $response->setStatusCode(Response::HTTP_NOT_FOUND);
-            $response->setContent($this->jsonMsg("Aucune réservation de salle trouvée avec cet ID."));
+            $response->setContent(Utils::jsonMsg("Aucune réservation de salle trouvée avec cet ID."));
             return $response;
         }
 
-        $rb->setStatus($updatedRb->getStatus());
-        $rb->setRoom($updatedRb->getRoom());
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $response->setStatusCode(Response::HTTP_FORBIDDEN);
+            $response->setContent(Utils::jsonMsg("Vous n'êtes pas administrateur du site."));
+            return $response;
+        }
+
+        $json = $request->request->all();
+        $rb->setStatus($json['status']);
+        $rb->setRoom($json['room']);
+
+        $errors = $validator->validate($rb);
+        if (count($errors)) {
+            return $this->view($errors, Response::HTTP_BAD_REQUEST);
+        }
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($rb);
         $em->flush();
 
+        $email = (new TemplatedEmail())
+            ->from('asso@esaip.org')
+            ->to($rb->getUser()->getEmail())
+            ->subject('Réservation de salle ' . strtolower($rb->getStatus()))
+            ->htmlTemplate('emails/roombook_response.html.twig')
+            ->context([
+                'rb' => $rb
+            ]);
+
+        $email->getHeaders()->addTextHeader('X-Auto-Response-Suppress', 'OOF, DR, RN, NRN, AutoReply');
+
+        try {
+            $mailer->send($email);
+        } catch (TransportExceptionInterface $e) {
+            error_log($e->getMessage());
+            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
+            $response->setContent(Utils::jsonMsg("Erreur interne (email). Le reponsable ne sera pas prévenu."));
+            return $response;
+        }
+
         return $rb;
     }
 
     /**
-     * @Rest\Delete(
-     *     path = "/api/roombook/{id}",
-     *     name = "api_roombooks_delete",
-     *     requirements = { "id"="\d+" }
+     * Delete a RoomBook. The user must be a Project admin.
+     * @OA\Response (
+     *     response = 200,
+     *     description = "The requested RoomBook has been deleted"
+     * )
+     * @OA\Response (
+     *     response = 404,
+     *     description = "The requested RoomBook doesn't exist"
+     * )
+     * @OA\Response (
+     *     response = 403,
+     *     description = "The user is not a Project admin"
+     * )
+     * @OA\Parameter (
+     *     name = "id",
+     *     in="path",
+     *     description="The RoomBook unique identifier",
+     *     @OA\Schema(type="integer")
      * )
      * @OA\Tag(name="RoomBook")
-     * @View(statusCode=200)
-     * @IsGranted("ROLE_PROJECT_EDITOR")
+     * @Rest\Delete(
+     *     path = "/api/roombook/{id}",
+     *     name = "api_roombook_delete",
+     *     requirements = { "id"="\d+" }
+     * )
+     * @IsGranted("ROLE_USER")
+     * @param $id
+     * @return Response
      */
-    public function deleteRoombook(RoomBook $rb) {
-        //TODO Check if the user is an admin of the project
+    public function deleteRb($id) {
         $response = new Response();
 
-        $em = $this->getDoctrine()->getManager();
-        if ($em->contains($rb)) {
-            $em->remove($rb);
-            $em->flush();
-            $response->setStatusCode(Response::HTTP_OK);
-            $response->setContent($this->jsonMsg("La réservation de salle a été supprimée."));
+        $rep = $this->getDoctrine()->getRepository(RoomBook::class);
+        $rb = $rep->find($id);
+
+        if ($rb == null) {
+            $response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $response->setContent(Utils::jsonMsg("Aucune réservation de salle trouvée avec cet ID."));
             return $response;
         }
-        $response->setStatusCode(Response::HTTP_NOT_FOUND);
-        $response->setContent($this->jsonMsg("Aucne réservation de salle n'a été trouvée avec cet ID."));
-        return $response;
-    }
 
-    private function jsonMsg($text) {
-        return '{ "message": "'.$text.'" }';
+        if (!$this->isGranted('PROJECT_ADMIN', $rb->getProject())) {
+            $response->setStatusCode(Response::HTTP_FORBIDDEN);
+            $response->setContent(Utils::jsonMsg("Vous n'êtes pas administrateur de ce projet."));
+            return $response;
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($rb);
+        $em->flush();
+
+        $response->setContent(Utils::jsonMsg("La réservation de salle a été supprimée."));
+        return $response;
     }
 }

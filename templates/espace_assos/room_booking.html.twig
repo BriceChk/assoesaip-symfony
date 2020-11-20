@@ -20,7 +20,7 @@
                         </div>
                         <div class="card-body">
                             <p>
-                                Votre demande sera enregistrée à votre nom et associée au projet sélectionné. Vous recevrez un mail lorsque elle sera traitée.
+                                Ta demande sera enregistrée à ton nom et associée au projet sélectionné. Tu recevra un mail lorsque elle sera traitée. Pense à faire ta demande au moins une semaine avant l'événement pour qu'elle puisse être traitée ! Sans réponse dans un délai d'une semaine, contacte Laurène Bregeault (<a href="mailto:lbregeault@esaip.org">lbregeault@esaip.org</a>).
                             </p>
                             <div class="row">
                                 <div class="col-lg-3 form-group">
@@ -65,7 +65,7 @@
                                     </label>
 
                                     <div class="input-group">
-                                        <input type="number" class="form-control" id="nb-participants" name="nb-participants" min="1">
+                                        <input type="number" class="form-control" id="nb-participants" name="nb-participants" min="1" value="1">
                                         <div class="input-group-append" data-target="#nb-participants">
                                             <div class="input-group-text"><i class="fas fa-user-friends"></i></div>
                                         </div>
@@ -74,15 +74,15 @@
                             </div>
                             <div class="form-group">
                                 <label for="objet">Objet de la demande</label>
-                                <textarea id="objet" placeholder="Réunion, présentation, ..." class="form-control" rows="3" style="height: 118px;"></textarea>
+                                <textarea id="objet" placeholder="Réunion, présentation, ..." class="form-control" rows="3" style="height: 118px;" maxlength="1000"></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="demandes-part">Demandes particulières</label>
-                                <textarea id="demandes-part" placeholder="Possibilité de déjeuner, disposition d'amphi, ..." class="form-control" rows="3" style="height: 118px;"></textarea>
+                                <textarea id="demandes-part" placeholder="Possibilité de déjeuner, disposition d'amphi, ..." class="form-control" rows="3" style="height: 118px;" maxlength="1000"></textarea>
                             </div>
                         </div>
                         <div class="card-footer">
-                            <button type="submit" class="btn btn-primary" onclick="enregistrer()">Envoyer la demande</button>
+                            <button type="submit" class="btn btn-primary" onclick="createRoombook()">Envoyer la demande</button>
                         </div>
                         <div class="overlay" style="display: none">
                             <i class="fas fa-2x fa-sync-alt"></i>
@@ -112,7 +112,7 @@
                                 </thead>
                                 <tbody id="listeDemandesEnCours">
                                 {% for rb in roombooks | filter(rb => date(rb.date) >= date()) | sort((a, b) => date(a.date) > date(b.date)) %}
-                                    <tr>
+                                    <tr id="rb-{{ rb.id }}">
                                         <td>{{ rb.date | date('d/m/Y') }} {{ rb.startTime | format_time(pattern="H'h'mm") }}-{{ rb.endTime | format_time(pattern="H'h'mm") }}</td>
                                         <td>{{ rb.nbParticipants }}</td>
                                         <td>{{ rb.object }}</td>
@@ -120,15 +120,23 @@
                                         {% set badge = (rb.status == 'En attente' ? 'warning' : (rb.status == 'Refusée' ? 'danger' : 'success')) %}
                                         <td><span class="badge badge-{{ badge }}">{{ rb.status == 'Acceptée' ? rb.room : rb.status}}</span></td>
                                         <td class="project-actions text-right">
-                                        {% if rb.status == "En attente" %}
-                                            <button class="btn btn-danger btn-sm" onclick="supprimer({{ rb.id }})"><i class="fas fa-trash"></i> Supprimer</button>
-                                        {% endif %}
+                                            {% if rb.status == "En attente" %}
+                                                <button class="btn btn-danger btn-sm" onclick="deleteRb({{ rb.id }})"><i class="fas fa-trash"></i> Supprimer</button>
+                                            {% endif %}
                                         </td>
                                     </tr>
-
                                 {% endfor %}
-
-
+                                <!-- RB template -->
+                                <tr id="rb-template" style="display: none">
+                                    <td>%date%</td>
+                                    <td>%part%</td>
+                                    <td>%object%</td>
+                                    <td>%needs%</td>
+                                    <td><span class="badge badge-warning">En attente</span></td>
+                                    <td class="project-actions text-right">
+                                        <button class="btn btn-danger btn-sm" onclick="deleteRb('%id%')"><i class="fas fa-trash"></i> Supprimer</button>
+                                    </td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -183,11 +191,32 @@
 
     </section>
     <!-- /.content -->
+
+    <!-- Delete RB modal -->
+    <div class="modal fade" data-backdrop="static" id="deleteRoombookModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Voulez-vous supprimer la demande ?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary modal-btn" data-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger delete-rb-btn modal-btn">Supprimer</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('build/js/moment/moment-with-locales.js') }}"></script>
     <script src="{{ asset('build/js/tempusdominus-bootstrap.js') }}"></script>
+    <script>
+        const projectId = {{ projectId }};
+    </script>
     {{ encore_entry_script_tags('espace_asso_roombook') }}
 {% endblock %}

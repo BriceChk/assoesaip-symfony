@@ -54,6 +54,22 @@ class AssoEsaipSettingsRepository extends ServiceEntityRepository
         return $setting->getValue();
     }
 
+    public function getRoombooksRecipients(): array
+    {
+        /** @var AssoEsaipSettings $setting */
+        try {
+            $setting = $this->createQueryBuilder('a')
+                ->andWhere('a.name = :val')
+                ->setParameter('val', 'roombooks_recipients')
+                ->getQuery()
+                ->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            return array();
+        }
+
+        return explode(' ', $setting->getValue());
+    }
+
     public function getHomeMessageText(): string
     {
         /** @var AssoEsaipSettings $setting */
