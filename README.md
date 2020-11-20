@@ -11,10 +11,11 @@ After cloning the repository, run `composer install` and `yarn install` to insta
 
 Create a file named `.env.local` to setup your dev env variables.
 
-##TODO
+## TODO
 - Get tickets from... on events (HelloAsso, Pumpkin, Lydia, Weezevent, Free events on Asso'esaip ...) with iframes
 - Boite à idées
 - Cafet' reservations with payments
 - Polls
+- Yearly cleaning process (roombooks, oldest old users, promo update) 
 
 <-- WIP -->
