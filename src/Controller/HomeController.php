@@ -39,13 +39,9 @@ class HomeController extends AbstractController
             $news = array_merge($news, $p->getNews()->toArray());
         }
 
-        // Home message
-        $settingsRepo = $this->getDoctrine()->getRepository(AssoEsaipSettings::class);
-
         return $this->render('home.html.twig', [
             'categories' => $categories,
-            'news' => $news,
-            'homeMessage' => $settingsRepo->getHomeMessage()
+            'news' => $news
         ]);
     }
 }

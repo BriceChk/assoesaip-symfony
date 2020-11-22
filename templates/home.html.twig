@@ -17,16 +17,6 @@
             <div class="col-lg-10 offset-lg-1 home-categ-list">
                 <hr class="my-4">
 
-                {% if homeMessage['enabled'] %}
-                    <div class="callout callout-info">
-                        <h5>{{ homeMessage['title'] }}</h5>
-                        <p>{{ homeMessage['text'] }}</p>
-                        {% if homeMessage['link'] != '' %}
-                            <a class="btn btn-primary" style="color: white; text-decoration: none;" href="{{ homeMessage['link'] }}">En savoir plus</a>
-                        {% endif %}
-                    </div>
-                {% endif %}
-
                 <div class="row equal justify-content-md-center" style="padding-left: 5px; padding-right: 5px;">
                     {% for categ in categories %}
                         <div class="col-lg d-flex">

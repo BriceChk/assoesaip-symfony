@@ -20,40 +20,6 @@ class AssoEsaipSettingsRepository extends ServiceEntityRepository
         parent::__construct($registry, AssoEsaipSettings::class);
     }
 
-
-    public function isHomeMessageEnabled(): bool
-    {
-        /** @var AssoEsaipSettings $setting */
-        try {
-            $setting = $this->createQueryBuilder('a')
-                ->andWhere('a.name = :val')
-                ->setParameter('val', 'home_message_enabled')
-                ->getQuery()
-                ->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            return false;
-        }
-
-        return $setting->getValue() == '1';
-    }
-
-
-    public function getHomeMessageTitle(): string
-    {
-        /** @var AssoEsaipSettings $setting */
-        try {
-            $setting = $this->createQueryBuilder('a')
-                ->andWhere('a.name = :val')
-                ->setParameter('val', 'home_message_title')
-                ->getQuery()
-                ->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            return '';
-        }
-
-        return $setting->getValue();
-    }
-
     public function getRoombooksRecipients(): array
     {
         /** @var AssoEsaipSettings $setting */
@@ -68,48 +34,6 @@ class AssoEsaipSettingsRepository extends ServiceEntityRepository
         }
 
         return explode(' ', $setting->getValue());
-    }
-
-    public function getHomeMessageText(): string
-    {
-        /** @var AssoEsaipSettings $setting */
-        try {
-            $setting = $this->createQueryBuilder('a')
-                ->andWhere('a.name = :val')
-                ->setParameter('val', 'home_message_text')
-                ->getQuery()
-                ->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            return '';
-        }
-
-        return $setting->getValue();
-    }
-
-    public function getHomeMessageLink(): string
-    {
-        /** @var AssoEsaipSettings $setting */
-        try {
-            $setting = $this->createQueryBuilder('a')
-                ->andWhere('a.name = :val')
-                ->setParameter('val', 'home_message_link')
-                ->getQuery()
-                ->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            return '';
-        }
-
-        return $setting->getValue();
-    }
-
-    public function getHomeMessage(): array
-    {
-        return array(
-            'enabled' => $this->isHomeMessageEnabled(),
-            'title' => $this->getHomeMessageTitle(),
-            'text' => $this->getHomeMessageText(),
-            'link' => $this->getHomeMessageLink()
-        );
     }
 
     public function isMaintenanceModeEnabled(): bool
