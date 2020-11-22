@@ -6,6 +6,12 @@ $esaip-color: #009bc2;
     }
 }
 
+@media (max-width: 990px) {
+    .home-categ-list {
+        display: none;
+    }
+}
+
 body {
     background-color: #e9ecef;
 }

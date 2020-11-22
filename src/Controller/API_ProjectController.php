@@ -4,7 +4,6 @@ namespace App\Controller;
 use App\Entity\Project;
 use App\Entity\ProjectCategory;
 use App\Entity\ProjectMember;
-use App\Entity\ProjectPage;
 use App\Entity\User;
 use App\Utils;
 use FOS\RestBundle\Controller\AbstractFOSRestController;

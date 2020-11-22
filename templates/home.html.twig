@@ -14,7 +14,7 @@
                 <h1 class="display-4">Bienvenue !</h1>
                 <p class="lead">Découvre les clubs et associations qui font vivre l'<b class="esaip-color">e</b>saip, leurs actualités et les prochains événements sur ton campus</p>
             </div>
-            <div class="col-lg-10 offset-lg-1">
+            <div class="col-lg-10 offset-lg-1 home-categ-list">
                 <hr class="my-4">
 
                 {% if homeMessage['enabled'] %}
@@ -43,7 +43,7 @@
             </div>
         </div>
 
-        <div class="container-fluid">
+        <div class="container-fluid py-5">
             <div class="row">
                 <div class="col-1"></div>
                 <div class="col-lg-5 order-2 order-lg-1">
@@ -104,7 +104,7 @@
                     <button class="btn btn-primary" id="loadArticlesButton" {{ news|length <= 30 ? 'style="display: none;"' }}>Charger la suite</button>
                 </div>
 
-                <div class="col-lg-5 order-1 order-lg-2">
+                <div class="col-lg-5 order-1 order-lg-2 mb-5">
                     <h2>Événements</h2>
                     <hr>
                     {% if is_granted('ROLE_USER') %}

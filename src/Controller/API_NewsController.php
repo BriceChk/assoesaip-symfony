@@ -91,7 +91,7 @@ class API_NewsController extends AbstractFOSRestController {
      *     description="The News as a JSON object",
      *     @OA\JsonContent(ref=@Model(type=News::class))
      * )
-     * @OA\Tag(name="Article")
+     * @OA\Tag(name="News")
      * @Rest\Put(
      *     path = "/api/project/{id}/news",
      *     name = "api_project_news_create",
