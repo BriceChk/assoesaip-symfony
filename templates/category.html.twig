@@ -128,18 +128,22 @@
 
                         </div>
 
-                        <div class="tab-pane fade" id="pills-calendar" role="tabpanel" aria-labelledby="pills-calendar-tab">
-                            {# TODO: Afficher le calendrier de la catégorie #}
-                            <div class="card">
-                                <div class="card-header">Calendrier</div>
-                                <div class="card-body">TODO: Remplacer par le vrai FullCalendar</div>
-                            </div>
+                       </div>
 
-                            <div id='calendar'></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                       <div class="tab-pane fade pb-5" id="pills-calendar" role="tabpanel" aria-labelledby="pills-calendar-tab">
+                           <div id='calendar'></div>
+                       </div>
+                   </div>
+               </div>
+           </div>
         </div>
     </main>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        const categId = {{ category.id }};
+    </script>
+    {{ encore_entry_script_tags('category') }}
 {% endblock %}

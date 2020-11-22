@@ -28,6 +28,7 @@ Encore
     .addEntry('profile', './assets/js/profile.js')
     .addEntry('project', './assets/js/project.js')
     .addEntry('calendar', './assets/js/calendar.js')
+    .addEntry('category', './assets/js/category.js')
     .addEntry('espace_asso', './assets/js/espace_asso.js')
     .addEntry('espace_asso_home', './assets/js/espace_asso_home.js')
     .addEntry('espace_asso_article', './assets/js/espace_asso_article.js')

@@ -9,6 +9,7 @@ use App\Entity\EventCategory;
 use App\Entity\EventOccurrence;
 use App\Entity\News;
 use App\Entity\Project;
+use App\Entity\ProjectCategory;
 use App\Entity\User;
 use App\Utils;
 use DateTime;
@@ -421,13 +422,13 @@ class API_EventController extends AbstractFOSRestController {
      * )
      * @OA\Parameter (
      *     name = "start",
-     *     in="path",
+     *     in="query",
      *     description="The start date",
      *     @OA\Schema(type="string")
      * )
      * @OA\Parameter (
      *     name = "end",
-     *     in="path",
+     *     in="query",
      *     description="The end date",
      *     @OA\Schema(type="string")
      * )
@@ -471,30 +472,188 @@ class API_EventController extends AbstractFOSRestController {
                 continue;
             }
 
-            $a = array(
-                "title" => $e->getTitle(),
-                "allDay" => $e->isAllDay(),
-                "url" => '/evenement/' . $e->getUrl(),
-                "description" => $e->getAbstract(),
-                "backgroundColor" => $e->getCategory()->getColor(),
-                "borderColor" => $e->getCategory()->getColor(),
-                "start" => $r->getDate()->format('Y-m-d\TH:m:00')
-            );
-
-            if ($e->getOccurrencesCount() == 1) {
-                $a['end'] = $e->getDateEnd()->format('Y-m-d\TH:m:00');
-            } else {
-                $a['duration'] = array("minutes" => $e->getDuration());
-            }
-
-            if (!$e->isPublished()) {
-                $a['backgroundColor'] = '#fca503';
-                $a['borderColor'] = '#fca503';
-            }
-
-            $events[] = $a;
+            $events[] = $this->makeFCEvent($r, $e);
         }
 
         return $this->view($events);
+    }
+
+    /**
+     * Get a Project's Events in the FullCalendar data format.
+     * https://fullcalendar.io/docs/event-object
+     * @OA\Response (
+     *     response = 200,
+     *     description = "Returns the array of FullCalendar Events",
+     * )
+     * @OA\Parameter (
+     *     name = "id",
+     *     in="path",
+     *     description="The Project unique identifier",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Parameter (
+     *     name = "start",
+     *     in="query",
+     *     description="The start date",
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter (
+     *     name = "end",
+     *     in="query",
+     *     description="The end date",
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Tag(name="Event")
+     * @Rest\Get(
+     *     path = "/api/project/{id}/events/fullcalendar",
+     *     name = "api_event_show_project_fc"
+     * )
+     * @IsGranted("ROLE_USER")
+     * @param $id
+     * @param Request $request
+     * @return \FOS\RestBundle\View\View|Response
+     */
+    public function showProjectFullCalEvents($id, Request $request) {
+        $response = new Response();
+        $rep = $this->getDoctrine()->getRepository(Project::class);
+        $project = $rep->find($id);
+        if ($project == null) {
+            $response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $response->setContent(Utils::jsonMsg("Aucun projet trouvé avec cet ID."));
+            return $response;
+        }
+
+        $start = explode(' ', $request->query->get('start'))[0];
+        $end = explode(' ', $request->query->get('end'))[0];
+
+        $rep = $this->getDoctrine()->getRepository(EventOccurrence::class);
+
+        try {
+            $startDate = new DateTime($start);
+            $endDate = new DateTime($end);
+        } catch (\Exception $e) {
+            $response = new Response();
+            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
+            $response->setContent(Utils::jsonMsg("Date invalide"));
+            return $response;
+        }
+
+        $result = $rep->findBetweenDates($startDate, $endDate);
+        $events = array();
+
+        $editor = $this->isGranted("PROJECT_ADMIN", $project);
+
+        foreach ($result as $r) {
+            $e = $r->getEvent();
+
+            if ($e->getProject() != $project || (!$editor && !$e->isPublished())) {
+                continue;
+            }
+
+            $events[] = $this->makeFCEvent($r, $e);
+        }
+
+        return $this->view($events);
+    }
+
+    /**
+     * Get a ProjectCategory's Events in the FullCalendar data format.
+     * https://fullcalendar.io/docs/event-object
+     * @OA\Response (
+     *     response = 200,
+     *     description = "Returns the array of FullCalendar Events",
+     * )
+     * @OA\Parameter (
+     *     name = "id",
+     *     in="path",
+     *     description="The ProjectCategory unique identifier",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Parameter (
+     *     name = "start",
+     *     in="query",
+     *     description="The start date",
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Parameter (
+     *     name = "end",
+     *     in="query",
+     *     description="The end date",
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Tag(name="Event")
+     * @Rest\Get(
+     *     path = "/api/project/category/{id}/events/fullcalendar",
+     *     name = "api_event_show_category_fc"
+     * )
+     * @IsGranted("ROLE_USER")
+     * @param $id
+     * @param Request $request
+     * @return \FOS\RestBundle\View\View|Response
+     */
+    public function showCategFullCalEvents($id, Request $request) {
+        $response = new Response();
+        $rep = $this->getDoctrine()->getRepository(ProjectCategory::class);
+        $categ = $rep->find($id);
+        if ($categ == null) {
+            $response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $response->setContent(Utils::jsonMsg("Aucune catégorie trouvée avec cet ID."));
+            return $response;
+        }
+
+        $start = explode(' ', $request->query->get('start'))[0];
+        $end = explode(' ', $request->query->get('end'))[0];
+
+        $rep = $this->getDoctrine()->getRepository(EventOccurrence::class);
+
+        try {
+            $startDate = new DateTime($start);
+            $endDate = new DateTime($end);
+        } catch (\Exception $e) {
+            $response = new Response();
+            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
+            $response->setContent(Utils::jsonMsg("Date invalide"));
+            return $response;
+        }
+
+        $result = $rep->findBetweenDates($startDate, $endDate);
+        $events = array();
+
+        foreach ($result as $r) {
+            $e = $r->getEvent();
+
+            if ($e->getProject()->getCategory() != $categ) {
+                continue;
+            }
+
+            $events[] = $this->makeFCEvent($r, $e);
+        }
+
+        return $this->view($events);
+    }
+
+    private function makeFCEvent($occ, $event): array {
+        $a = array(
+            "title" => $event->getTitle(),
+            "allDay" => $event->isAllDay(),
+            "url" => '/evenement/' . $event->getUrl(),
+            "description" => $event->getAbstract(),
+            "backgroundColor" => $event->getCategory()->getColor(),
+            "borderColor" => $event->getCategory()->getColor(),
+            "start" => $occ->getDate()->format('Y-m-d\TH:m:00')
+        );
+
+        if ($event->getOccurrencesCount() == 1) {
+            $a['end'] = $event->getDateEnd()->format('Y-m-d\TH:m:00');
+        } else {
+            $a['duration'] = array("minutes" => $event->getDuration());
+        }
+
+        if (!$event->isPublished()) {
+            $a['backgroundColor'] = '#fca503';
+            $a['borderColor'] = '#fca503';
+        }
+
+        return $a;
     }
 }

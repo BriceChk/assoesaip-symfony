@@ -38,10 +38,7 @@
                                 </div>
 
                                 <div class="tab-pane fade" id="tab_2" role="tabpanel" aria-labelledby="actu">
-                                    <div class="card">
-                                        <div class="card-header">Calendrier</div>
-                                        <div class="card-body">Blabla</div>
-                                    </div>
+                                    <div id='calendar'></div>
 
                                     <div class="card">
                                         <div class="card-header">Actualités</div>
@@ -244,5 +241,8 @@
 
 {% block javascripts %}
     {{ parent() }}
+    <script>
+        const projectId = {{ project.id }};
+    </script>
     {{ encore_entry_script_tags('project') }}
 {% endblock %}

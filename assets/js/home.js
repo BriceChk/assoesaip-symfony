@@ -1,6 +1,10 @@
 import { Calendar } from "@fullcalendar/core";
-import listPlugin from '@fullcalendar/list'
+import listPlugin from '@fullcalendar/list';
 import bootstrapPlugin from '@fullcalendar/bootstrap';
+
+import '@fullcalendar/core/main.css';
+import '@fullcalendar/list/main.css';
+import '@fullcalendar/bootstrap/main.css';
 
 $(document).ready( function () {
     let calendarEl = document.getElementById('calendar');
@@ -8,12 +12,12 @@ $(document).ready( function () {
         plugins: [listPlugin, bootstrapPlugin],
         themeSystem: 'bootstrap',
         locale: 'fr',
-        initialView: 'list',
+        defaultView: 'list',
         height: 340,
-        headerToolbar: false,
-        allDayContent: 'Toute la journée',
-        noEventsContent: 'Aucun événement',
-        events: 'https://asso-esaip.bricechk.fr/api/event/fullcalendar',
+        header: false,
+        allDayText : 'Toute la journée',
+        noEventsMessage: 'Aucun événement',
+        events: '/api/event/fullcalendar',
         visibleRange: function (currentDate) {
             // Generate a new date for manipulating in the next step
             let startDate = new Date(currentDate.valueOf());
@@ -25,7 +29,7 @@ $(document).ready( function () {
 
             return {start: startDate, end: endDate};
         },
-        eventDidMount: function (info) {
+        eventRender: function (info) {
             let el = $(info.el);
             el.attr('data-toggle', 'tooltip');
             el.attr('data-placement', 'left');

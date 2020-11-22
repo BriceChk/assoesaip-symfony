@@ -107,8 +107,12 @@
                 <div class="col-lg-5 order-1 order-lg-2">
                     <h2>Événements</h2>
                     <hr>
-                    <div id='calendar' style="margin-bottom: 25px;"></div>
-                    <a class="btn btn-primary" href="{{ path('calendar') }}">Tout voir</a>
+                    {% if is_granted('ROLE_USER') %}
+                        <div id='calendar' style="margin-bottom: 25px;"></div>
+                        <a class="btn btn-primary" href="{{ path('calendar') }}">Tout voir</a>
+                    {% else %}
+                        <a href="{{ path('connect_azure_start') }}">Connecte-toi</a> pour voir le calendrier !
+                    {% endif %}
                 </div>
 
             </div>

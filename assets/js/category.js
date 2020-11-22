@@ -19,22 +19,23 @@ $(document).ready( function () {
         firstDay: 1,
         buttonText: {
             today:    'Aujourd\'hui',
-            month:    'Grille',
+            month:    'Mois',
             week:     'Semaine',
             day:      'jour',
             list:     'Liste'
         },
+        height: 1000,
         header: {
             left:   'title',
             center: '',
-            right:  'today prev,next timeGridWeek,dayGridMonth,listMonth'
+            right:  'today prev,next listMonth,timeGridWeek,dayGridMonth'
         },
         minTime: '07:00:00',
         maxTime: '23:59:59',
-        defaultView: 'timeGridWeek',
+        defaultView: 'listMonth',
         allDayText : 'Toute la journée',
         noEventsMessage: 'Aucun événement',
-        events: '/api/event/fullcalendar',
+        events: '/api/project/category/' + categId + "/events/fullcalendar",
         eventRender: function (info) {
             let el = $(info.el);
             el.attr('data-toggle', 'tooltip');
@@ -44,5 +45,7 @@ $(document).ready( function () {
         }
     });
 
-    calendar.render();
+    $('a[data-toggle="pill"]').on('shown.bs.tab', function (e) {
+        calendar.render();
+    })
 });
