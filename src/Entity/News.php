@@ -51,6 +51,11 @@ class News
      */
     private $project;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $starred = false;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -130,5 +135,17 @@ class News
 
     public function getCampus() {
         return $this->project->getCampus();
+    }
+
+    public function getStarred(): ?bool
+    {
+        return $this->starred;
+    }
+
+    public function setStarred(bool $starred): self
+    {
+        $this->starred = $starred;
+
+        return $this;
     }
 }

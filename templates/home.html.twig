@@ -50,13 +50,20 @@
                     <h2>Actualités</h2>
                     <hr>
 
-                    {% for n in news|sort((a, b) => a.datePublished < b.datePublished) %}
+                    {% for n in news | sort((a, b) => a.datePublished < b.datePublished) | sort((a, b) => b.starred <=> a.starred) | slice(0, 25) %}
                         <div class="d-flex">
                             <div class="card box-shadow flex-fill card-link">
                                 {% if n.event != null %}
-                                    <div class="ribbon-wrapper ribbon-lg">
+                                    <div class="ribbon-wrapper ribbon-{{ n.starred ? 'xl' : 'lg' }}">
                                         <div class="ribbon bg-info">
                                             Evenement
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if n.starred %}
+                                    <div class="ribbon-wrapper ribbon">
+                                        <div class="ribbon bg-success">
+                                            <i class="fas fa-star"></i>
                                         </div>
                                     </div>
                                 {% endif %}
