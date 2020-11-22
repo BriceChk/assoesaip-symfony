@@ -41,16 +41,14 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", unique=true)
-     * @Assert\NotBlank()
-     * @Assert\Length(min=2, max=50)
+     * @Assert\Email()
      */
     private $username;
 
     /**
-     * @ORM\Column(type="string", unique=true)
-     * @Assert\Email()
+     * @ORM\Column(type="string", length=255)
      */
-    private $email;
+    private $msId;
 
     /**
      * @ORM\Column(type="json")
@@ -180,11 +178,7 @@ class User implements UserInterface
     }
 
     public function getEmail() {
-        return $this->email;
-    }
-
-    public function setEmail($email): void {
-        $this->email = $email;
+        return $this->username;
     }
 
     /**
@@ -430,6 +424,18 @@ class User implements UserInterface
                 $fcmToken->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getMsId(): ?string
+    {
+        return $this->msId;
+    }
+
+    public function setMsId(string $msId): self
+    {
+        $this->msId = $msId;
 
         return $this;
     }

@@ -47,7 +47,7 @@ class AzureAuthenticator extends SocialAuthenticator
         $azureUser = $this->getAzureClient()->fetchUserFromToken($credentials);
 
         // 1) have they logged in with Azure before? Easy!
-        $existingUser = $this->em->getRepository(User::class)->findOneBy(['username' => $azureUser->getId()]);
+        $existingUser = $this->em->getRepository(User::class)->findOneBy(['username' => $azureUser->getUpn()]);
 
         if ($existingUser) {
             return $existingUser;
@@ -60,8 +60,8 @@ class AzureAuthenticator extends SocialAuthenticator
 
         // 3) Register new user
         $user = new User();
-        $user->setUsername($azureUser->getId());
-        $user->setEmail($azureUser->getUpn());
+        $user->setUsername($azureUser->getUpn());
+        $user->setMsId($azureUser->getId());
         $user->setFirstName($azureUser->getFirstName());
         $user->setLastName($azureUser->getLastName());
         $this->em->persist($user);
