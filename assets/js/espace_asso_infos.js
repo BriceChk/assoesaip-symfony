@@ -1,5 +1,5 @@
 import Sortable from 'sortablejs';
-import 'easy-autocomplete/dist/easy-autocomplete.css';
+
 
 $(document).ready(function () {
     // Sortable members list
@@ -12,7 +12,7 @@ $(document).ready(function () {
     // Add member search
     let options = {
         url: function (phrase) {
-            return "/api/user/search/" + phrase;
+            return "/api/search/user/" + phrase;
         },
         getValue: "full_name_and_email",
         theme: 'bootstrap',
@@ -28,7 +28,7 @@ $(document).ready(function () {
 
                 let itemFound = false;
                 $('#members-list li').each(function () {
-                    if ($(this).attr('id') == user.id) {
+                    if ($(this).attr('id') === user.id.toString()) {
                         itemFound = true;
                     }
                 });

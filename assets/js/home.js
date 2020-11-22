@@ -1,4 +1,3 @@
-require('easy-autocomplete/dist/jquery.easy-autocomplete');
 import { Calendar } from "@fullcalendar/core";
 import listPlugin from '@fullcalendar/list'
 import bootstrapPlugin from '@fullcalendar/bootstrap';
@@ -36,20 +35,4 @@ $(document).ready( function () {
     });
 
     calendar.render();
-
-    let options = {
-        url: function (phrase) {
-            return "../api/api-v1.php?action=search_project&query=" + phrase;
-        },
-        getValue: "text",
-        theme: 'bootstrap',
-        requestDelay: 500,
-        list: {
-            onChooseEvent: function () {
-                window.location.href = $("#inputSearch").getSelectedItemData().value;
-            }
-        }
-    };
-
-    $("#inputSearch").easyAutocomplete(options);
 });

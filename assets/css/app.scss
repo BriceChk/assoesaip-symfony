@@ -82,6 +82,14 @@ a:not(.dropdown-item) {
     background-color: #e9ecef;
 }
 
+.easy-autocomplete{
+    width:100% !important
+}
+
+.easy-autocomplete input{
+    width: 100%;
+}
+
 @media (max-width: 1200px) {
     .titre-page {
         font-size: 2.5rem;
