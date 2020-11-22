@@ -23,7 +23,7 @@
                     <div class="card">
                         <div class="card-body p-0">
                             <ul class="list-group list-group-flush">
-                                {% for page in pages %}
+                                {% for page in pages | filter(p => p.published) %}
                                     <li class="list-group-item" style="padding-top: 25px; padding-bottom: 25px">
                                         <a href="{{ path('espace_assos_ressource', {url: page.url}) }}" class="pas-de-lien">
                                             <h5>{{ page.title }}</h5>
@@ -33,6 +33,14 @@
                                         </a>
                                     </li>
                                 {% endfor %}
+                                {% if pages | filter(p => p.published) is empty %}
+                                    <li class="list-group-item" style="padding-top: 25px; padding-bottom: 25px">
+                                        <h5>Aucune page ressource dispo</h5>
+                                        <p class="card-text">
+                                            On vous prépare ça au plus vite !
+                                        </p>
+                                    </li>
+                                {% endif %}
                             </ul>
                         </div>
                     </div>
