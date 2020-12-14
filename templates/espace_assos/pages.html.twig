@@ -49,7 +49,7 @@
                             </ul>
                             <ul class="list-group list-group-flush" id="nav-list">
                                 <li class="list-group-item" style="display: none">
-                                    <a href="#page-home" data-toggle="tab" aria-controls="home" aria-selected="true"></a>
+                                    <a href="#page-home" data-toggle="tab" class="active" aria-controls="home" aria-selected="true"></a>
                                 </li>
                                 {% for page in project.pages | sort((a, b) => a.orderPosition <=> b.orderPosition) %}
                                     <li class="list-group-item d-flex justify-content-between align-items-center page-list-item" id="page-list-{{ page.id }}">
@@ -70,7 +70,7 @@
                         </div>
                         <ul style="display: none">
                             <li class="list-group-item d-flex justify-content-between align-items-center" id="list-template">
-                                <span contenteditable="true">%name%</span>
+                                <span contenteditable="true" class="page-name">%name%</span>
                                 <a href="#page-%id%" data-toggle="tab" aria-controls="page-%id%" aria-selected="false"></a>
                                 <div class="btn-group-toggle btn-group-sm role-buttons" data-toggle="buttons">
                                     <label class="btn btn-success boutonPublier">

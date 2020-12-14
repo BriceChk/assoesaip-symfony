@@ -108,7 +108,7 @@ window.save = function () {
         let item = $(this);
         let m = {
             user: item.attr('id'),
-            orderPosition: i,
+            order_position: i,
             role: item.find('.role-input').val(),
             admin: item.find('.boutonAdmin').hasClass("active"),
             introduction: item.find('.intro-ta').val()

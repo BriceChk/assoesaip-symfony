@@ -21,7 +21,6 @@ class HomeController extends AbstractController
         $categories = $categRepo->findBy(array('visible' => 1), array('order' => 'ASC'));
 
         // TODO Mettre un bouton charger + // Vérifier que la limite de 20 articles + events marche bien
-        // TODO Faire fonctionner la recherche
 
         /** @var User $user */
         $user = $this->getUser();

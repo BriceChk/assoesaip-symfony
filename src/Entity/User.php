@@ -166,7 +166,7 @@ class User implements UserInterface
      * @return string
      */
     public function getFullNameAndEmail() {
-        return $this->getFullName() . ' (' . $this->email . ')';
+        return $this->getFullName() . ' (' . $this->username . ')';
     }
 
     public function getUsername() {
