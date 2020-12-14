@@ -10,6 +10,7 @@ use App\Entity\EventOccurrence;
 use App\Entity\News;
 use App\Entity\Project;
 use App\Entity\ProjectCategory;
+use App\Entity\UploadedImage;
 use App\Entity\User;
 use App\Utils;
 use DateTime;
@@ -24,8 +25,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Vich\UploaderBundle\Handler\UploadHandler;
 
-//TODO Image upload + Discord integration
+//TODO Discord integration + notifications
 
 class API_EventController extends AbstractFOSRestController {
     /**
@@ -188,6 +190,15 @@ class API_EventController extends AbstractFOSRestController {
         $em->persist($event);
         $em->flush();
 
+        $imagesRep = $this->getDoctrine()->getRepository(UploadedImage::class);
+        $images = $imagesRep->findAllOrphanImagesByProject($project);
+        foreach ($images as $i) {
+            $i->setEvent($event);
+            $em->persist($i);
+        }
+
+        $em->flush();
+
         return $event;
     }
 
@@ -231,9 +242,10 @@ class API_EventController extends AbstractFOSRestController {
      * @param SluggerInterface $slugger
      * @return Event|\FOS\RestBundle\View\View|object|Response
      */
-    public function updateEvent($id, Request $request, ValidatorInterface $validator, HTMLPurifier $purifier, SluggerInterface $slugger) {
+    public function updateEvent($id, Request $request, ValidatorInterface $validator, HTMLPurifier $purifier, SluggerInterface $slugger, UploadHandler $handler) {
         $response = new Response();
 
+        $em = $this->getDoctrine()->getManager();
         $rep = $this->getDoctrine()->getRepository(Event::class);
         $event = $rep->find($id);
 
@@ -280,6 +292,14 @@ class API_EventController extends AbstractFOSRestController {
             return $response;
         }
 
+        // Checking if the Article Images are in the article
+        foreach ($event->getUploadedImages() as $p) {
+            if (strpos($event->getHtml(), $p->getFileName()) === false) {
+                $handler->remove($p, 'file');
+                $em->remove($p);
+            }
+        }
+
         $publishNews = false;
 
         if (!$json['published']) {
@@ -309,8 +329,6 @@ class API_EventController extends AbstractFOSRestController {
             }
         }
         $event->setPublished($json['published']);
-
-        $em = $this->getDoctrine()->getManager();
 
         // On enlève l'éventuelle news de l'event si l'event n'est pas publié ou en privé
         if (!$event->isPublished() || $event->isPrivate()) {
@@ -630,6 +648,74 @@ class API_EventController extends AbstractFOSRestController {
         }
 
         return $this->view($events);
+    }
+
+    /**
+     * Upload an image for an Event. The user must be a Project admin.
+     * @OA\Response (
+     *     response = 200,
+     *     description = "The new image has been saved. The body contains the image URL."
+     * )
+     * @OA\Response (
+     *     response = 404,
+     *     description = "The requested Event doesn't exist"
+     * )
+     * @OA\Response (
+     *     response = 403,
+     *     description = "The user is not a Project admin"
+     * )
+     * @OA\Parameter (
+     *     name = "id",
+     *     in="path",
+     *     description="The Event unique identifier",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Parameter (
+     *     name = "file",
+     *     in="query",
+     *     description="The image file.",
+     *     @OA\Schema(type="file")
+     * )
+     * @OA\Tag(name="Event")
+     * @Rest\Post(
+     *     path = "/api/event/{id}/image",
+     *     name = "api_event_upload_image",
+     *     requirements = { "id"="\d+" }
+     * )
+     * @IsGranted("ROLE_USER")
+     * @param $id
+     * @param Request $request
+     * @return Response
+     */
+    public function uploadImage($id, Request $request): Response {
+        $response = new Response();
+
+        $rep = $this->getDoctrine()->getRepository(Event::class);
+        $event = $rep->find($id);
+
+        if ($event == null) {
+            $response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $response->setContent(Utils::jsonMsg("Aucun événement trouvé avec cet ID."));
+            return $response;
+        }
+
+        if (!$this->isGranted('PROJECT_ADMIN', $event->getProject())) {
+            $response->setStatusCode(Response::HTTP_FORBIDDEN);
+            $response->setContent(Utils::jsonMsg("Vous n'êtes pas administrateur de ce projet."));
+            return $response;
+        }
+
+        $image = new UploadedImage();
+        $image->setEvent($event);
+        $image->setProject($event->getProject());
+        $image->setFile($request->files->get('image')['file']);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($image);
+        $em->flush();
+
+        $response->setContent('/images/uploaded-images/' . $image->getFileName());
+        return $response;
     }
 
     private function makeFCEvent($occ, $event): array {

@@ -24,10 +24,34 @@ const summernoteOptions = {
     fontNames: ['Segoe UI'],
     callbacks: {
         onImageUpload: function(files) {
-            //uploadSummerNoteImage(files[0]);
+            uploadSummerNoteImage(files[0]);
         }
     }
 };
+
+function uploadSummerNoteImage(file) {
+    let data = new FormData();
+    data.append("image[file]", file);
+
+    $.ajax({
+        type: "POST",
+        url: '/api/ressource-page/' +getCurrentPageId() + '/image',
+        contentType: false,
+        processData: false,
+        dataType: 'text',
+        enctype: 'multipart/form-data',
+        data: data,
+        success: function(url) {
+            let img = $('<img>').attr({src: url, class: 'img-fluid'});
+            $('#summernote-' + getCurrentPageId()).summernote('insertNode', img[0]);
+        }
+    });
+}
+
+function getCurrentPageId() {
+    let page = $("#nav-list a.active").attr('href');
+    return page.split('-')[1];
+}
 
 $(document).ready(function () {
     let el = document.getElementById('nav-list');

@@ -6,9 +6,9 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Entity\ArticleCategory;
-use App\Entity\FcmToken;
 use App\Entity\News;
 use App\Entity\Project;
+use App\Entity\UploadedImage;
 use App\Utils;
 use DateTime;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -16,7 +16,6 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\View;
 use HTMLPurifier;
 use Kreait\Firebase\Messaging;
-use Kreait\Firebase\Messaging\CloudMessage;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -24,8 +23,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Vich\UploaderBundle\Handler\UploadHandler;
 
-//TODO Image upload + Discord integration + notifications
+//TODO Discord integration + notifications
 
 class API_ArticleController extends AbstractFOSRestController {
     /**
@@ -159,6 +159,15 @@ class API_ArticleController extends AbstractFOSRestController {
         $em->persist($article);
         $em->flush();
 
+        $imagesRep = $this->getDoctrine()->getRepository(UploadedImage::class);
+        $images = $imagesRep->findAllOrphanImagesByProject($project);
+        foreach ($images as $i) {
+            $i->setArticle($article);
+            $em->persist($i);
+        }
+
+        $em->flush();
+
         return $article;
     }
 
@@ -257,11 +266,13 @@ class API_ArticleController extends AbstractFOSRestController {
      * @param HTMLPurifier $purifier
      * @param SluggerInterface $slugger
      * @param Messaging $messaging
+     * @param UploadHandler $handler
      * @return Article|\FOS\RestBundle\View\View|object|Response
      */
-    public function updateArticle($id, Request $request, ValidatorInterface $validator, HTMLPurifier $purifier, SluggerInterface $slugger, Messaging $messaging) {
+    public function updateArticle($id, Request $request, ValidatorInterface $validator, HTMLPurifier $purifier, SluggerInterface $slugger, Messaging $messaging, UploadHandler $handler) {
         $response = new Response();
 
+        $em = $this->getDoctrine()->getManager();
         $rep = $this->getDoctrine()->getRepository(Article::class);
         $article = $rep->find($id);
 
@@ -292,6 +303,14 @@ class API_ArticleController extends AbstractFOSRestController {
         $article->setHtml($purifier->purify($json['html']));
         $article->setDateEdited(new DateTime('now'));
 
+        // Checking if the Article Images are in the article
+        foreach ($article->getUploadedImages() as $p) {
+            if (strpos($article->getHtml(), $p->getFileName()) === false) {
+                $handler->remove($p, 'file');
+                $em->remove($p);
+            }
+        }
+
         $publishNews = false;
 
         if (!$json['published']) {
@@ -321,8 +340,6 @@ class API_ArticleController extends AbstractFOSRestController {
             }
         }
         $article->setPublished($json['published']);
-
-        $em = $this->getDoctrine()->getManager();
 
         // On enlève l'éventuelle news de l'article si l'article n'est pas publié ou en privé
         if (!$article->isPublished() || $article->isPrivate()) {
@@ -362,5 +379,73 @@ class API_ArticleController extends AbstractFOSRestController {
         $em->flush();
 
         return $article;
+    }
+
+    /**
+     * Upload an image for an Article. The user must be a Project admin.
+     * @OA\Response (
+     *     response = 200,
+     *     description = "The new image has been saved. The body contains the image URL."
+     * )
+     * @OA\Response (
+     *     response = 404,
+     *     description = "The requested Article doesn't exist"
+     * )
+     * @OA\Response (
+     *     response = 403,
+     *     description = "The user is not a Project admin"
+     * )
+     * @OA\Parameter (
+     *     name = "id",
+     *     in="path",
+     *     description="The Article unique identifier",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Parameter (
+     *     name = "file",
+     *     in="query",
+     *     description="The image file.",
+     *     @OA\Schema(type="file")
+     * )
+     * @OA\Tag(name="Article")
+     * @Rest\Post(
+     *     path = "/api/article/{id}/image",
+     *     name = "api_article_upload_image",
+     *     requirements = { "id"="\d+" }
+     * )
+     * @IsGranted("ROLE_USER")
+     * @param $id
+     * @param Request $request
+     * @return Response
+     */
+    public function uploadImage($id, Request $request): Response {
+        $response = new Response();
+
+        $rep = $this->getDoctrine()->getRepository(Article::class);
+        $article = $rep->find($id);
+
+        if ($article == null) {
+            $response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $response->setContent(Utils::jsonMsg("Aucun article trouvé avec cet ID."));
+            return $response;
+        }
+
+        if (!$this->isGranted('PROJECT_ADMIN', $article->getProject())) {
+            $response->setStatusCode(Response::HTTP_FORBIDDEN);
+            $response->setContent(Utils::jsonMsg("Vous n'êtes pas administrateur de ce projet."));
+            return $response;
+        }
+
+        $image = new UploadedImage();
+        $image->setArticle($article);
+        $image->setProject($article->getProject());
+        $image->setFile($request->files->get('image')['file']);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($image);
+        $em->flush();
+
+        $response->setContent('/images/uploaded-images/' . $image->getFileName());
+        return $response;
     }
 }

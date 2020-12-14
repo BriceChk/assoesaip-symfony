@@ -23,10 +23,30 @@ summernote.summernote({
     fontNames: ['Segoe UI'],
     callbacks: {
         onImageUpload: function(files) {
-            //uploadSummerNoteImage(files[0]);
+            uploadSummerNoteImage(files[0]);
         }
     }
 });
+
+function uploadSummerNoteImage(file) {
+    let data = new FormData();
+    data.append("image[file]", file);
+    let url = articleId === -1 ? '/api/project/' + projectId + '/image' : "/api/article/" + articleId + '/image';
+
+    $.ajax({
+        type: "POST",
+        url: url,
+        contentType: false,
+        processData: false,
+        dataType: 'text',
+        enctype: 'multipart/form-data',
+        data: data,
+        success: function(url) {
+            let img = $('<img>').attr({src: url, class: 'img-fluid'});
+            $('#summernote').summernote('insertNode', img[0]);
+        }
+    });
+}
 
 $(function () {
     $('[data-toggle="tooltip"]').tooltip()
@@ -47,7 +67,7 @@ window.save = function (published) {
     let url = '/api/article/' + articleId;
     if (articleId === -1) {
         method = 'PUT';
-        url = '/api/project/' + id + '/articles';
+        url = '/api/project/' + projectId + '/articles';
     }
 
     $.ajax({

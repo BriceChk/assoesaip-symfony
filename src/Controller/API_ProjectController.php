@@ -4,6 +4,7 @@ namespace App\Controller;
 use App\Entity\Project;
 use App\Entity\ProjectCategory;
 use App\Entity\ProjectMember;
+use App\Entity\UploadedImage;
 use App\Entity\User;
 use App\Utils;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -16,6 +17,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Vich\UploaderBundle\Handler\UploadHandler;
 
 class API_ProjectController extends AbstractFOSRestController {
     /**
@@ -517,9 +519,10 @@ class API_ProjectController extends AbstractFOSRestController {
      * @param Request $request
      * @param ValidatorInterface $validator
      * @param \HTMLPurifier $purifier
+     * @param UploadHandler $handler
      * @return Project|\FOS\RestBundle\View\View|Response
      */
-    public function updateHomePage($id, Request $request, ValidatorInterface $validator, \HTMLPurifier $purifier) {
+    public function updateHomePage($id, Request $request, ValidatorInterface $validator, \HTMLPurifier $purifier, UploadHandler $handler) {
         $response = new Response();
         $em = $this->getDoctrine();
         $rep = $em->getRepository(Project::class);
@@ -539,6 +542,15 @@ class API_ProjectController extends AbstractFOSRestController {
         $json = $request->request->all();
         $project->setHtml($purifier->purify($json['html']));
 
+        // Checking if the ProjectPage Images are in the article
+        $rep = $em->getRepository(UploadedImage::class);
+        foreach ($rep->findAllOrphanImagesByProject($project) as $p) {
+            if (strpos($project->getHtml(), $p->getFileName()) === false) {
+                $handler->remove($p, 'file');
+                $em->getManager()->remove($p);
+            }
+        }
+
         $errors = $validator->validate($project);
         if (count($errors)) {
             return $this->view($errors, Response::HTTP_BAD_REQUEST);
@@ -549,5 +561,72 @@ class API_ProjectController extends AbstractFOSRestController {
         $em->flush();
 
         return $project;
+    }
+
+    /**
+     * Upload an image for a Project. It is used to temporarily store images for new Articles or Events. The user must be a Project admin.
+     * @OA\Response (
+     *     response = 200,
+     *     description = "The new image has been saved. The body contains the image URL."
+     * )
+     * @OA\Response (
+     *     response = 404,
+     *     description = "The requested Project doesn't exist"
+     * )
+     * @OA\Response (
+     *     response = 403,
+     *     description = "The user is not a Project admin"
+     * )
+     * @OA\Parameter (
+     *     name = "id",
+     *     in="path",
+     *     description="The Project unique identifier",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Parameter (
+     *     name = "file",
+     *     in="query",
+     *     description="The image file.",
+     *     @OA\Schema(type="file")
+     * )
+     * @OA\Tag(name="Project")
+     * @Rest\Post(
+     *     path = "/api/project/{id}/image",
+     *     name = "api_project_upload_image",
+     *     requirements = { "id"="\d+" }
+     * )
+     * @IsGranted("ROLE_USER")
+     * @param $id
+     * @param Request $request
+     * @return Response
+     */
+    public function uploadImage($id, Request $request): Response {
+        $response = new Response();
+
+        $rep = $this->getDoctrine()->getRepository(Project::class);
+        $project = $rep->find($id);
+
+        if ($project == null) {
+            $response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $response->setContent(Utils::jsonMsg("Aucun projet trouvé avec cet ID."));
+            return $response;
+        }
+
+        if (!$this->isGranted('PROJECT_ADMIN', $project)) {
+            $response->setStatusCode(Response::HTTP_FORBIDDEN);
+            $response->setContent(Utils::jsonMsg("Vous n'êtes pas administrateur de ce projet."));
+            return $response;
+        }
+
+        $image = new UploadedImage();
+        $image->setProject($project);
+        $image->setFile($request->files->get('image')['file']);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($image);
+        $em->flush();
+
+        $response->setContent('/images/uploaded-images/' . $image->getFileName());
+        return $response;
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -50,6 +52,16 @@ class ProjectPage
      * @Groups({"list", "page-full"})
      */
     private $published;
+
+    /**
+     * @ORM\OneToMany(targetEntity=UploadedImage::class, mappedBy="projectPage", cascade={"remove"})
+     */
+    private $uploadedImages;
+
+    public function __construct()
+    {
+        $this->uploadedImages = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -112,6 +124,36 @@ class ProjectPage
     public function setPublished(bool $published): self
     {
         $this->published = $published;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|UploadedImage[]
+     */
+    public function getUploadedImages(): Collection
+    {
+        return $this->uploadedImages;
+    }
+
+    public function addUploadedImage(UploadedImage $uploadedImage): self
+    {
+        if (!$this->uploadedImages->contains($uploadedImage)) {
+            $this->uploadedImages[] = $uploadedImage;
+            $uploadedImage->setProjectPage($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUploadedImage(UploadedImage $uploadedImage): self
+    {
+        if ($this->uploadedImages->removeElement($uploadedImage)) {
+            // set the owning side to null (unless already changed)
+            if ($uploadedImage->getProjectPage() === $this) {
+                $uploadedImage->setProjectPage(null);
+            }
+        }
 
         return $this;
     }

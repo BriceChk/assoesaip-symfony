@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -81,6 +83,21 @@ class Article
      * @ORM\JoinColumn(nullable=false)
      */
     private $category;
+
+    /**
+     * @ORM\OneToMany(targetEntity=UploadedImage::class, mappedBy="article", cascade={"remove"} )
+     */
+    private $uploadedImages;
+
+    /**
+     * @ORM\OneToOne(targetEntity=News::class, mappedBy="article", cascade={"remove"})
+     */
+    private $news;
+
+    public function __construct()
+    {
+        $this->uploadedImages = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -215,5 +232,48 @@ class Article
 
     public function getCampus() {
         return $this->project->getCampus();
+    }
+
+    public function getNews() {
+        return $this->news;
+    }
+
+    /**
+     * @param News $news
+     * @return Article
+     */
+    public function setNews(News $news): Article {
+        $this->news = $news;
+        return $this;
+    }
+
+    /**
+     * @return Collection|UploadedImage[]
+     */
+    public function getUploadedImages(): Collection
+    {
+        return $this->uploadedImages;
+    }
+
+    public function addUploadedImage(UploadedImage $uploadedImage): self
+    {
+        if (!$this->uploadedImages->contains($uploadedImage)) {
+            $this->uploadedImages[] = $uploadedImage;
+            $uploadedImage->setArticle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUploadedImage(UploadedImage $uploadedImage): self
+    {
+        if ($this->uploadedImages->removeElement($uploadedImage)) {
+            // set the owning side to null (unless already changed)
+            if ($uploadedImage->getArticle() === $this) {
+                $uploadedImage->setArticle(null);
+            }
+        }
+
+        return $this;
     }
 }

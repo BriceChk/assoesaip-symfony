@@ -215,7 +215,7 @@
 {% block javascripts %}
     {{ parent() }}
     <script>
-        const id = {{ projectId }};
+        const projectId = {{ projectId }};
         let eventId = {{ eventId }}
     </script>
     <script src="{{ asset('build/js/moment/moment-with-locales.js') }}"></script>

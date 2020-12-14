@@ -61,11 +61,31 @@ $(document).ready(function () {
         fontNames: ['Segoe UI'],
         callbacks: {
             onImageUpload: function(files) {
-                //uploadSummerNoteImage(files[0]);
+                uploadSummerNoteImage(files[0]);
             }
         }
     });
 });
+
+function uploadSummerNoteImage(file) {
+    let data = new FormData();
+    data.append("image[file]", file);
+    let url = eventId === -1 ? '/api/project/' + projectId + '/image' : "/api/event/" + eventId + '/image';
+
+    $.ajax({
+        type: "POST",
+        url: url,
+        contentType: false,
+        processData: false,
+        dataType: 'text',
+        enctype: 'multipart/form-data',
+        data: data,
+        success: function(url) {
+            let img = $('<img>').attr({src: url, class: 'img-fluid'});
+            $('#summernote').summernote('insertNode', img[0]);
+        }
+    });
+}
 
 window.save = function (published) {
     let allDay = $('#allDay').is(':checked');
@@ -133,7 +153,7 @@ window.save = function (published) {
     let url = '/api/event/' + eventId;
     if (eventId === -1) {
         method = 'PUT';
-        url = '/api/project/' + id + '/events';
+        url = '/api/project/' + projectId + '/events';
     }
 
     $.ajax({

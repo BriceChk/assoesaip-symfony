@@ -31,12 +31,12 @@ class News
     private $link;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Article")
+     * @ORM\OneToOne(targetEntity="App\Entity\Article", inversedBy="news")
      */
     private $article;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Event")
+     * @ORM\OneToOne(targetEntity="App\Entity\Event", inversedBy="news")
      */
     private $event;
 

@@ -188,6 +188,11 @@ class Project
      */
     private $news;
 
+    /**
+     * @ORM\OneToMany(targetEntity=UploadedImage::class, mappedBy="project", cascade={"remove"})
+     */
+    private $uploadedImages;
+
     public function __construct()
     {
         $this->childrenProjects = new ArrayCollection();
@@ -197,6 +202,7 @@ class Project
         $this->roomBooks = new ArrayCollection();
         $this->pages = new ArrayCollection();
         $this->news = new ArrayCollection();
+        $this->uploadedImages = new ArrayCollection();
     }
 
     /**
@@ -588,6 +594,36 @@ class Project
             // set the owning side to null (unless already changed)
             if ($news->getProject() === $this) {
                 $news->setProject(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|UploadedImage[]
+     */
+    public function getUploadedImages(): Collection
+    {
+        return $this->uploadedImages;
+    }
+
+    public function addUploadedImage(UploadedImage $uploadedImage): self
+    {
+        if (!$this->uploadedImages->contains($uploadedImage)) {
+            $this->uploadedImages[] = $uploadedImage;
+            $uploadedImage->setProject($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUploadedImage(UploadedImage $uploadedImage): self
+    {
+        if ($this->uploadedImages->removeElement($uploadedImage)) {
+            // set the owning side to null (unless already changed)
+            if ($uploadedImage->getProject() === $this) {
+                $uploadedImage->setProject(null);
             }
         }
 

@@ -130,9 +130,20 @@ class Event
      */
     private $occurrences;
 
+    /**
+     * @ORM\OneToMany(targetEntity=UploadedImage::class, mappedBy="event", cascade={"remove"})
+     */
+    private $uploadedImages;
+
+    /**
+     * @ORM\OneToOne(targetEntity=News::class, mappedBy="event", cascade={"remove"})
+     */
+    private $news;
+
     public function __construct()
     {
         $this->occurrences = new ArrayCollection();
+        $this->uploadedImages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -403,5 +414,35 @@ class Event
 
     public function getCampus() {
         return $this->project->getCampus();
+    }
+
+    /**
+     * @return Collection|UploadedImage[]
+     */
+    public function getUploadedImages(): Collection
+    {
+        return $this->uploadedImages;
+    }
+
+    public function addUploadedImage(UploadedImage $uploadedImage): self
+    {
+        if (!$this->uploadedImages->contains($uploadedImage)) {
+            $this->uploadedImages[] = $uploadedImage;
+            $uploadedImage->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUploadedImage(UploadedImage $uploadedImage): self
+    {
+        if ($this->uploadedImages->removeElement($uploadedImage)) {
+            // set the owning side to null (unless already changed)
+            if ($uploadedImage->getEvent() === $this) {
+                $uploadedImage->setEvent(null);
+            }
+        }
+
+        return $this;
     }
 }
