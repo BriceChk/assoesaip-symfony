@@ -110,7 +110,8 @@
                             </div>
                             <div class="form-group" id="inputDaysGroup" style="display: none;">
                                 <label for="inputDaysDuration">Durée (jours)</label>
-                                <input type="number" min="1" class="form-control" id="inputDaysDuration" value="{{ def and event.allDay ? event.duration / 1440 : 1 }}">
+                                {# We add 1440 minutes to the duration to make it equal to the number of days of the event #}
+                                <input type="number" min="1" class="form-control" id="inputDaysDuration" value="{{ def and event.allDay ? (event.duration + 1440) / 1440 : 1 }}">
                             </div>
                             <div class="form-group" id="inputEndDateGroup">
                                 <label>Date de fin</label>
