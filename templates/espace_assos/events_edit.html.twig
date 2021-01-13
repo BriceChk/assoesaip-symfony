@@ -200,6 +200,12 @@
                             <span id="draft-div" {{ published ? 'style="display: none"' }}>
                                 <span class="badge badge-secondary">Brouillon</span>
                                 <p>Publier l'événement générera un lien vers celui-ci et publiera une actu visible sur la page d'accueil et l'appli.</p>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="notifCheck">
+                                    <label class="custom-control-label" for="notifCheck">Envoyer une notification aux étudiants</label><br>
+                                    <small class="text-muted">Seulement si l'événement est en public</small>
+                                </div>
+                                <br>
                                 <button id="pub-btn" type="button" class="btn btn-success" onclick="save(true)" {{ not def ? 'style="display: none"' }}>Publier</button>
                             </span>
                             <button id="save-btn" type="button" class="btn btn-primary" onclick="save({{ event is defined and event.published ? 'true' : 'false' }})">Enregistrer</button>
