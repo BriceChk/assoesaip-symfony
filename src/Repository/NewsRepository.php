@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\News;
+use App\Entity\ProjectCategory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,6 +18,54 @@ class NewsRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, News::class);
+    }
+
+    /**
+     * @param $count
+     * @param string $campus
+     * @return News[] Returns an array of News objects
+     */
+    public function findLatestNews($count, $campus = "A"): array {
+        return $this->createQueryBuilder('n')
+            ->innerJoin('n.project', 'p')
+            ->andWhere('p.campus LIKE :val')
+            ->setParameter('val', '%' . $campus . '%')
+            ->orderBy('n.datePublished', 'DESC')
+            ->setMaxResults($count)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
+     * @param $count
+     * @param string $campus
+     * @return News[] Returns an array of News objects
+     */
+    public function findStarredNews($campus = "A"): array {
+        return $this->createQueryBuilder('n')
+            ->innerJoin('n.project', 'p')
+            ->andWhere('p.campus LIKE :val')
+            ->andWhere('n.starred = 1')
+            ->setParameter('val', '%' . $campus . '%')
+            ->orderBy('n.datePublished', 'DESC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+
+    public function findCategoryNews(ProjectCategory $categ, $campus = "A"): array {
+        return $this->createQueryBuilder('n')
+            ->innerJoin('n.project', 'p')
+            ->andWhere('p.campus LIKE :val')
+            ->andWhere('p.category = :categ')
+            ->setParameter('val', '%' . $campus . '%')
+            ->setParameter('categ', $categ)
+            ->orderBy('n.datePublished', 'DESC')
+            ->getQuery()
+            ->getResult()
+            ;
     }
 
     // /**
