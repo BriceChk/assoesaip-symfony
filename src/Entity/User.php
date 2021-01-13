@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
+use JMS\Serializer\Annotation\Groups;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -24,24 +25,28 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"article", "event", "profile"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
+     * @Groups({"article", "event", "profile"})
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
+     * @Groups({"article", "event", "profile"})
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", unique=true)
      * @Assert\Email()
+     * @Groups({"article", "event", "profile"})
      */
     private $username;
 
@@ -57,11 +62,15 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=15)
+     * @Groups({"article", "event", "profile", "profileEdit"})
+     * @Assert\Choice({"ING1", "ING2", "IR3", "IR4", "IR5", "IRA3", "IRA4", "IRA5", "SEP3", "SEP4", "SEP5", "SEPA3", "SEPA4", "SEPA5", "CPI", "BACH1", "BACH2", "BACH3", "Personnel esaip"})
      */
     private $promo = '';
 
     /**
      * @ORM\Column(type="string", length=15)
+     * @Groups({"article", "event", "profile", "profileEdit"})
+     * @Assert\Choice({"Angers", "Aix"})
      */
     private $campus = '';
 
@@ -76,6 +85,7 @@ class User implements UserInterface
     /**
      * var string
      * @ORM\Column(type="string", nullable=true)
+     * @Groups({"article", "event", "profile"})
      */
     private $avatarFileName;
 

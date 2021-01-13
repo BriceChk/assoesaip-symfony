@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -14,12 +15,14 @@ class News
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"news"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="text")
      * @Assert\Length(max="240", maxMessage="Le message ne doit pas dépasser 240 caractères")
+     * @Groups({"news"})
      */
     private $content = "";
 
@@ -27,32 +30,38 @@ class News
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Length(max="255", maxMessage="Le lien ne doit pas dépasser 255 caractères")
      * @Assert\Url(message="L'url est invalide")
+     * @Groups({"news"})
      */
     private $link;
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Article", inversedBy="news")
+     * @Groups({"news"})
      */
     private $article;
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Event", inversedBy="news")
+     * @Groups({"news"})
      */
     private $event;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"news"})
      */
     private $datePublished;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Project", inversedBy="news")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"news"})
      */
     private $project;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"news"})
      */
     private $starred = false;
 

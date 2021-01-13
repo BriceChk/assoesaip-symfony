@@ -25,7 +25,7 @@ class Project
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"basic"})
+     * @Groups({"basic", "news", "article", "event", "categProjectList", "eventOccList"})
      */
     private $id;
 
@@ -38,7 +38,7 @@ class Project
      *     maxMessage = "Le nom du projet ne doit pas dépasser {{ limit }} caractères"
      * )
      * @ORM\Column(type="string", length=50)
-     * @Groups({"basic"})
+     * @Groups({"basic", "news", "article", "event", "categProjectList", "eventOccList"})
      */
     private $name;
 
@@ -51,7 +51,7 @@ class Project
      *     maxMessage = "L'URL ne doit pas dépasser {{ limit }} caractères"
      * )
      * @ORM\Column(type="string", length=30, unique=true)
-     * @Groups({"basic"})
+     * @Groups({"basic", "article", "event", "categProjectList"})
      */
     private $url;
 
@@ -61,7 +61,7 @@ class Project
      *     message = "Le type de projet est invalide"
      * )
      * @ORM\Column(type="string", length=15)
-     * @Groups({"basic"})
+     * @Groups({"basic", "categProjectList"})
      */
     private $type;
 
@@ -77,19 +77,20 @@ class Project
      *     message = "Le campus est invalide"
      * )
      * @ORM\Column(type="string", length=6)
-     * @Groups({"basic"})
+     * @Groups({"basic", "categProjectList"})
      */
     private $campus;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Project", inversedBy="childrenProjects")
      * @ORM\JoinColumn(onDelete="SET NULL")
+     * @Groups({"basic"})
      */
     private $parentProject;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Project", mappedBy="parentProject")
-     * @Serializer\Exclude()
+     * @Groups({"categProjectList"})
      */
     private $childrenProjects;
 
@@ -121,6 +122,7 @@ class Project
      *     maxMessage="La description ne doit pas dépasser 180 caractères"
      * )
      * @ORM\Column(type="string", length=180)
+     * @Groups({"categProjectList", "article", "event"})
      */
     private $description;
 
@@ -128,12 +130,14 @@ class Project
      * @var File|null
      * @Vich\UploadableField(mapping="project_logo", fileNameProperty="logoFileName")
      * @Assert\Image(mimeTypesMessage="Le format du logo est invalide")
+     * @Serializer\Exclude
      */
     private $logoFile;
 
     /**
     * var string
     * @ORM\Column(type="string", nullable=true)
+    * @Groups({"news", "article", "event", "categProjectList", "eventOccList"})
     */
     private $logoFileName;
 
@@ -190,6 +194,7 @@ class Project
 
     /**
      * @ORM\OneToMany(targetEntity=UploadedImage::class, mappedBy="project", cascade={"remove"})
+     * @Serializer\Exclude()
      */
     private $uploadedImages;
 

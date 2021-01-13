@@ -5,6 +5,8 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
+use JMS\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -16,81 +18,96 @@ class Article
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"news", "article"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string")
+     * @Groups({"news", "article"})
      */
     private $url = "";
 
     /**
      * @ORM\Column(type="string", length=50)
      * @Assert\Length(max="50", maxMessage="Le titre ne doit pas dépasser 50 caractères")
+     * @Groups({"news", "article"})
      */
     private $title;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="articles")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"article"})
      */
     private $author;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Project", inversedBy="articles")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"article"})
      */
     private $project;
 
     /**
      * @ORM\Column(type="string", length=180)
      * @Assert\Length(max="180", maxMessage="Le résumé ne doit pas dépasser 180 caractères")
+     * @Groups({"news", "article"})
      */
     private $abstract;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups({"article"})
      */
     private $html;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"article"})
      */
     private $dateCreated;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"article"})
      */
     private $dateEdited;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"article"})
      */
     private $datePublished;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"article"})
      */
     private $published;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"article"})
      */
     private $private;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\ArticleCategory", inversedBy="articles")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"article"})
      */
     private $category;
 
     /**
      * @ORM\OneToMany(targetEntity=UploadedImage::class, mappedBy="article", cascade={"remove"} )
+     * @Serializer\Exclude
      */
     private $uploadedImages;
 
     /**
      * @ORM\OneToOne(targetEntity=News::class, mappedBy="article", cascade={"remove"})
+     * @Serializer\Exclude
      */
     private $news;
 

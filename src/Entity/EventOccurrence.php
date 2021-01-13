@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\EventOccurrenceRepository")
@@ -13,17 +14,20 @@ class EventOccurrence
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"event", "eventOccList"})
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Event", inversedBy="occurrences")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"eventOccList"})
      */
     private $event;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"event", "eventOccList"})
      */
     private $date;
 
