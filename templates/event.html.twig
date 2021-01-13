@@ -59,8 +59,8 @@
                                 <ul class="list-group list-group-flush">
                                     {% if event.occurrencesCount == 1 %}
                                         {% if event.allDay %}
-                                            {% set start = event.dateStart|format_date(pattern="EEEE dd MMM",locale='fr') ~ ', toute la journée'|capitalize %}
-                                            {% set end = event.dateEnd|format_date(locale='fr') ~ ', toute la journée' %}
+                                            {% set start = event.dateStart|format_date(pattern="EEEE dd MMM",locale='fr') ~ ' toute la journée'|capitalize %}
+                                            {% set end = event.dateEnd|format_date(pattern="EEEE dd MMM",locale='fr') ~ ' toute la journée'|capitalize %}
                                         {% else %}
                                             {% set start = event.dateStart|format_datetime(pattern="EEEE dd MMM H'h'mm", locale='fr')|capitalize %}
                                             {% set end = event.dateEnd|format_datetime(pattern="EEEE dd MMM H'h'mm", locale='fr')|capitalize %}
