@@ -6,9 +6,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ProjectCategoryRepository")
+ * @ORM\HasLifecycleCallbacks
+ * @Vich\Uploadable()
  */
 class ProjectCategory
 {
@@ -43,6 +48,20 @@ class ProjectCategory
      * @ORM\Column(type="integer")
      */
     private $order = 100;
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="category_logo", fileNameProperty="logoFileName")
+     * @Assert\Image(mimeTypesMessage="Le format du logo est invalide")
+     * @Serializer\Exclude
+     */
+    private $logoFile;
+
+    /**
+     * var string
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $logoFileName;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Project", mappedBy="category")
@@ -105,6 +124,31 @@ class ProjectCategory
     {
         $this->visible = $visible;
 
+        return $this;
+    }
+
+    /**
+     * @return File|null
+     */
+    public function getLogoFile(): ?File {
+        return $this->logoFile;
+    }
+
+    /**
+     * @param File|null $logoFile
+     * @return ProjectCategory
+     */
+    public function setLogoFile(?File $logoFile): ProjectCategory {
+        $this->logoFile = $logoFile;
+        return $this;
+    }
+
+    public function getLogoFileName() {
+        return $this->logoFileName;
+    }
+
+    public function setLogoFileName($logoFileName): ProjectCategory {
+        $this->logoFileName = $logoFileName;
         return $this;
     }
 
