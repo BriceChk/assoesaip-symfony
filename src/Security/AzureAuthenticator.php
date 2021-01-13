@@ -53,6 +53,7 @@ class AzureAuthenticator extends SocialAuthenticator
             return $existingUser;
         }
 
+        // Check si le compte vient de l'esaip
         if (strpos($azureUser->getUpn(), '@esaip.org') === false) {
             return null;
         }
@@ -85,6 +86,9 @@ class AzureAuthenticator extends SocialAuthenticator
 
         // Redirect to last page
         $targetUrl = $session->get('redirect_uri', $homeUrl);
+        if (strpos($targetUrl, 'favicon') !== false) {
+            $targetUrl = $homeUrl;
+        }
         $session->remove('redirect_uri');
 
         return new RedirectResponse($targetUrl);
