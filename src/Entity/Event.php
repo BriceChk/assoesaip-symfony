@@ -2,9 +2,12 @@
 
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
+use JMS\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -16,127 +19,151 @@ class Event
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"news", "event", "eventOccList"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string")
+     * @Groups({"news", "event"})
      */
     private $url = "";
 
     /**
      * @ORM\Column(type="string", length=50)
      * @Assert\Length(max="50", maxMessage="Le titre ne doit pas dépasser 50 caractères")
+     * @Groups({"news", "event", "eventOccList"})
      */
     private $title;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="events")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"event"})
      */
     private $author;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Project", inversedBy="events")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"event", "eventOccList"})
      */
     private $project;
 
     /**
      * @ORM\Column(type="string", length=180)
      * @Assert\Length(max="180", maxMessage="Le résumé ne doit pas dépasser 180 caractères")
+     * @Groups({"news", "event", "eventOccList"})
      */
     private $abstract;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups({"event"})
      */
     private $html;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"event"})
      */
     private $dateCreated;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"event"})
      */
     private $dateEdited;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"event"})
      */
     private $datePublished;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"event"})
      */
     private $published;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"event"})
      */
     private $private;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\EventCategory", inversedBy="events")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"event", "eventOccList"})
      */
     private $category;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"event", "eventOccList"})
      */
     private $dateStart;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"event", "eventOccList"})
      */
     private $dateEnd;
 
     /**
      * @ORM\Column(type="integer")
      * Duration in minutes
+     * @Groups({"event", "eventOccList"})
      */
     private $duration;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"event", "eventOccList"})
      */
     private $allDay;
 
     /**
      * @ORM\Column(type="json")
+     * @Groups({"event", "eventOccList"})
      */
     private $daysOfWeek = [];
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"event", "eventOccList"})
      */
     private $intervalCount;
 
     /**
      * @ORM\Column(type="string", length=8)
+     * @Groups({"event", "eventOccList"})
      */
     private $intervalType;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"event", "eventOccList"})
      */
     private $occurrencesCount;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\EventOccurrence", mappedBy="event", orphanRemoval=true, cascade={"persist"})
+     * @Groups({"event"})
      */
     private $occurrences;
 
     /**
      * @ORM\OneToMany(targetEntity=UploadedImage::class, mappedBy="event", cascade={"remove"})
+     * @Serializer\Exclude
      */
     private $uploadedImages;
 
     /**
      * @ORM\OneToOne(targetEntity=News::class, mappedBy="event", cascade={"remove"})
+     * @Serializer\Exclude
      */
     private $news;
 
@@ -387,6 +414,17 @@ class Event
     public function getOccurrences(): Collection
     {
         return $this->occurrences;
+    }
+
+    public function removePastOccurrences(): self
+    {
+        $this->occurrences = $this->occurrences->filter(function (EventOccurrence $occ) {
+            if ($this->allDay) {
+                return $occ->getDate() >= (new DateTime('now'))->setTime(0, 0, 0);
+            }
+            return $occ->getDate() >= new DateTime('now');
+        });
+        return $this;
     }
 
     public function addOccurrence(EventOccurrence $occurrence): self

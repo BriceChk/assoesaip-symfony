@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Entity\Event;
 use App\Entity\EventCategory;
 use App\Entity\EventOccurrence;
+use App\Entity\FcmToken;
 use App\Entity\News;
 use App\Entity\Project;
 use App\Entity\ProjectCategory;
@@ -18,6 +19,10 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\View;
 use HTMLPurifier;
+use Kreait\Firebase\Exception\FirebaseException;
+use Kreait\Firebase\Exception\MessagingException;
+use Kreait\Firebase\Messaging;
+use Kreait\Firebase\Messaging\CloudMessage;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -53,7 +58,7 @@ class API_EventController extends AbstractFOSRestController {
      *     name = "api_event_show",
      *     requirements = { "id"="\d+" }
      * )
-     * @View()
+     * @View(serializerGroups={"event"})
      * @IsGranted("ROLE_USER")
      * @param Integer $id The Event ID
      * @return Event|Response
@@ -69,7 +74,7 @@ class API_EventController extends AbstractFOSRestController {
             return $response;
         }
 
-        return $event;
+        return $event->removePastOccurrences();
     }
 
     /**
@@ -455,6 +460,33 @@ class API_EventController extends AbstractFOSRestController {
 
         $response->setContent(Utils::jsonMsg("L'événement a été supprimé."));
         return $response;
+    }
+
+    /**
+     * Get next EventOccurences.
+     * @OA\Response (
+     *     response = 200,
+     *     description = "Returns the array of EventOccurences",
+     *     @OA\JsonContent(type="array", @OA\Items(ref=@Model(type=EventOccurrence::class, groups={"eventOccList"})))
+     * )
+     * @OA\Tag(name="Event")
+     * @Rest\Get(
+     *     path = "/api/event/next-occurrences",
+     *     name = "api_event_show_next_occ"
+     * )
+     * @View(serializerGroups={"eventOccList"})
+     * @IsGranted("ROLE_USER")
+     * @return \FOS\RestBundle\View\View|Response
+     */
+    public function getNextOccurrences() {
+        $rep = $this->getDoctrine()->getRepository(EventOccurrence::class);
+        if ($this->isGranted('ROLE_ADMIN')) {
+            return $rep->findNext();
+        } else {
+            /** @var User $user */
+            $user = $this->getUser();
+            return $rep->findNext($user->getCampus());
+        }
     }
 
     /**
