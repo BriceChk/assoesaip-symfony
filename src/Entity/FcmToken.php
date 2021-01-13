@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\FcmTokenRepository;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=FcmTokenRepository::class)
@@ -24,14 +26,24 @@ class FcmToken
     private $user;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=22)
+     * @Assert\Length(exactMessage="L'ID d'instance doit faire 22 caractères.", max="22", min="22")
+     * @Groups({"fcmtoken"})
      */
     private $instanceId;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=163)
+     * @Assert\Length(exactMessage="Le token (instanceId:token) doit faire 163 caractères.", max="163", min="163")
+     * @Groups({"fcmtoken"})
      */
     private $token;
+
+    /**
+     * @ORM\Column(type="boolean")
+     * @Groups({"fcmtoken"})
+     */
+    private $notificationsEnabled = false;
 
     public function getId(): ?int
     {
@@ -70,6 +82,18 @@ class FcmToken
     public function setToken(string $token): self
     {
         $this->token = $token;
+
+        return $this;
+    }
+
+    public function isNotificationsEnabled(): ?bool
+    {
+        return $this->notificationsEnabled;
+    }
+
+    public function setNotificationsEnabled(bool $notificationsEnabled): self
+    {
+        $this->notificationsEnabled = $notificationsEnabled;
 
         return $this;
     }
