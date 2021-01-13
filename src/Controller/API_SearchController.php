@@ -44,8 +44,10 @@ class API_SearchController extends AbstractFOSRestController {
      * @param string $term
      * @return \FOS\RestBundle\View\View
      */
-    public function search(string $term) {
+    public function search(string $term): \FOS\RestBundle\View\View {
         $a = array();
+
+        if (strlen($term) < 2) return $this->view($a);
 
         $rep = $this->getDoctrine()->getRepository(Project::class);
         $projects = $rep->search($term);
@@ -53,7 +55,9 @@ class API_SearchController extends AbstractFOSRestController {
             $a[] = [
                 "name" => $p->getName(),
                 "type" => $p->getType(),
-                "url" => $this->generateUrl('project', ['url' => $p->getUrl()])
+                "url" => $this->generateUrl('project', ['url' => $p->getUrl()]),
+                "id" => $p->getId(),
+                "description" => $p->getDescription()
             ];
         }
 
@@ -63,7 +67,8 @@ class API_SearchController extends AbstractFOSRestController {
             $a[] = [
                 "name" => $e->getTitle(),
                 "type" => "Événement",
-                "url" => $this->generateUrl('event', ['url' => $e->getUrl()])
+                "url" => $this->generateUrl('event', ['url' => $e->getUrl()]),
+                "id" => $e->getId()
             ];
         }
 
@@ -73,7 +78,8 @@ class API_SearchController extends AbstractFOSRestController {
             $a[] = [
                 "name" => $e->getTitle(),
                 "type" => "Article",
-                "url" => $this->generateUrl('article', ['url' => $e->getUrl()])
+                "url" => $this->generateUrl('article', ['url' => $e->getUrl()]),
+                "id" => $e->getId()
             ];
         }
 
