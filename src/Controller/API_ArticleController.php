@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Entity\ArticleCategory;
+use App\Entity\FcmToken;
 use App\Entity\News;
 use App\Entity\Project;
 use App\Entity\UploadedImage;
@@ -15,7 +16,10 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\View;
 use HTMLPurifier;
+use Kreait\Firebase\Exception\FirebaseException;
+use Kreait\Firebase\Exception\MessagingException;
 use Kreait\Firebase\Messaging;
+use Kreait\Firebase\Messaging\CloudMessage;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -51,7 +55,7 @@ class API_ArticleController extends AbstractFOSRestController {
      *     name = "api_article_show",
      *     requirements = { "id"="\d+" }
      * )
-     * @View(serializerGroups={"basic", "page-full"})
+     * @View(serializerGroups={"article"})
      * @IsGranted("ROLE_USER")
      * @param Integer $id The Article ID
      * @return Article|Response
@@ -364,16 +368,31 @@ class API_ArticleController extends AbstractFOSRestController {
             $news->setProject($article->getProject());
             $em->persist($news);
 
-            /* TODO notifications
-            $rep = $this->getDoctrine()->getRepository(FcmToken::class);
-            $all = $rep->findAll();
+            if ($json['notify']) {
+                $rep = $this->getDoctrine()->getRepository(FcmToken::class);
+                $all = $rep->findBy(['notificationsEnabled' => true]);
 
-            foreach ($all as $a) {
-                $message = CloudMessage::withTarget('token', $a->getToken())
-                    ->withData(['type' => 'article', 'id' => $article->getId()]);
-                $messaging->send($message);
+                foreach ($all as $a) {
+                    $message = CloudMessage::withTarget('token', $a->getToken())
+                        ->withData([
+                            'type' => 'article',
+                            'id' => $article->getId(),
+                            'title' => $article->getTitle(),
+                            'abstract' => $article->getAbstract() . ' | ' . $article->getProject()->getName(),
+                            'project_name' => $article->getProject()->getName(),
+                            'notify' => true,
+                            'click_action' => 'FLUTTER_NOTIFICATION_CLICK'
+                        ])->withNotification(Messaging\Notification::create(
+                            $article->getTitle(),
+                            $article->getAbstract() . ' | ' . $article->getProject()->getName()
+                        ));
+                    try {
+                        $messaging->send($message);
+                    } catch (MessagingException | FirebaseException $e) {
+                        //TODO Id inexistant, supprimer
+                    }
+                }
             }
-            */
         }
 
         $em->flush();

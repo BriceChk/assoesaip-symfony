@@ -4,13 +4,19 @@
 namespace App\Controller;
 
 
+use App\Entity\FcmToken;
 use App\Entity\News;
 use App\Entity\Project;
+use App\Entity\User;
 use App\Utils;
 use DateTime;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\Annotations\View;
+use Kreait\Firebase\Exception\FirebaseException;
+use Kreait\Firebase\Exception\MessagingException;
+use Kreait\Firebase\Messaging;
+use Kreait\Firebase\Messaging\CloudMessage;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -19,6 +25,50 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class API_NewsController extends AbstractFOSRestController {
+
+    /**
+     * Get the latest News
+     * @OA\Tag(name="News")
+     * @View(serializerGroups={"news"})
+     * @IsGranted("ROLE_USER")
+     * @Rest\Get(
+     *     path = "/api/news",
+     *     name = "api_news_show_list",
+     * )
+     */
+    public function showNewsList() {
+        $newsRepo = $this->getDoctrine()->getRepository(News::class);
+
+        if ($this->isGranted('ROLE_ADMIN')) {
+            return $newsRepo->findLatestNews(20);
+        } else {
+            /** @var User $user */
+            $user = $this->getUser();
+            return $newsRepo->findLatestNews(20, $user->getCampus());
+        }
+    }
+
+    /**
+     * Get the starred News
+     * @OA\Tag(name="News")
+     * @View(serializerGroups={"news"})
+     * @IsGranted("ROLE_USER")
+     * @Rest\Get(
+     *     path = "/api/news/starred",
+     *     name = "api_news_show_list_starred",
+     * )
+     */
+    public function showStarredNewsList() {
+        $newsRepo = $this->getDoctrine()->getRepository(News::class);
+
+        if ($this->isGranted('ROLE_ADMIN')) {
+            return $newsRepo->findStarredNews();
+        } else {
+            /** @var User $user */
+            $user = $this->getUser();
+            return $newsRepo->findStarredNews($user->getCampus());
+        }
+    }
 
     /**
      * Get a News from its ID.
@@ -104,7 +154,7 @@ class API_NewsController extends AbstractFOSRestController {
      * @param ValidatorInterface $validator
      * @return News|\FOS\RestBundle\View\View|Response
      */
-    public function createNews($id, Request $request, ValidatorInterface $validator) {
+    public function createNews($id, Request $request, ValidatorInterface $validator, Messaging $messaging) {
         $response = new Response();
         $rep = $this->getDoctrine()->getRepository(Project::class);
         $project = $rep->find($id);
@@ -138,7 +188,29 @@ class API_NewsController extends AbstractFOSRestController {
         $em->flush();
 
         if ($json['notify']) {
-            //TODO Notification
+            $rep = $this->getDoctrine()->getRepository(FcmToken::class);
+            $all = $rep->findBy(['notificationsEnabled' => true]);
+
+            foreach ($all as $a) {
+                $message = CloudMessage::withTarget('token', $a->getToken())
+                    ->withData([
+                        'type' => 'news',
+                        'id' => $news->getId(),
+                        'title' => $news->getProject()->getName(),
+                        'abstract' => $news->getContent(),
+                        'project_name' => $news->getProject()->getName(),
+                        'notify' => true,
+                        'click_action' => 'FLUTTER_NOTIFICATION_CLICK'
+                    ])->withNotification(Messaging\Notification::create(
+                        $news->getProject()->getName(),
+                        $news->getContent()
+                    ));
+                try {
+                    $messaging->send($message);
+                } catch (MessagingException | FirebaseException $e) {
+                    //TODO Id inexistant, supprimer
+                }
+            }
         }
 
         return $news;

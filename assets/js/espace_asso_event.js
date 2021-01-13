@@ -97,6 +97,7 @@ window.save = function (published) {
         category: $('#categorie').val(),
         private: $('#customRadio2').is(':checked'),
         published: published,
+        notify: $('#notifCheck').is(':checked'),
         all_day: allDay,
         interval_count: parseInt($('#inputInterval').val()),
         interval_type: $('#inputIntervalType').val()
@@ -109,9 +110,9 @@ window.save = function (published) {
     let dateDebut = allDay ? dateDebutPicker.format('YYYY-MM-DD 00:00:00') : dateDebutPicker.format('YYYY-MM-DD HH:mm:00');
     json['duration'] = 0;
     if (allDay) {
-        // Conversion des jours en minutes
+        // Conversion des jours en minutes. On soustrait 1 jour pour que la date de fin soit à la bonne date
         if (eventRepeated) {
-            json['duration'] = $('#inputDaysDuration').val() * 1440;
+            json['duration'] = ($('#inputDaysDuration').val() - 1) * 1440;
         }
     } else {
         // Conversion du temps hh:mm en minutes

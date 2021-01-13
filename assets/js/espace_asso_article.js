@@ -60,7 +60,8 @@ window.save = function (published) {
         html: $('#summernote').summernote('code'),
         category: $('#categorie').val(),
         private: $('#customRadio2').is(':checked'),
-        published: published
+        published: published,
+        notify: $('#notifCheck').is(':checked')
     }
 
     let method = 'POST';

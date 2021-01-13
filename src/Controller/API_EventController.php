@@ -242,7 +242,7 @@ class API_EventController extends AbstractFOSRestController {
      * @param SluggerInterface $slugger
      * @return Event|\FOS\RestBundle\View\View|object|Response
      */
-    public function updateEvent($id, Request $request, ValidatorInterface $validator, HTMLPurifier $purifier, SluggerInterface $slugger, UploadHandler $handler) {
+    public function updateEvent($id, Request $request, ValidatorInterface $validator, HTMLPurifier $purifier, SluggerInterface $slugger, Messaging $messaging, UploadHandler $handler) {
         $response = new Response();
 
         $em = $this->getDoctrine()->getManager();
@@ -352,6 +352,32 @@ class API_EventController extends AbstractFOSRestController {
             $news->setDatePublished($event->getDatePublished());
             $news->setProject($event->getProject());
             $em->persist($news);
+
+            if ($json['notify']) {
+                $rep = $this->getDoctrine()->getRepository(FcmToken::class);
+                $all = $rep->findBy(['notificationsEnabled' => true]);
+
+                foreach ($all as $a) {
+                    $message = CloudMessage::withTarget('token', $a->getToken())
+                        ->withData([
+                            'type' => 'event',
+                            'id' => $event->getId(),
+                            'title' => $event->getTitle(),
+                            'abstract' => $event->getAbstract() . ' | ' . $event->getProject()->getName(),
+                            'project_name' => $event->getProject()->getName(),
+                            'notify' => true,
+                            'click_action' => 'FLUTTER_NOTIFICATION_CLICK'
+                        ])->withNotification(Messaging\Notification::create(
+                            $event->getTitle(),
+                            $event->getAbstract() . ' | ' . $event->getProject()->getName()
+                        ));
+                    try {
+                        $messaging->send($message);
+                    } catch (MessagingException | FirebaseException $e) {
+                        //TODO Id inexistant, supprimer
+                    }
+                }
+            }
         }
 
         // Remove old occurrences and add new ones
