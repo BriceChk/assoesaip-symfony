@@ -1,6 +1,8 @@
 <?php
 namespace App\Controller;
 
+use App\Entity\EventOccurrence;
+use App\Entity\News;
 use App\Entity\Project;
 use App\Entity\ProjectCategory;
 use App\Entity\ProjectMember;
@@ -628,5 +630,80 @@ class API_ProjectController extends AbstractFOSRestController {
 
         $response->setContent('/images/uploaded-images/' . $image->getFileName());
         return $response;
+    }
+
+    /**
+     * Get the lastest News of a Project.
+     * @OA\Response (
+     *     response = 200,
+     *     description = "The list of News",
+     *     @OA\JsonContent(type="array", @OA\Items(ref=@Model(type=News::class)))
+     * )
+     * @OA\Parameter (
+     *     name = "id",
+     *     in="path",
+     *     description="The Project unique identifier",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Tag(name="Project")
+     * @Rest\Get(
+     *     path = "/api/project/{id}/news",
+     *     name = "api_project_news_list"
+     * )
+     * @View(serializerGroups={"news"})
+     * @IsGranted("ROLE_USER")
+     * @param $id
+     * @return News[]|Response
+     */
+    public function listProjectNews($id) {
+        $rep = $this->getDoctrine()->getRepository(Project::class);
+        $proj = $rep->find($id);
+
+        if ($proj == null) {
+            $response = new Response();
+            $response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $response->setContent(Utils::jsonMsg("Aucun project n'a été trouvé avec cet ID."));
+            return $response;
+        }
+
+        return $proj->getNews()->slice(0, 30);
+    }
+
+    /**
+     * Get next EventOccurences of a Project.
+     * @OA\Response (
+     *     response = 200,
+     *     description = "Returns the array of EventOccurences",
+     *     @OA\JsonContent(type="array", @OA\Items(ref=@Model(type=EventOccurrence::class, groups={"eventOccList"})))
+     * )
+     * @OA\Parameter (
+     *     name = "id",
+     *     in="path",
+     *     description="The Project unique identifier",
+     *     @OA\Schema(type="integer")
+     * )
+     * @OA\Tag(name="Project")
+     * @Rest\Get(
+     *     path = "/api/project/{id}/next-event-occurrences",
+     *     name = "api_event_show_next_project_occ"
+     * )
+     * @View(serializerGroups={"eventOccList"})
+     * @IsGranted("ROLE_USER")
+     * @param $id
+     * @return \FOS\RestBundle\View\View|Response
+     */
+    public function listProjectEvents($id) {
+        $rep = $this->getDoctrine()->getRepository(Project::class);
+        $proj = $rep->find($id);
+
+        if ($proj == null) {
+            $response = new Response();
+            $response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $response->setContent(Utils::jsonMsg("Aucun project n'a été trouvé avec cet ID."));
+            return $response;
+        }
+
+        $rep = $this->getDoctrine()->getRepository(EventOccurrence::class);
+        return $rep->findProjectNext($proj);
     }
 }
