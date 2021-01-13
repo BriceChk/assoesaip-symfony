@@ -283,7 +283,7 @@ class API_ProjectPageController extends AbstractFOSRestController {
     }
 
     /**
-     * Get a list of a Project's ProjectPages
+     * Get a list of a Project's visible ProjectPages
      * @OA\Response (
      *     response = 200,
      *     description = "The list of ProjectPages",
@@ -321,7 +321,9 @@ class API_ProjectPageController extends AbstractFOSRestController {
             return $response;
         }
 
-        return $project->getPages()->toArray();
+        return $project->getPages()->filter(function (ProjectPage $p) {
+            return $p->getPublished();
+        });
     }
 
     /**
