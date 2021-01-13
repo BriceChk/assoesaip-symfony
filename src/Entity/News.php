@@ -89,7 +89,7 @@ class News
 
     public function setLink(?string $link): self
     {
-        $this->link = $link;
+        $this->link = $link == "" ? null : $link;
 
         return $this;
     }
