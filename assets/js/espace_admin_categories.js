@@ -108,20 +108,21 @@ window.deleteCategory = function (type) {
         return;
     }
 
-    if (confirm('Voulez-vous vraiment supprimer la catégorie ' + type + ' sélectionnée ?'))
-    $.ajax({
-        url: '/api/' + type + '-category/' + id,
-        type: 'DELETE',
-        contentType: 'application/json',
-        success: function () {
-            toastr.success("La catégorie a été supprimée.");
-            el.find(' :selected').remove();
-            resetFormCateg();
-        },
-        error: function (data) {
-            error(data);
-        }
-    });
+    if (confirm('Voulez-vous vraiment supprimer la catégorie ' + type + ' sélectionnée ?')) {
+        $.ajax({
+            url: '/api/' + type + '-category/' + id,
+            type: 'DELETE',
+            contentType: 'application/json',
+            success: function () {
+                toastr.success("La catégorie a été supprimée.");
+                el.find(' :selected').remove();
+                resetFormCateg();
+            },
+            error: function (data) {
+                error(data);
+            }
+        });
+    }
 }
 
 window.saveProjectCategory = function () {
