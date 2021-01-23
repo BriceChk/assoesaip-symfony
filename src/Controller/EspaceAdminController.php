@@ -9,15 +9,9 @@ use App\Entity\Project;
 use App\Entity\ProjectCategory;
 use App\Entity\RessourcePage;
 use App\Entity\RoomBook;
-use App\Form\RessourcePageType;
-use DateTime;
-use FOS\RestBundle\Controller\Annotations as Rest;
-use FOS\RestBundle\Controller\Annotations\View;
+use App\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class EspaceAdminController extends AbstractController
@@ -35,7 +29,29 @@ class EspaceAdminController extends AbstractController
      */
     public function index()
     {
-        return $this->render('espace_admin/espace_admin.html.twig');
+        $em = $this->getDoctrine()->getManager();
+
+        $userRepo = $em->getRepository(User::class);
+        $projectRepo = $em->getRepository(Project::class);
+        $rbRepo = $em->getRepository(RoomBook::class);
+
+        $totalUsers = $userRepo->getTotalUsersCount();
+        $validUsers = $userRepo->getValidUsersCount();
+        $lastWeek = $userRepo->getLastWeekUsersCount();
+        $rbs = $rbRepo->getFutureRoombookCount();
+
+        $totalProjects = $projectRepo->createQueryBuilder('p')
+            ->select('count(p.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $this->render('espace_admin/espace_admin.html.twig', [
+            'totalUsers' => $totalUsers,
+            'validUsers' => $validUsers,
+            'lastWeek' => $lastWeek,
+            'totalProjects' => $totalProjects,
+            'roombooks' => $rbs
+        ]);
     }
 
     /**
@@ -79,8 +95,11 @@ class EspaceAdminController extends AbstractController
      */
     public function admins()
     {
-        return $this->render('espace_admin/espace_admin_admins.html.twig', [
+        $repo = $this->getDoctrine()->getRepository(User::class);
+        $admins = $repo->findByRole('ROLE_ADMIN');
 
+        return $this->render('espace_admin/espace_admin_admins.html.twig', [
+            'admins' => $admins
         ]);
     }
 

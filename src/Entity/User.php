@@ -264,7 +264,7 @@ class User implements UserInterface
     }
 
     public function updateLastLogin(): void {
-        $this->lastLogin = date('Y-m-d');
+        $this->lastLogin = new DateTime('now');
     }
 
     public function getRoles(): array {

@@ -57,6 +57,10 @@ class NavigationSubscriber implements EventSubscriberInterface
             return;
         }
 
+        $user->updateLastLogin();
+        $this->em->persist($user);
+        $this->em->flush();
+
         if ($event->getRequest()->attributes->get('_route') == 'profile') {
             return;
         }

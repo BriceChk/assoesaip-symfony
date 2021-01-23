@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\User;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -32,6 +33,48 @@ class UserRepository extends ServiceEntityRepository
             ->setParameter('val', '%' . $value . '%')
             ->orderBy('p.firstName', 'ASC')
             ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    // They have set their promo & campus
+    public function getValidUsersCount() {
+        return $this->createQueryBuilder('u')
+            ->where("u.campus != ''")
+            ->andWhere("u.promo != ''")
+            ->select('count(u.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function getTotalUsersCount() {
+        return $this->createQueryBuilder('u')
+            ->select('count(u.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function getLastWeekUsersCount() {
+        $date = (new DateTime('now'))->sub(new \DateInterval('P7D'));
+
+        return $this->createQueryBuilder('u')
+            ->where("u.lastLogin >= :date")
+            ->setParameter(':date', $date)
+            ->select('count(u.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+    * @return User[] Returns an array of User objects
+    */
+    public function findByRole($value)
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.roles LIKE :val')
+            ->setParameter('val', '%'.$value.'%')
+            ->orderBy('p.firstName', 'ASC')
             ->getQuery()
             ->getResult()
         ;

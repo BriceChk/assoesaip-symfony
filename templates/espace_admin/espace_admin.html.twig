@@ -17,11 +17,79 @@
                         Les pages de gestion des réservations de salle, news de la vie asso, pages ressources fonctionnent. Pour le reste, contacter Brice.
                     </div>
                     <p>
-                        Ici plus tard stats sur le nombre de projets, le nombres d'utilisateurs, d'autres stats ...
+                        a faire : gestion du mode maintenance, des articles mis en avant
                     </p>
-                    <p>
-                        Mais aussi : gestion du mode maintenance, des articles mis en avant et affichage du nombre de reservations de salles à traiter
-                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-info">
+                        <div class="inner">
+                            <h3>{{ totalUsers }}</h3>
+
+                            <p>Utilisateurs uniques</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-info">
+                        <div class="inner">
+                            <h3>{{ validUsers }}</h3>
+
+                            <p>Utilisateurs depuis Septembre</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-info">
+                        <div class="inner">
+                            <h3>{{ lastWeek }}</h3>
+
+                            <p>Utilisateurs ces 7 derniers jours</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-green">
+                        <div class="inner">
+                            <h3>{{ totalProjects }}</h3>
+
+                            <p>Clubs, assos & projets</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <a href="{{ url('espace_admin_projects') }}" class="small-box-footer">Gérer <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-warning">
+                        <div class="inner">
+                            <h3>{{ roombooks }}</h3>
+
+                            <p>Réservations de salle à traiter</p>
+                        </div>
+                        <div class="icon">
+                            <i class="far fa-calendar-check"></i>
+                        </div>
+                        <a href="{{ url('espace_admin_roombooks') }}" class="small-box-footer">Gérer <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
                 </div>
             </div>
         </div>

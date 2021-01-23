@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\RoomBook;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,6 +18,17 @@ class RoomBookRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, RoomBook::class);
+    }
+
+    public function getFutureRoombookCount() {
+        $date = new DateTime('now');
+
+        return $this->createQueryBuilder('r')
+            ->where("r.date >= :date")
+            ->setParameter(':date', $date)
+            ->select('count(r.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     // /**
