@@ -12,9 +12,9 @@ class NavbarController extends AbstractController
     {
         $em = $this->getDoctrine()->getRepository(ProjectCategory::class);
         if ($isAdmin) {
-            $categories = $em->findBy([], ['order' => 'ASC']);
+            $categories = $em->findBy([], ['listOrder' => 'ASC']);
         } else {
-            $categories = $em->findBy(['visible' => true], ['order' => 'ASC']);
+            $categories = $em->findBy(['visible' => true], ['listOrder' => 'ASC']);
         }
 
         $view = $withProjects ? 'macros/_navbar_projects.html.twig' : 'macros/_navbar_categories.html.twig';

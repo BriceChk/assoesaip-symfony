@@ -20,7 +20,7 @@ class HomeController extends AbstractController
     public function index()
     {
         $categRepo = $this->getDoctrine()->getRepository(ProjectCategory::class);
-        $categories = $categRepo->findBy(array('visible' => 1), array('order' => 'ASC'));
+        $categories = $categRepo->findBy(array('visible' => 1), array('listOrder' => 'ASC'));
 
         // TODO Mettre un bouton charger + // Vérifier que la limite de 20 articles + events marche bien
 

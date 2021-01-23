@@ -43,6 +43,7 @@ Encore
     .addEntry('espace_admin_news_list', './assets/js/espace_admin_news_list.js')
     .addEntry('espace_admin_roombooks', './assets/js/espace_admin_roombooks.js')
     .addEntry('espace_admin_admins', './assets/js/espace_admin_admins.js')
+    .addEntry('espace_admin_categories', './assets/js/espace_admin_categories.js')
     //.addEntry('page1', './assets/page1.js')
     //.addEntry('page2', './assets/page2.js')
 

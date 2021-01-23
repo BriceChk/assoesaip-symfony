@@ -26,16 +26,19 @@ class ProjectCategory
 
     /**
      * @ORM\Column(type="string", length=30, unique=true)
+     * @Assert\Length(max="30", maxMessage="Longueur max 30 caractères pour l'URL")
      */
     private $url;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Length(max="255", maxMessage="Longueur max 255 caractères pour le nom")
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\Length(max="255", maxMessage="Longueur max 255 caractères pour la description")
      */
     private $description;
 
@@ -47,7 +50,7 @@ class ProjectCategory
     /**
      * @ORM\Column(type="integer")
      */
-    private $order = 100;
+    private $listOrder = 100;
 
     /**
      * @var File|null
@@ -155,18 +158,18 @@ class ProjectCategory
     /**
      * @return int
      */
-    public function getOrder(): int
+    public function getListOrder(): int
     {
-        return $this->order;
+        return $this->listOrder;
     }
 
     /**
-     * @param int $order
+     * @param int $listOrder
      * @return ProjectCategory
      */
-    public function setOrder(int $order): ProjectCategory
+    public function setListOrder(int $listOrder): ProjectCategory
     {
-        $this->order = $order;
+        $this->listOrder = $listOrder;
         return $this;
     }
 
