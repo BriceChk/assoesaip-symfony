@@ -1,49 +1,9 @@
-{% for category in categories | filter(category => category.projects is not empty) | sort((a, b) => a.order > b.order) %}
+{% set isAdmin = is_granted('ROLE_ADMIN') %}
+{% set campus = isAdmin ? 'A' : app.user.campus %}
 
-    <li class="dropdown-submenu dropdown-hover">
-        <div id="dropdownSubMenu{{ category.url }}" class="dropdown-item dropdown-toggle">
-            {{ category.name }}
-        </div>
-
-        <div class="dropdown-menu" aria-labelledby="dropdownSubMenu{{ category.url }}">
-            <a class="dropdown-item" href="{{ path('category', {url: category.url}) }}">{{ category.name }}</a>
-
-            {% set notConnected = app.user == null or is_granted('ROLE_ADMIN') %}
-            {% set firstCampus = (notConnected ? 'Angers' : app.user.campus) %}
-
-            {% set first = category.projects | filter(project => project.campus == firstCampus) | sort((a, b) => a.type <=> b.type) %}
-
-            {% if first is not empty %}
-                <div class="dropdown-divider"></div>
-                {% if notConnected %}
-                    <h6 class="dropdown-header text-left">{{ firstCampus }}</h6>
-                {% endif %}
-                {% for project in first %}
-                    <a class="dropdown-item" href="{{ path('project', {url: project.url}) }}">{{ project.name }}</a>
-                {% endfor %}
-            {% endif %}
-
-            {% if notConnected %}
-                {% set second = category.projects | filter(project => project.campus == 'Aix') | sort((a, b) => a.type <=> b.type) %}
-                {% set angersaix = category.projects | filter(project => project.campus == "Angers & Aix") | sort((a, b) => a.type <=> b.type) %}
-
-                {% if second is not empty %}
-                    <div class="dropdown-divider"></div>
-                    <h6 class="dropdown-header text-left">{{ firstCampus == 'Angers' ? 'Aix' : 'Angers' }}</h6>
-                    {% for project in second %}
-                        <a class="dropdown-item" href="{{ path('project', {url: project.url}) }}">{{ project.name }}</a>
-                    {% endfor %}
-                {% endif %}
-
-                {% if angersaix is not empty %}
-                    <div class="dropdown-divider"></div>
-                    <h6 class="dropdown-header text-left">Angers & Aix</h6>
-                    {% for project in angersaix %}
-                        <a class="dropdown-item" href="{{ path('project', {url: project.url}) }}">{{ project.name }}</a>
-                    {% endfor %}
-                {% endif %}
-            {% endif %}
-        </div>
-    </li>
-
+{% for category in categories | filter(category => category.projects is not empty) %}
+    {% set array = category.projects | filter(project => campus in project.campus) %}
+    {% if array is not empty %}
+        <a class="dropdown-item" href="{{ path('category', {url: category.url}) }}">{{ category.name }}</a>
+    {% endif %}
 {% endfor %}

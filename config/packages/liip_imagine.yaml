@@ -21,3 +21,10 @@ liip_imagine:
                 thumbnail:
                     size: [200, 200]
                     mode: inset
+        cafet:
+            quality: 100
+            filters:
+                downscale:
+                    max: [ 80, 80 ]
+
+

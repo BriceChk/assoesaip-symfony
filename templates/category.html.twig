@@ -1,5 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{% from 'macros/macros.html.twig' import news_list %}
+
 {% block title %}Asso'esaip - {{ category.name }}{% endblock %}
 
 {% block stylesheets %}
@@ -36,25 +38,48 @@
                            {% for project in category.projects
                                | filter(project => project.type == "Association")
                                | filter(project => campus in project.campus)
-                               | filter(project => project.childrenProjects is not empty)
+                               | sort((a, b) => a.name <=> b.name)
+                               | sort((a, b) => a.childrenProjects is empty)
                            %}
-                               <h2 class="asso-category">
-                                   {{ project.name }}
-                                   {% if notConnected %}
-                                       <span class="text-secondary" style="font-size: small">(Association à {{ project.campus }})</span>
-                                   {% endif %}
-                               </h2>
-                               <p>{{ project.description }}</p>
-                               <a class="btn btn-primary btn-sm" href="{{ path('project', {'url': project.url}) }}">Découvrir l'asso</a>
+                               <div class="row asso-category">
+                                   <div class="col-xl-auto my-auto text-center">
+                                       {% if project.logoFileName != null %}
+                                           <img src="{{ vich_uploader_asset(project, 'logoFile') | imagine_filter('thumbnail') }}" alt="Logo projet" style="height: 100px; width: auto">
+                                       {% else %}
+                                           <img src="{{ asset('build/images/project-placeholder.png') | imagine_filter('thumbnail') }}" alt="Logo projet" style="height: 100px; width: auto">
+                                       {% endif %}
+                                   </div>
+                                   <div class="col-xl">
+                                       <h2>
+                                           {{ project.name }}
+                                           {% if notConnected %}
+                                               <span class="text-secondary" style="font-size: small">(Association à {{ project.campus }})</span>
+                                           {% endif %}
+                                       </h2>
+                                       <p>{{ project.description }}</p>
+                                       <a class="btn btn-primary btn-sm" href="{{ path('project', {'url': project.url}) }}">Découvrir l'asso</a>
+                                   </div>
+                               </div>
                                <hr>
                                <div class="row">
                                    {% for childProject in project.childrenProjects %}
-                                       <div class="col-md-4 d-flex">
-                                           <div style="border-color: #009bc2;" class="card mb-4 box-shadow flex-fill card-link">
-                                               <div class="card-body d-flex flex-column">
-                                                   <h5>{{ childProject.name }}</h5>
-                                                   <span class="card-text">{{ childProject.description }}</span>
-                                                   <a class="stretched-link" href="{{ path('project', {'url': childProject.url}) }}"></a>
+                                       <div class="col-lg-4 d-flex">
+                                           <div class="card mb-4 box-shadow flex-fill card-link border-esaip">
+                                               <div class="card-body row">
+                                                   <div class="col-xl-auto my-auto text-center">
+                                                       {% if childProject.logoFileName != null %}
+                                                           <img src="{{ vich_uploader_asset(childProject, 'logoFile') | imagine_filter('thumbnail') }}" alt="Logo projet" style="height: 80px; width: auto">
+                                                       {% else %}
+                                                           <img src="{{ asset('build/images/project-placeholder.png') | imagine_filter('thumbnail') }}" alt="Logo projet" style="height: 80px; width: auto">
+                                                       {% endif %}
+                                                   </div>
+                                                   <div class="col-xl">
+                                                       <div class="d-flex flex-column">
+                                                           <h5>{{ childProject.name }}</h5>
+                                                           <span class="card-text">{{ childProject.description }}</span>
+                                                           <a class="stretched-link" href="{{ path('project', {'url': childProject.url}) }}"></a>
+                                                       </div>
+                                                   </div>
                                                </div>
                                            </div>
                                        </div>
@@ -62,76 +87,12 @@
                                </div>
                            {% endfor %}
 
-                           {% set otherAssos = category.projects | filter(project => project.type == "Association") | filter(project => project.childrenProjects is empty) %}
-                           {% if otherAssos is not empty %}
 
-                               {% for asso in otherAssos %}
-                                   <h2 class="asso-category">
-                                       {{ asso.name }}
-                                       {% if notConnected %}
-                                           <span class="text-secondary" style="font-size: small">(Association à {{ asso.campus }})</span>
-                                       {% endif %}
-                                   </h2>
-                                   <p>{{ asso.description }}</p>
-                                   <a class="btn btn-primary btn-sm" href="{{ path('project', {'url': asso.url}) }}">Découvrir l'asso</a>
-                                   <hr>
-                               {% endfor %}
-                           {% endif %}
                        </div>
 
                        <div class="tab-pane fade pt-4" id="pills-actu" role="tabpanel" aria-labelledby="pills-actu-tab">
                            <div class="row">
-                               {% for n in news|sort((a, b) => a.datePublished < b.datePublished) %}
-                                   <div class="col-xl-6 d-flex">
-                                       <div class="card box-shadow flex-fill card-link">
-                                           {% if n.event != null %}
-                                               <div class="ribbon-wrapper ribbon-lg">
-                                                   <div class="ribbon bg-info">
-                                                       Evenement
-                                                   </div>
-                                               </div>
-                                           {% endif %}
-
-                                           <div class="row" style="display: flex; margin: 0; min-height: 110px;">
-                                               <div class="col-md-auto my-auto text-center">
-                                                   {% if n.project.logoFileName != null %}
-                                                       <img class="" src="{{ vich_uploader_asset(n.project, 'logoFile') | imagine_filter('thumbnail') }}" alt="Logo projet">
-                                                   {% endif %}
-                                               </div>
-
-                                               <div class="col">
-                                                   <div class="card-body d-flex flex-column">
-                                                       {% if n.article != null or n.event != null %}
-                                                           <h3 class="card-text">
-                                                               {{ n.article != null ? n.article.title }}
-                                                               {{ n.event != null ? n.event.title }}
-                                                           </h3>
-                                                       {% endif %}
-                                                       <p class="card-text">
-                                                           {% if n.article != null %}
-                                                               {{ n.article.abstract }}
-                                                           {% elseif n.event != null %}
-                                                               {{ n.event.abstract }}
-                                                           {% else %}
-                                                               {{ n.content }}
-                                                           {% endif %}
-                                                       </p>
-                                                       <div class="d-flex justify-content-between align-items-center mt-auto">
-                                                           <small class="text-muted">{{ n.project.name }} · {{ n.datePublished|format_date(locale="fr") }} · {{ n.datePublished|format_time(locale="fr", pattern="HH'h'mm") }}</small>
-                                                           {% if n.link != "" %}
-                                                               <a href="{{ n.link }}" class="stretched-link"></a>
-                                                           {% elseif n.article != null %}
-                                                               <a href="{{ path('article', {url: n.article.url}) }}" class="stretched-link"></a>
-                                                           {% elseif n.event != null %}
-                                                               <a href="{{ path('event', {url: n.event.url}) }}" class="stretched-link"></a>
-                                                           {% endif %}
-                                                       </div>
-                                                   </div>
-                                               </div>
-                                           </div>
-                                       </div>
-                                   </div>
-                               {% endfor %}
+                               {{ news_list(news, 'col-xl-6') }}
                            </div>
                            <button class="btn btn-primary" id="loadArticlesButton" {{ news|length <= 30 ? 'style="display: none;"' }}>Charger la suite</button>
 

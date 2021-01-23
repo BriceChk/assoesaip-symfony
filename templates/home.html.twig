@@ -1,5 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{% from 'macros/macros.html.twig' import news_list %}
+
 {% block title %}Asso'esaip - Accueil{% endblock %}
 
 {% block stylesheets %}
@@ -10,7 +12,7 @@
 {% block body %}
     <main>
         <div class="home-header">
-            <div class="text-center">
+            <div class="px-3 text-center">
                 <h1 class="display-4">Bienvenue !</h1>
                 <p class="lead">Découvre les clubs et associations qui font vivre l'<b class="esaip-color">e</b>saip, leurs actualités et les prochains événements sur ton campus</p>
             </div>
@@ -18,16 +20,21 @@
                 <hr class="my-4">
 
                 <div class="row equal justify-content-md-center" style="padding-left: 5px; padding-right: 5px;">
+                    {% set isAdmin = is_granted('ROLE_ADMIN') %}
+                    {% set campus = isAdmin ? 'A' : app.user.campus %}
                     {% for categ in categories %}
-                        <div class="col-lg d-flex">
-                            <div class="card flex-fill card-link" style="border-color: #009bc2;">
-                                <div class="card-body d-flex flex-column">
-                                    <h5>{{ categ.name }}</h5>
-                                    <span class="card-text">{{ categ.description }}</span>
-                                    <a class="stretched-link" href="{{ path('category', { 'url': categ.url }) }}/"></a>
+                        {% set array = categ.projects | filter(project => campus in project.campus) %}
+                        {% if array is not empty %}
+                            <div class="col-lg d-flex">
+                                <div class="card flex-fill card-link border-esaip">
+                                    <div class="card-body d-flex flex-column">
+                                        <h5>{{ categ.name }}</h5>
+                                        <span class="card-text">{{ categ.description }}</span>
+                                        <a class="stretched-link" href="{{ path('category', { 'url': categ.url }) }}/"></a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>
@@ -39,65 +46,7 @@
                 <div class="col-lg-5 order-2 order-lg-1">
                     <h2>Actualités</h2>
                     <hr>
-
-                    {% for n in news | sort((a, b) => a.datePublished < b.datePublished) | sort((a, b) => b.starred <=> a.starred) | slice(0, 25) %}
-                        <div class="d-flex">
-                            <div class="card box-shadow flex-fill card-link">
-                                {% if n.event != null %}
-                                    <div class="ribbon-wrapper ribbon-{{ n.starred ? 'xl' : 'lg' }}">
-                                        <div class="ribbon bg-info">
-                                            Evenement
-                                        </div>
-                                    </div>
-                                {% endif %}
-                                {% if n.starred %}
-                                    <div class="ribbon-wrapper ribbon">
-                                        <div class="ribbon bg-success">
-                                            <i class="fas fa-star"></i>
-                                        </div>
-                                    </div>
-                                {% endif %}
-
-                                <div class="row" style="display: flex; margin: 0; min-height: 110px;">
-                                    <div class="col-md-auto my-auto text-center">
-                                        {% if n.project.logoFileName != null %}
-                                            <img class="" src="{{ vich_uploader_asset(n.project, 'logoFile') | imagine_filter('thumbnail') }}" alt="Logo projet">
-                                        {% endif %}
-                                    </div>
-
-                                    <div class="col">
-                                        <div class="card-body d-flex flex-column">
-                                            {% if n.article != null or n.event != null %}
-                                                <h3 class="card-text">
-                                                    {{ n.article != null ? n.article.title }}
-                                                    {{ n.event != null ? n.event.title }}
-                                                </h3>
-                                            {% endif %}
-                                            <p class="card-text">
-                                                {% if n.article != null %}
-                                                    {{ n.article.abstract }}
-                                                {% elseif n.event != null %}
-                                                    {{ n.event.abstract }}
-                                                {% else %}
-                                                    {{ n.content }}
-                                                {% endif %}
-                                            </p>
-                                            <div class="d-flex justify-content-between align-items-center mt-auto">
-                                                <small class="text-muted">{{ n.project.name }} · {{ n.datePublished|format_date(locale="fr") }} · {{ n.datePublished|format_time(locale="fr", pattern="HH'h'mm") }}</small>
-                                                {% if n.link != "" %}
-                                                    <a href="{{ n.link }}" class="stretched-link"></a>
-                                                {% elseif n.article != null %}
-                                                    <a href="{{ path('article', {url: n.article.url}) }}" class="stretched-link"></a>
-                                                {% elseif n.event != null %}
-                                                    <a href="{{ path('event', {url: n.event.url}) }}" class="stretched-link"></a>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
+                    {{ news_list(news) }}
                     <button class="btn btn-primary" id="loadArticlesButton" {{ news|length <= 30 ? 'style="display: none;"' }}>Charger la suite</button>
                 </div>
 

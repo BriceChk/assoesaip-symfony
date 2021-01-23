@@ -28,7 +28,7 @@ class UserRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('p')
             ->andWhere("p.firstName LIKE :val")
             ->orWhere("p.lastName LIKE :val")
-            ->orWhere("p.email LIKE :val")
+            ->orWhere("p.username LIKE :val")
             ->setParameter('val', '%' . $value . '%')
             ->orderBy('p.firstName', 'ASC')
             ->setMaxResults(10)

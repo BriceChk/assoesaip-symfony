@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% from 'macros/macros.html.twig' import cafet_item %}
+
+{% block title %}Asso'esaip - La Cafet'{% endblock %}
+
+{% block body %}
+    <main role="main">
+        <div class="jumbotron text-center">
+            <h1 class="display-4">La Cafet'</h1>
+            <p class="lead">Retrouve le menu de la Cafet', et résèrve tes repas ! La Cafet' est ouverte de 12h à 12h45.</p>
+            <div class="card bg-danger mx-auto" style="width: 11rem">
+                La Cafet' est fermée
+            </div>
+        </div>
+        <div class="container-fluid pb-5">
+            <div class="row">
+                <div class="col-lg-10 offset-lg-1">
+                    <h1>Menu de {{ day }}</h1>
+                    <hr>
+                    <h3>Repas</h3>
+                    <div class="row">
+                        {% for i in repas %}
+                            {{ cafet_item(i) }}
+                        {% endfor %}
+                    </div>
+                    <br>
+                    <h3>Desserts</h3>
+                    <div class="row">
+                        {% for i in desserts %}
+                            {{ cafet_item(i) }}
+                        {% endfor %}
+                    </div>
+                    <br>
+                    <h3>Boissons</h3>
+                    <div class="row">
+                        {% for i in boissons %}
+                            {{ cafet_item(i) }}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+{% endblock %}

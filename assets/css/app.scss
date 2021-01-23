@@ -1,4 +1,49 @@
-$esaip-color: #009bc2;
+//$esaip-color: #009bc2;
+$esaip-color: #0077b6;
+
+.bg-esaip {
+    background-color: $esaip-color;
+}
+
+.border-esaip {
+    border-color: $esaip-color;
+}
+
+.news-badge {
+    position: absolute;
+    right: 20px;
+    bottom: -12px;
+}
+
+@font-face {
+    font-family: "Nunito";
+    src: url("/build/fonts/Nunito-Regular.ttf");
+}
+
+body {
+    font-family: "Nunito", serif;
+}
+
+.navbar-esaip {
+    background-color: $esaip-color;
+}
+
+.navbar-esaip .nav-link, .navbar-brand {
+    color: #eaeaea;
+}
+
+.navbar-esaip .nav-link:hover, .navbar-esaip .active .nav-link {
+    color: #fff
+}
+
+.navbar-esaip .navbar-toggler {
+    color: rgba(255, 255, 255, 0.5);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.navbar-esaip .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255, 255, 255, 0.75)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
 
 @media (min-width: 576px) {
     .jumbotron {
@@ -26,11 +71,21 @@ main {
 }
 
 // Diviseur entre Accueil _ Calendrier et les catégories dans la navbar
+// + liste des categ sur pc (avec projets) ou mobile (sans projet)
 @media (min-width: 1200px) {
     .divider-vertical {
         height: 20px;
         margin: 0 9px;
-        border-left: 1px solid #878787;
+        border-left: 1px solid #eaeaea;
+    }
+    #nav-categories-dropdown {
+        display: none;
+    }
+}
+
+@media (max-width: 1200px) {
+    #nav-projects-dropdown {
+        display: none;
     }
 }
 
@@ -84,7 +139,7 @@ a:not(.dropdown-item) {
 
 .home-header {
     padding: 2rem 0;
-    background-color: #e9ecef;
+    background-color: #eeeeee;
 }
 
 .easy-autocomplete{
@@ -107,7 +162,19 @@ a:not(.dropdown-item) {
 
 /* Fix word wrap internet explorer */
 .card {
-    width: 100%
+    width: 100%;
+}
+
+.btn, .nav-pills .nav-link, .nav-pills .active, .card, .card-body, .fc-scroller, .btn-group-toggle .btn, .alert, .list-group {
+    border-radius: 1.25rem;
+}
+
+.card-header:first-child {
+    border-radius: calc(1.25rem - 1px) calc(1.25rem - 1px) 0 0;
+}
+
+.card-footer, .card-footer:last-child {
+    border-radius: 0 0 calc(1.25rem - 1px) calc(1.25rem - 1px);
 }
 
 /* Barre de défilement dans le menu sur mobile */
@@ -140,10 +207,6 @@ a:not(.dropdown-item) {
     margin-bottom: 10px;
 }
 
-hr {
-    margin-bottom: 1.5rem!important;
-}
-
 /* Corriger le mauvais affichage des éléments de liste sur firefox et edge */
 .list-group li {
     width: 100%
@@ -154,7 +217,7 @@ hr {
 
 /* Social icons */
 .social a {
-    font-size: 50px;
+    font-size: 35px;
     margin-left: 10px;
     margin-right: 10px;
 }

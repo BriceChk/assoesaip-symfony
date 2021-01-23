@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% from 'macros/macros.html.twig' import news_list %}
 
 {% block title %}Asso'esaip - {{ project.name }}{% endblock %}
 
@@ -9,7 +10,7 @@
 
 {% block body %}
     <main role="main">
-        <div class="album py-5 bg-light">
+        <div class="album py-5 bg-white">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-7 offset-lg-1">
@@ -40,63 +41,13 @@
                                 <div class="tab-pane fade" id="tab_2" role="tabpanel" aria-labelledby="actu">
                                     <div id='calendar'></div>
 
-                                    <div class="card">
-                                        <div class="card-header">Actualités</div>
-
-                                        {% if project.news is empty %}
-                                            <div class="card-body">
-                                                <p class="card-text">Pas de news !</p>
-                                            </div>
-                                        {% else %}
-                                            <div class="card-body p-0">
-                                                <ul class="list-group list-group-flush">
-                                                    {% for n in project.news | sort((a, b) => a.datePublished < b.datePublished)|slice(0, 9) %}
-                                                        <li class="list-group-item">
-                                                            {% if n.article != null or n.event != null %}
-                                                                <h4>
-                                                                    {{ n.article != null ? n.article.title }}
-                                                                    {{ n.event != null ? n.event.title }}
-                                                                </h4>
-                                                            {% endif %}
-                                                            <p class="card-text">
-                                                                {% if n.article != null %}
-                                                                    {{ n.article.abstract }}
-                                                                {% elseif n.event != null %}
-                                                                    {{ n.event.abstract }}
-                                                                {% else %}
-                                                                    {{ n.content }}
-                                                                {% endif %}
-                                                            </p>
-                                                            <p class="card-text">
-                                                                <small class="text-muted">
-                                                                    {{ n.datePublished | format_datetime(pattern="dd/MM/y · H'h'mm") }}
-                                                                    <span class="float-right">
-                                                                        {% if n.link != "" %}
-                                                                            <a target="_blank" href="{{ n.link }}">Ouvrir le lien</a>
-                                                                        {% elseif n.article != null %}
-                                                                            <a href="{{ path('article', {url: n.article.url}) }}">Voir l'article</a>
-                                                                        {% elseif n.event != null %}
-                                                                            <a href="{{ path('event', {url: n.event.url}) }}">Voir l'événement</a>
-                                                                        {% endif %}
-                                                                    </span>
-                                                                </small>
-                                                            </p>
-                                                        </li>
-                                                    {% endfor %}
-                                                </ul>
-                                            </div>
-                                        {% endif %}
-                                        <!-- /.card-body -->
-
-                                        {% if is_granted('PROJECT_ADMIN', project) %}
-                                            {# TODO: route espace asso #}
-                                            <div class="card-footer">
-                                                <button class="btn btn-primary btn-sm mt-auto" id="loadArticlesButton" {{ project.articles|length <= 10 ? 'style="display: none;"' }}>Charger la suite</button>
-                                                <a class="btn btn-primary btn-sm mt-auto" href="{{ path('espace_assos_articles_write', {url: project.url}) }}" role="button">Rédiger un article</a>
-                                            </div>
-                                        {% endif %}
-
-                                    </div>
+                                    {% if project.news is empty %}
+                                        <div class="card-body">
+                                            <p class="card-text">Pas de news !</p>
+                                        </div>
+                                    {% else %}
+                                        {{ news_list(project.news) }}
+                                    {% endif %}
                                 </div>
 
                                 <!-- /.tab-pane -->

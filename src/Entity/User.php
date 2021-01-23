@@ -96,6 +96,24 @@ class User implements UserInterface
     private $firstLogin;
 
     /**
+     * @param mixed $firstLogin
+     * @return User
+     */
+    public function setFirstLogin($firstLogin) {
+        $this->firstLogin = $firstLogin;
+        return $this;
+    }
+
+    /**
+     * @param mixed $lastLogin
+     * @return User
+     */
+    public function setLastLogin($lastLogin) {
+        $this->lastLogin = $lastLogin;
+        return $this;
+    }
+
+    /**
      * @ORM\Column(type="date")
      * @Serializer\Exclude()
      */

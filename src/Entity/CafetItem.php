@@ -4,9 +4,14 @@ namespace App\Entity;
 
 use App\Repository\CafetItemRepository;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity(repositoryClass=CafetItemRepository::class)
+ * @Vich\Uploadable()
  */
 class CafetItem
 {
@@ -33,6 +38,14 @@ class CafetItem
     private $imageFileName;
 
     /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="cafet_image", fileNameProperty="imageFileName")
+     * @Assert\Image(mimeTypesMessage="Le format de l'image est invalide")
+     * @Serializer\Exclude
+     */
+    private $imageFile;
+
+    /**
      * @ORM\Column(type="string", length=10)
      */
     private $type;
@@ -43,7 +56,7 @@ class CafetItem
     private $price;
 
     /**
-     * @ORM\Column(type="string", length=42)
+     * @ORM\Column(type="string", length=13)
      */
     private $day;
 

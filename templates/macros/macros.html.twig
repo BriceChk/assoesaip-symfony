@@ -1,0 +1,101 @@
+{# /templates/macros/alertes.html.twig #}
+{% macro alert(message, type) %}
+    <div class="alert alert-{{ type }}" role="alert">
+        {{ message }}
+    </div>
+{% endmacro%}
+
+{# List of News for the homepage, category and project page #}
+{% macro news_list(news_array, container_class = "") %}
+    {% for n in news_array | sort((a, b) => a.datePublished < b.datePublished) | sort((a, b) => b.starred <=> a.starred) | slice(0, 25) %}
+        <div class="{{ container_class }} d-flex">
+            <div class="card box-shadow flex-fill card-link" {{ n.starred ? 'style="border-color: green"' }}>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-auto py-2 text-center">
+                            {% if n.project.logoFileName != null %}
+                                <img src="{{ vich_uploader_asset(n.project, 'logoFile') | imagine_filter('thumbnail') }}" alt="Logo projet" style="height: 50px; width: auto">
+                            {% else %}
+                                <img src="{{ asset('build/images/project-placeholder.png') | imagine_filter('thumbnail') }}" alt="Logo projet" style="height: 50px; width: auto">
+                            {% endif %}
+                        </div>
+
+                        <div class="col my-auto pl-0">
+                            <div class="row justify-content-between">
+                                <div class="col-md">
+                                    <span class="text-muted">{{ n.project.name }} </span>
+                                </div>
+                                <div class="col-md-auto">
+                                    <span class="text-muted">{{ n.datePublished|format_date(locale="fr") }} · {{ n.datePublished|format_time(locale="fr", pattern="HH'h'mm") }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr style="margin: 0; padding: 0">
+                    <div class="row card-body d-flex flex-column pt-3">
+                        {% if n.article != null or n.event != null %}
+                            <h4 class="card-text">
+                                {{ n.article != null ? n.article.title }}
+                                {{ n.event != null ? n.event.title }}
+                            </h4>
+                        {% endif %}
+                        <p class="card-text">
+                            {% if n.article != null %}
+                                {{ n.article.abstract }}
+                            {% elseif n.event != null %}
+                                {{ n.event.abstract }}
+                            {% else %}
+                                {{ n.content }}
+                            {% endif %}
+                        </p>
+                    </div>
+                    {% set color = n.article != null ? n.article.category.color : (n.event != null ? n.event.category.color : null) %}
+                    {% if color != null %}
+                        {% set text = n.article != null ? n.article.category.name : n.event.category.name %}
+                        {% set icon = n.article != null ? 'newspaper' : 'calendar-alt' %}
+                        <h5>
+                            <span class="badge badge-pill badge-primary news-badge" style="background-color: {{ color }}"><i class="far fa-{{ icon }}"></i> {{ text }}</span>
+                        </h5>
+                    {% endif %}
+                    {% if n.link != null %}
+                        <h5>
+                            <a href="{{ n.link }}" class="badge badge-pill badge-primary news-badge"><i class="fas fa-external-link-alt"></i></a>
+                        </h5>
+                    {% endif %}
+                </div>
+
+                {% if n.link != "" %}
+                    <a target="_blank" href="{{ n.link }}" class="stretched-link"></a>
+                {% elseif n.article != null %}
+                    <a href="{{ path('article', {url: n.article.url}) }}" class="stretched-link"></a>
+                {% elseif n.event != null %}
+                    <a href="{{ path('event', {url: n.event.url}) }}" class="stretched-link"></a>
+                {% endif %}
+
+            </div>
+        </div>
+    {% endfor %}
+{% endmacro %}
+
+{# A card for Cafet Items #}
+{% macro cafet_item(item) %}
+    <div class="col-lg-4 d-flex">
+        <div class="card mb-4 box-shadow flex-fill">
+            <div class="card-body row">
+                <div class="col-auto my-auto text-center" style="width: 100px">
+                    {% if item.imageFileName != null %}
+                        <img src="{{ vich_uploader_asset(item, 'imageFile') | imagine_filter('cafet') }}" alt="Logo projet">
+                    {% else %}
+                        <img src="{{ asset('build/images/project-placeholder.png') | imagine_filter('cafet') }}" alt="Logo projet" style="height: 80px; width: auto">
+                    {% endif %}
+                </div>
+                <div class="col">
+                    <div class="d-flex flex-column">
+                        <h5>{{ item.name }} · {{ item.price }}€</h5>
+                        <span class="card-text">{{ item.description }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}

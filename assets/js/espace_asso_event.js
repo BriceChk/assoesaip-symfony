@@ -178,6 +178,7 @@ window.save = function (published) {
                 $('#save-btn').attr('onclick', 'save(false)');
                 $('#pub-btn').show();
             }
+            updateNotifCheckDisplay();
         },
         error: function (data) { error(data) }
     });
@@ -202,6 +203,20 @@ $('#allDay').change(function() {
 $("#inputRepeat").change(function() {
     updateDisplayOptions();
 });
+
+$('input[name=customRadio]').change(function () {
+    updateNotifCheckDisplay();
+});
+
+function updateNotifCheckDisplay() {
+    if ($('#customRadio1').is(':checked')) {
+        if (eventId !== -1){
+            $('#notifCheckContainer').show();
+        }
+    } else {
+        $('#notifCheckContainer').hide();
+    }
+}
 
 function updateDisplayOptions() {
     let allDay = $('#allDay').is(':checked');

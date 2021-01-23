@@ -92,7 +92,22 @@ window.save = function (published) {
                 $('#save-btn').attr('onclick', 'save(false)');
                 $('#pub-btn').show();
             }
+            updateNotifCheckDisplay();
         },
         error: function (data) { error(data) }
     });
+}
+
+$('input[name=customRadio]').change(function () {
+    updateNotifCheckDisplay();
+});
+
+function updateNotifCheckDisplay() {
+    if ($('#customRadio1').is(':checked')) {
+        if (articleId !== -1){
+            $('#notifCheckContainer').show();
+        }
+    } else {
+        $('#notifCheckContainer').hide();
+    }
 }

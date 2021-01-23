@@ -2,7 +2,7 @@
     "type": "project",
     "license": "proprietary",
     "require": {
-        "php": ">=7.2.5",
+        "php": ">=7.4.12",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-json": "*",
@@ -50,7 +50,8 @@
         "twig/intl-extra": "^3.1",
         "twig/twig": "^2.12|^3.0",
         "vich/uploader-bundle": "^1.15",
-        "zircote/swagger-php": "^3.1"
+        "zircote/swagger-php": "^3.1",
+      "ext-mysqli": "*"
     },
     "require-dev": {
         "symfony/browser-kit": "^5.1",

@@ -92,6 +92,10 @@ Encore
         to: 'js/[path][name].[ext]'
     })
     .copyFiles({
+        from: './assets/fonts',
+        to: 'fonts/[path][name].[ext]'
+    })
+    .copyFiles({
         from: './node_modules/moment/min',
         to: 'js/moment/[path][name].[ext]'
     })

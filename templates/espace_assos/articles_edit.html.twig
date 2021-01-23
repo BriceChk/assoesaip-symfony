@@ -63,7 +63,7 @@
                             <span id="draft-div" {{ published ? 'style="display: none"' }}>
                                 <span class="badge badge-secondary">Brouillon</span>
                                 <p>Publier l'article générera un lien vers celui-ci et publiera une actu visible sur la page d'accueil et l'appli.</p>
-                                <div class="custom-control custom-checkbox">
+                                <div class="custom-control custom-checkbox" id="notifCheckContainer" {{ not def or def and article.private ? 'style="display: none"' }}>
                                     <input type="checkbox" class="custom-control-input" id="notifCheck">
                                     <label class="custom-control-label" for="notifCheck">Envoyer une notification aux étudiants</label><br>
                                     <small class="text-muted">Seulement si l'article est en public</small>

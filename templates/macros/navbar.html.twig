@@ -1,7 +1,7 @@
-<nav class="navbar fixed-top navbar-expand-xl navbar-dark bg-dark elevation-2">
+<nav class="navbar fixed-top navbar-expand-xl navbar-esaip elevation-2">
     <a class="navbar-brand" href="/">
         <img src="{{ asset('build/images/icons/android-chrome-144x144.png') }}" style="margin-right: 10px; margin-top: -5px; width: 36px; height: 36px;" alt="logo_esaip">
-        Asso'<b class="esaip-color">e</b>saip
+        Asso'esaip
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -18,8 +18,8 @@
             </li>
 
             {% if is_granted('ROLE_USER') and app.user.campus == "Angers" %}
-                <li class="nav-item {{ app.request.get('_route') == 'azsdazd' ? 'active' }}">
-                    <a class="nav-link" href="#">La Cafet'</a>
+                <li class="nav-item {{ app.request.get('_route') == 'cafet' ? 'active' }}">
+                    <a class="nav-link" href="{{ url('cafet') }}">La Cafet'</a>
                 </li>
             {% endif %}
         </ul>
@@ -29,13 +29,21 @@
         </ul>
 
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item dropdown">
-                <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">Parcourir les clubs & assos</a>
-                <ul class="dropdown-menu border-0 shadow" aria-labelledby="navbarDropdownLink">
+            <li class="nav-item dropdown" id="nav-projects-dropdown">
+                <a id="navProjectsDropdown" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">Parcourir les clubs & assos</a>
+                <ul class="dropdown-menu border-0 shadow" aria-labelledby="navProjectsDropdown">
                     {{ render(controller(
-                        'App\\Controller\\NavbarController::renderCategories', {onlyVisible: not is_granted('ROLE_ADMIN')}
+                        'App\\Controller\\NavbarController::renderCategories', {isAdmin: is_granted('ROLE_ADMIN'), withProjects: true}
                     )) }}
                 </ul>
+            </li>
+            <li class="nav-item dropdown" id="nav-categories-dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navCategDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Parcourir les clubs & assos</a>
+                <div class="dropdown-menu" aria-labelledby="navCategDropdown">
+                    {{ render(controller(
+                        'App\\Controller\\NavbarController::renderCategories', {isAdmin: is_granted('ROLE_ADMIN'), withProjects: false}
+                    )) }}
+                </div>
             </li>
         </ul>
 

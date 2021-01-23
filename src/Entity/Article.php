@@ -29,8 +29,8 @@ class Article
     private $url = "";
 
     /**
-     * @ORM\Column(type="string", length=50)
-     * @Assert\Length(max="50", maxMessage="Le titre ne doit pas dépasser 50 caractères")
+     * @ORM\Column(type="string", length=60)
+     * @Assert\Length(max="60", maxMessage="Le titre ne doit pas dépasser 60 caractères")
      * @Groups({"news", "article"})
      */
     private $title;
