@@ -36,10 +36,10 @@
                             Liste des administrateurs
                         </div>
                         <div class="card-body p-0">
-                            <ul class="list-group list-group-flush">
+                            <ul class="list-group list-group-flush" id="admin-list">
                                 {% for a in admins %}
-                                    <li class="list-group-item">
-                                        <div style="display: table-cell; vertical-align: middle">
+                                    <li class="list-group-item" id="{{ a.id }}">
+                                        <div>
                                             {{ a.fullName }} (<a href="mailto:{{ a.username }}">{{ a.username }}</a>)
                                         </div>
                                         <span class="float-right">
@@ -47,6 +47,14 @@
                                     </span>
                                     </li>
                                 {% endfor %}
+                                <li class="list-group-item" id="admin-template" style="display: none">
+                                    <div>
+                                        %name% (<a href="mailto:%mail%">%mail%</a>)
+                                    </div>
+                                    <span class="float-right">
+                                        <button class="btn btn-danger" onclick="deleteAdmin('%id%', '%name%')">Supprimer</button>
+                                    </span>
+                                </li>
                             </ul>
                         </div>
                     </div>

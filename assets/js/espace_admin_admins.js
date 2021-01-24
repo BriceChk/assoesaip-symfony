@@ -13,8 +13,27 @@ $(document).ready(function () {
                 let user = inputMembre.getSelectedItemData();
 
                 if (confirm('Voulez-vous vraiment ajouter ' + user.first_name + ' ' + user.last_name + ' aux administrateurs ?')) {
-                    alert("Ce n'est pas encore implémenté.");
-                    //TODO Requete + ajout à la liste
+                    $.ajax({
+                        url: '/api/admin/' + user.id,
+                        type: 'PUT',
+                        contentType: 'application/json',
+                        success: function () {
+                            toastr.success("L'utilisateur a été ajouté aux administrateurs.");
+                            let el = $('#admin-template').clone();
+
+                            el.attr('id', user.id).html(el.html()
+                                .replace(/%name%/gi, user.first_name + ' ' + user.last_name)
+                                .replace(/%mail%/gi, user.username)
+                                .replace('%id%', user.id)
+                            ).show();
+
+                            $('#admin-list').append(el);
+                        },
+                        error: function (data) {
+                            error(data);
+                        }
+                    });
+
                 }
 
                 inputMembre.val('');
@@ -29,7 +48,17 @@ $(document).ready(function () {
 
 window.deleteAdmin = function (id, name) {
     if (confirm("Supprimer l'admin " + name + " ?")) {
-        alert("Ce n'est pas encore implémenté.");
-        //TODO La suppression
+        $.ajax({
+            url: '/api/admin/' + id,
+            type: 'DELETE',
+            contentType: 'application/json',
+            success: function () {
+                toastr.success("L'utilisateur a été supprimé des administrateurs.");
+                $('#' + id).remove();
+            },
+            error: function (data) {
+                error(data);
+            }
+        });
     }
 }
