@@ -2,9 +2,10 @@
 
 {% block stylesheets %}
     {{ parent() }}
+    {{ encore_entry_link_tags('espace_admin_projects') }}
 {% endblock %}
 
-{% block header %}Projets <span style="color: red">(Pas encore fonctionnel)</span>{% endblock %}
+{% block header %}Projets{% endblock %}
 
 {% block body %}
     <!-- Main content -->
@@ -16,7 +17,7 @@
                         <div class="card-header">
                             Ajouter un projet
                         </div>
-                        <div class="card-body">
+                        <div class="card-body" id="form-projet">
                             <div class="row form-group">
                                 <div class="col">
                                     <label for="inputNomProjet">Nom</label>
@@ -27,6 +28,7 @@
                                     <select class="form-control" id="inputCampus">
                                         <option>Angers</option>
                                         <option>Aix</option>
+                                        <option>Reims</option>
                                     </select>
                                 </div>
                                 <div class="col">
@@ -50,34 +52,42 @@
                                     <div class="autocomplete">
                                         <input type="text" class="form-control" id="input1erAdmin" placeholder="Nom, adresse@esaip.org">
                                     </div>
-                                    <small class="form-text text-muted">Entrez un nom ou une adresse mail esaip. La personne doit s'être connectée une première fois à Asso'esaip. Cette personne pourra gérer la page projet et sera prévenue de la création de la page.</small>
+                                    <p>
+                                        <small class="form-text text-muted">Entrez un nom ou une adresse mail esaip. La personne doit s'être connectée une première fois à Asso'esaip. Cette personne pourra gérer la page projet et sera prévenue de la création de la page.</small>
+                                    </p>
                                     <ul class="list-group" id="listeMembres">
+                                        <li class="list-group-item" style="display: none" id="admin-item">
+                                            <div id="admin-name"></div>
+                                            <div class="btn-group-toggle float-right" data-toggle="buttons">
+                                                <button class="btn btn-danger" onclick="$(this).parent().parent().attr('value', null).hide();">Supprimer</button>
+                                            </div>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <button class="btn btn-success" onclick="">Ajouter le projet</button>
+                                <button class="btn btn-success" onclick="createProject()">Ajouter le projet</button>
                             </div>
                         </div>
                     </div>
 
                     <div class="card">
                         <div class="card-header">
-                            Liste des projets
+                            Liste des projets <span class="text-muted small">TODO: possibilité de modifier l'URL d'un projet</span>
                         </div>
                         <div class="card-body p-0">
                             <ul class="list-group list-group-flush">
                                 {% for p in projects | sort((a, b) => a.name <=> b.name) %}
-                                    <li class="list-group-item">
+                                    <li class="list-group-item" id="{{ p.id }}">
                                         <div style="display: table-cell; vertical-align: middle">
-                                            {{ p.name }} ({{ p.campus }})
+                                            <span class="project-name">{{ p.name }}</span> ({{ p.campus }})
                                             <span class="text-muted text-sm">(date de création : {{ p.dateAdded | date('d/m/Y') }}, dernière modification : {{ p.dateModified | date('d/m/Y') }})</span>
                                         </div>
                                         <span class="float-right">
-                                        <a href="{{ path('project', {url: p.url}) }}" class="btn btn-primary">Voir la page</a>
-                                        <a href="{{ path('espace_assos', {url: p.url}) }}" class="btn btn-primary">Modifier</a>
-                                        <button class="btn btn-danger">Supprimer</button>
-                                    </span>
+                                            <a href="{{ path('project', {url: p.url}) }}" target="_blank" class="btn btn-primary">Voir la page</a>
+                                            <a href="{{ path('espace_assos', {url: p.url}) }}" target="_blank" class="btn btn-primary">Modifier</a>
+                                            <button class="btn btn-danger" onclick="deleteProject($(this).parent().parent())">Supprimer</button>
+                                        </span>
                                     </li>
                                 {% endfor %}
                             </ul>
@@ -92,4 +102,5 @@
 
 {% block javascripts %}
     {{ parent() }}
+    {{ encore_entry_script_tags('espace_admin_projects') }}
 {% endblock %}

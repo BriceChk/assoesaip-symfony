@@ -35,7 +35,7 @@
                                     <div class="col-lg">
                                         <label for="inputCategorie">Catégorie</label>
                                         <select class="form-control" id="inputCategorie">
-                                            {% for categ in categories | sort((a, b) => a.order <=> b.order) %}
+                                            {% for categ in categories | sort((a, b) => a.listOrder <=> b.listOrder) %}
                                                 <option value="{{ categ.id }}" {{ categ == project.category ? 'selected' }}>{{ categ.name }}</option>';
                                             {% endfor %}
                                         </select>

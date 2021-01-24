@@ -88,17 +88,19 @@ class API_ProjectController extends AbstractFOSRestController {
      *     name = "api_project_create"
      * )
      * @View(statusCode=201)
-     * @ParamConverter("project", converter="fos_rest.request_body")
      * @IsGranted("ROLE_ADMIN")
-     * @param Project $project
-     * @return Project|Response
+     * @param Request $request
+     * @param ValidatorInterface $validator
+     * @return Project|\FOS\RestBundle\View\View|Response
      */
-    public function newProject(Project $project)
+    public function newProject(Request $request, ValidatorInterface $validator)
     {
         $em = $this->getDoctrine()->getManager();
         $rep = $em->getRepository(Project::class);
 
-        $p = $rep->findOneByUrl($project->getUrl());
+        $json = $request->request->all();
+
+        $p = $rep->findOneByUrl($json['url']);
         if ($p != null) {
             $response = new Response();
             $response->setStatusCode(Response::HTTP_BAD_REQUEST);
@@ -106,19 +108,41 @@ class API_ProjectController extends AbstractFOSRestController {
             return $response;
         }
 
-        //TODO remplacer param converter (ça va surement pas marcher)
+        // Should be the Non catégorisé category
+        $categ = $em->getRepository(ProjectCategory::class)->findOneBy(['visible' => false], ['listOrder' => 'DESC']);
+
+        $project = new Project();
+        $project->setName($json['name']);
+        $project->setCampus($json['campus']);
+        $project->setType($json['type']);
+        $project->setUrl($json['url']);
+        $project->setCategory($categ);
+
+        $errors = $validator->validate($project);
+        if (count($errors)) {
+            return $this->view($errors, Response::HTTP_BAD_REQUEST);
+        }
+
+        $user = $em->getRepository(User::class)->find($json['admin_id']);
+        if ($user == null) {
+            $response = new Response();
+            $response->setStatusCode(Response::HTTP_NOT_FOUND);
+            $response->setContent(Utils::jsonMsg("L'utilisateur n'a pas été trouvé"));
+            return $response;
+        }
 
         $em->persist($project);
         $em->flush();
 
-        if ($em->contains($project)) {
-            return $project;
-        }
+        $pm = new ProjectMember();
+        $pm->setUser($user);
+        $pm->setProject($project);
+        $pm->setAdmin(true);
 
-        $response = new Response();
-        $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
-        $response->setContent(Utils::jsonMsg("Une erreur s'est produite lors de l'enregistrement."));
-        return $response;
+        $em->persist($pm);
+        $em->flush();
+
+        return $project;
     }
 
     //TODO API pour modifier l'URL (admin)
@@ -241,14 +265,15 @@ class API_ProjectController extends AbstractFOSRestController {
      *     requirements = { "id"="\d+" }
      * )
      * @IsGranted("ROLE_ADMIN")
-     * @param Project $project
+     * @param $id
      * @return Response
      */
-    public function deleteProject(Project $project) {
+    public function deleteProject($id) {
         $response = new Response();
-
         $em = $this->getDoctrine()->getManager();
-        if ($em->contains($project)) {
+        $project = $em->getRepository(Project::class)->find($id);
+
+        if ($project != null) {
             $em->remove($project);
             $em->flush();
             $response->setStatusCode(Response::HTTP_OK);

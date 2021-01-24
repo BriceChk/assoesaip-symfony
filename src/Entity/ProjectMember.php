@@ -37,13 +37,13 @@ class ProjectMember
      * @ORM\Column(type="string", length=40)
      * @Assert\Length(max=40, maxMessage="Le rôle ne doit pas dépasser 40 caractères")
      */
-    private $role;
+    private $role = 'Membre';
 
     /**
      * @ORM\Column(type="string", length=500)
      * @Assert\Length(max=500, maxMessage="L'introduction ne doit pas faire plus de 500 caractères")
      */
-    private $introduction;
+    private $introduction = '';
 
     /**
      * @ORM\Column(type="boolean")
@@ -53,7 +53,7 @@ class ProjectMember
     /**
      * @ORM\Column(type="integer")
      */
-    private $orderPosition;
+    private $orderPosition = 1;
 
     public function getId(): ?int
     {

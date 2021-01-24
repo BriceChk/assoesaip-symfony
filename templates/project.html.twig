@@ -53,37 +53,37 @@
                                 <!-- /.tab-pane -->
                                 <div class="tab-pane fade" id="tab_3" role="tabpanel" aria-labelledby="members">
                                     <div class="row">
-                                    {% for member in project.members | sort((a,b) => (a.orderPosition > b.orderPosition)) %}
-                                        <div class="col-xl-12">
-                                            <div class="card">
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <div class="col-md-auto text-center">
-                                                        {% if member.user.avatarFileName != null %}
-                                                            <img class="img-circle elevation-2" src="{{ vich_uploader_asset(member.user, 'avatarFile') | imagine_filter('memberPicture') }}" alt="Photo auteur">
-                                                        {% else %}
-                                                            <img class="img-circle elevation-2" src="{{ asset('build/images/placeholder.png') | imagine_filter('memberPicture') }}" alt="Photo auteur">
-                                                        {% endif %}
-                                                    </div>
-                                                    <div class="col my-auto">
-                                                        <h4>
-                                                            {{ member.user.fullName }}
-                                                            {% if member.user.promo != '' %}
-                                                                <small class="text-muted">({{ member.user.promo }})</small>
-                                                            {% endif %}
-                                                        </h4>
-                                                        {% if member.role != '' %}
-                                                            <p>{{ member.role }}</p>
-                                                        {% endif %}
-                                                        {# TODO Vérifier que les sauts de lignes fonctionnent dans l'introduction #}
-                                                        <p>{{ member.introduction }}</p>
-                                                    </div>
+                                        {% for member in project.members | sort((a,b) => (a.orderPosition > b.orderPosition)) %}
+                                            <div class="col-xl-12">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-md-auto text-center">
+                                                                {% if member.user.avatarFileName != null %}
+                                                                    <img class="img-circle elevation-2" src="{{ vich_uploader_asset(member.user, 'avatarFile') | imagine_filter('memberPicture') }}" alt="Photo auteur">
+                                                                {% else %}
+                                                                    <img class="img-circle elevation-2" src="{{ asset('build/images/placeholder.png') | imagine_filter('memberPicture') }}" alt="Photo auteur">
+                                                                {% endif %}
+                                                            </div>
+                                                            <div class="col my-auto">
+                                                                <h4>
+                                                                    {{ member.user.fullName }}
+                                                                    {% if member.user.promo != '' %}
+                                                                        <small class="text-muted">({{ member.user.promo }})</small>
+                                                                    {% endif %}
+                                                                </h4>
+                                                                {% if member.role != '' %}
+                                                                    <p>{{ member.role }}</p>
+                                                                {% endif %}
+                                                                {# TODO Vérifier que les sauts de lignes fonctionnent dans l'introduction #}
+                                                                <p>{{ member.introduction }}</p>
+                                                            </div>
 
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
+                                        {% endfor %}
                                     </div>
                                 </div>
                                 <!-- /.tab-pane -->
@@ -113,7 +113,13 @@
                                     </div>
                                 {% endif %}
 
-                                <span>{{ project.name }} est {{ project.type == "Association" ? 'une association' : (project.type == 'Club' ? 'un club' : 'un projet') }} à {{ project.campus }} qui compte {{ project.members | length }} membres.</span>
+                                <span>
+                                    {{ project.name }} est {{
+                                    project.type == "Association" ? 'une association' :
+                                    (project.type == 'Club' ? 'un club' :
+                                    (project.type == 'Projet' ? 'un projet' : 'une liste BDE'))
+                                    }} à {{ project.campus }} qui compte {{ project.members | length }} membres.
+                                </span>
 
                                 {% if project.parentProject != null and project.type != 'Association' %}
                                     <br><br><span>Ce club est rattaché à l'association <a href="{{ path('project', {'url': project.parentProject.url}) }}">{{ project.parentProject.name }}</a>.</span>

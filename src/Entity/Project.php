@@ -101,7 +101,7 @@ class Project
      * )
      * @ORM\Column(type="string", length=255)
      */
-    private $keywords;
+    private $keywords = '';
 
     /**
      * @Assert\Email(
@@ -109,7 +109,7 @@ class Project
      * )
      * @ORM\Column(type="string", length=255)
      */
-    private $email;
+    private $email = '';
 
     /**
      * @ORM\Column(type="json")
@@ -124,7 +124,7 @@ class Project
      * @ORM\Column(type="string", length=180)
      * @Groups({"categProjectList", "article", "event"})
      */
-    private $description;
+    private $description = '';
 
     /**
      * @var File|null
@@ -144,7 +144,7 @@ class Project
     /**
      * @ORM\Column(type="text")
      */
-    private $html;
+    private $html = '<h1>Présentation</h1><hr><br>';
 
     /**
      * @ORM\Column(type="date")
