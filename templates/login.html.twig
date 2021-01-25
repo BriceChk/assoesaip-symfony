@@ -8,30 +8,51 @@
     <title>Asso'esaip</title>
 
     {{ encore_entry_link_tags('app') }}
+
+    <style>
+        #bvn-text {
+            font-size: 4em
+        }
+
+        #aelogo {
+            height: 200px;
+            width: 200px;
+        }
+
+        @media (max-width: 767px) {
+            #aelogo {
+                height: 100px;
+                width: 100px;
+            }
+
+            #bvn-text {
+                font-size: 3em;
+            }
+        }
+    </style>
 </head>
 <body style="margin: 0; background-color: #fff">
-<div style="width: 100%; height: 50%; position: fixed; border-radius: 0 0 75px 0" class="text-center bg-esaip">
 
-   <div class="container">
-       <div class="row pt-5">
+<div style="width: 100%; height: 50%; position: fixed; border-radius: 0 0 50px 0" class="text-center bg-esaip">
+       <div class="pt-5">
            <div class="col-md-auto">
-               <img style="height: 200px; width: 200px" src="{{ asset('build/images/icons/android-chrome-256x256.png') }}">
+               <img id="aelogo" src="{{ asset('build/images/icons/android-chrome-256x256.png') }}" alt="Asso'esaip logo">
            </div>
-           <div class="col-md text-white my-auto" style="font-size: 4em">
+           <div class="col-md-auto text-white my-auto" id="bvn-text">
                Bienvenue sur Asso'esaip
            </div>
        </div>
-   </div>
-
 </div>
-<div style="width: 100%; height: 50%; position: fixed; bottom: 0;" class="bg-esaip">
 
-</div>
-<div style="width: 100%; height: 50%; background-color: #fff; position: fixed; bottom: 0; border-radius: 75px 0 0 0" class="text-center">
-    <p class="pt-5 px-1" style="font-size: x-large">
+<div style="width: 100%; height: 50%; position: fixed; bottom: 0;" class="bg-esaip"></div>
+
+<div style="width: 100%; height: 50%; background-color: #fff; position: fixed; bottom: 0; border-radius: 50px 0 0 0" class="">
+    <p class="pt-5 px-1" style="font-size: x-large; text-align: center">
         Découvre les clubs et assos de ton campus, leurs actus et les prochains événements.
     </p>
-    <a href="{{ url('connect_azure_start') }}" class="btn btn-primary btn-lg" style="bottom: 100px; position: fixed">Connexion</a>
+    <p style="text-align: center">
+        <a href="{{ url('connect_azure_start') }}" class="btn btn-primary btn-lg mt-5">Connexion</a>
+    </p>
 </div>
 
 </body>
