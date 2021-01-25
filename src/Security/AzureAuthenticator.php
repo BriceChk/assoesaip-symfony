@@ -101,11 +101,8 @@ class AzureAuthenticator extends SocialAuthenticator
     {
         $message = strtr($exception->getMessageKey(), $exception->getMessageData());
 
-        if ($exception instanceof UsernameNotFoundException) {
-            //TODO Page erreur compte qui ne contient pas @esaip.org
-        }
-
-        return new Response($message, Response::HTTP_FORBIDDEN);
+        //return new Response($message, Response::HTTP_FORBIDDEN);
+        return new RedirectResponse('/login-office');
     }
 
     /**
@@ -131,7 +128,7 @@ class AzureAuthenticator extends SocialAuthenticator
         $session->set('redirect_uri', $uri);
 
         return new RedirectResponse(
-            '/login-office/', // might be the site, where users choose their oauth provider
+            '/login-office', // might be the site, where users choose their oauth provider
             Response::HTTP_TEMPORARY_REDIRECT
         );
     }
