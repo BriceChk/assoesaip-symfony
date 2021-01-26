@@ -6,6 +6,7 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-json": "*",
+        "ext-mysqli": "*",
         "cocur/slugify": "^4.0",
         "composer/package-versions-deprecated": "^1.11",
         "doctrine/annotations": "^1.11",
@@ -50,8 +51,7 @@
         "twig/intl-extra": "^3.1",
         "twig/twig": "^2.12|^3.0",
         "vich/uploader-bundle": "^1.15",
-        "zircote/swagger-php": "^3.1",
-      "ext-mysqli": "*"
+        "zircote/swagger-php": "^3.1"
     },
     "require-dev": {
         "symfony/browser-kit": "^5.1",
