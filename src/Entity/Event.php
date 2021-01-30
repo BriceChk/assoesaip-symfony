@@ -96,7 +96,7 @@ class Event
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\EventCategory", inversedBy="events")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"event", "eventOccList"})
+     * @Groups({"event", "eventOccList", "news"})
      */
     private $category;
 

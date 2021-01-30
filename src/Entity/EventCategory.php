@@ -17,19 +17,19 @@ class EventCategory
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"event", "eventOccList"})
+     * @Groups({"event", "eventOccList", "news"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"event", "eventOccList"})
+     * @Groups({"event", "eventOccList", "news"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=7)
-     * @Groups({"event", "eventOccList"})
+     * @Groups({"event", "eventOccList", "news"})
      */
     private $color;
 

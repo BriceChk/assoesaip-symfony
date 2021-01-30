@@ -95,7 +95,7 @@ class Article
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\ArticleCategory", inversedBy="articles")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"article"})
+     * @Groups({"article", "news"})
      */
     private $category;
 

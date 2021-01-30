@@ -17,19 +17,19 @@ class ArticleCategory
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"article"})
+     * @Groups({"article", "news"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"article"})
+     * @Groups({"article", "news"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=7)
-     * @Groups({"article"})
+     * @Groups({"article", "news"})
      */
     private $color;
 
