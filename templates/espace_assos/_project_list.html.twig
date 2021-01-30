@@ -1,4 +1,4 @@
-{% for p in projects %}
+{% for p in projects | sort((a, b) => a.name <=> b.name) %}
     <option value="{{ path('espace_assos', {url: p.url}) }}" id="{{ p.id }}" url="{{ p.url }}" {{ p.url == app.request.get('url') ? 'selected' }} >{{ p.name }} {% if is_granted('ROLE_ADMIN') %}({{ p.campus }}){% endif %}</option>
 {% endfor %}
 {% if projects is empty %}
