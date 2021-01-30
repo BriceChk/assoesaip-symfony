@@ -42,7 +42,7 @@ class API_CategoriesController extends AbstractFOSRestController {
      */
     public function listVisibleCategories() {
         $rep = $this->getDoctrine()->getRepository(ProjectCategory::class);
-        return $rep->findBy(['visible' => true], ['order' => 'ASC']);
+        return $rep->findBy(['visible' => true], ['listOrder' => 'ASC']);
     }
 
     /**
