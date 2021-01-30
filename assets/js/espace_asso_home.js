@@ -108,6 +108,9 @@ window.createNews = function () {
 
             toastr.success("L'actu a été publiée !");
             $('#newNewsModal').modal('hide');
+            $('#news-message').val('');
+            $('#news-link').val('');
+            $('#news-notif').prop('checked', false)
         },
         error: function (data) { error(data) }
     });
