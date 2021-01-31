@@ -17,33 +17,33 @@ class FcmToken
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="fcmTokens")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $user;
+    private User $user;
 
     /**
      * @ORM\Column(type="string", length=22)
      * @Assert\Length(exactMessage="L'ID d'instance doit faire 22 caractères.", max="22", min="22")
      * @Groups({"fcmtoken"})
      */
-    private $instanceId;
+    private string $instanceId;
 
     /**
      * @ORM\Column(type="string", length=163)
      * @Assert\Length(exactMessage="Le token (instanceId:token) doit faire 163 caractères.", max="163", min="163")
      * @Groups({"fcmtoken"})
      */
-    private $token;
+    private string $token;
 
     /**
      * @ORM\Column(type="boolean")
      * @Groups({"fcmtoken"})
      */
-    private $notificationsEnabled = false;
+    private bool $notificationsEnabled = false;
 
     public function getId(): ?int
     {
@@ -55,7 +55,7 @@ class FcmToken
         return $this->user;
     }
 
-    public function setUser(?User $user): self
+    public function setUser(User $user): self
     {
         $this->user = $user;
 
