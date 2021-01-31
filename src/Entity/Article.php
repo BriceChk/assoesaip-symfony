@@ -190,7 +190,7 @@ class Article
         return $this->datePublished;
     }
 
-    public function setDatePublished(\DateTimeInterface $datePublished): self
+    public function setDatePublished($datePublished): self
     {
         $this->datePublished = $datePublished;
         return $this;
@@ -210,7 +210,7 @@ class Article
         return $this->dateCreated;
     }
 
-    public function setDateCreated(\DateTimeInterface $dateCreated): self
+    public function setDateCreated($dateCreated): self
     {
         $this->dateCreated = $dateCreated;
         return $this;

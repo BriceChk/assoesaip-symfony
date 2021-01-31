@@ -400,7 +400,7 @@ class Project
         return $this->dateAdded;
     }
 
-    public function setDateAdded(DateTimeInterface $dateAdded): self
+    public function setDateAdded($dateAdded): self
     {
         $this->dateAdded = $dateAdded;
 
@@ -412,7 +412,7 @@ class Project
         return $this->dateModified;
     }
 
-    public function setDateModified(DateTimeInterface $dateModified): self
+    public function setDateModified($dateModified): self
     {
         $this->dateModified = $dateModified;
 
@@ -633,5 +633,12 @@ class Project
         }
 
         return $this;
+    }
+
+    /**
+     * @param mixed $id
+     */
+    public function setId($id): void {
+        $this->id = $id;
     }
 }

@@ -123,7 +123,7 @@ class News
         return $this->datePublished;
     }
 
-    public function setDatePublished(\DateTimeInterface $datePublished): self
+    public function setDatePublished($datePublished): self
     {
         $this->datePublished = $datePublished;
 
