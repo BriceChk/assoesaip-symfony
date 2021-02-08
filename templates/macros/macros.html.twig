@@ -5,9 +5,15 @@
     </div>
 {% endmacro%}
 
-{# List of News for the homepage, category and project page #}
+{# List of News for the homepage, category and project page. Uses a sub macro to properly sort by date. #}
 {% macro news_list(news_array, container_class = "") %}
-    {% for n in news_array | sort((a, b) => a.datePublished < b.datePublished) | sort((a, b) => b.starred <=> a.starred) | slice(0, 25) %}
+    {% import _self as s %}
+    {{ s._news_list_sorted(news_array | filter(n => n.starred), container_class) }}
+    {{ s._news_list_sorted(news_array | filter(n => not n.starred), container_class) }}
+{% endmacro %}
+
+{% macro _news_list_sorted(news_array, container_class = "") %}
+    {% for n in news_array | sort((a, b) => a.datePublished < b.datePublished) | slice(0, 25) %}
         <div class="{{ container_class }} d-flex">
             <div class="card box-shadow flex-fill card-link" {{ n.starred ? 'style="border-color: green"' }}>
                 <div class="container">
