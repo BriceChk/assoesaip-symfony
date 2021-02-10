@@ -26,7 +26,7 @@ class UserType extends AbstractType
                 ]
             ])
             ->add('campus', ChoiceType::class, [
-                'choices' => ['Angers' => 'Angers', 'Aix' => 'Aix']
+                'choices' => ['Angers' => 'Angers', 'Aix' => 'Aix', 'Reims' => 'Reims']
             ])
             ->add('avatarFile', FileType::class, [
                 'required' => false,

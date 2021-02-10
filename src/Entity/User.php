@@ -70,7 +70,7 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=15)
      * @Groups({"article", "event", "profile", "profileEdit"})
-     * @Assert\Choice({"Angers", "Aix"})
+     * @Assert\Choice({"Angers", "Aix", "Reims"})
      */
     private $campus = '';
 
