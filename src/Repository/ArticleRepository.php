@@ -46,8 +46,7 @@ class ArticleRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('p')
             ->where("p.published = 1")
-            ->andWhere("p.title LIKE :val")
-            ->orWhere("p.abstract LIKE :val")
+            ->andWhere("p.title LIKE :val OR p.abstract LIKE :val")
             ->setParameter('val', '%' . $value . '%')
             ->orderBy('p.datePublished', 'DESC')
             ->getQuery()
