@@ -1,10 +1,9 @@
 {% extends 'espace_assos/espasso_base.html.twig' %}
 
-{% block header %}Créer un événement <a class="btn btn-link" href="{{ path('espace_assos_events_list', {url: app.request.get('url')}) }}">Retour à la liste</a> {% endblock %}
+{% block header %}{{ event is defined ? 'Modifier' : 'Créer' }} un événement <a class="btn btn-link" href="{{ path('espace_assos_events_list', {url: app.request.get('url')}) }}">Retour à la liste</a> {% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
-    {{ encore_entry_link_tags('espace_asso_event') }}
     {{ encore_entry_link_tags('espace_asso_event') }}
 {% endblock %}
 
