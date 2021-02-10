@@ -307,7 +307,7 @@ class User implements UserInterface
             return $project->isAdmin();
         })->map(function (ProjectMember $project) {
             return $project->getProject();
-        });
+        })->getValues();
     }
 
     public function addProject(ProjectMember $member): self

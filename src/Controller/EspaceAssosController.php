@@ -83,15 +83,17 @@ class EspaceAssosController extends AbstractController
             return $this->render('espace_assos/espace_assos_no_project.html.twig', ['noProject' => true]);
         }
 
+        $rep = $this->getDoctrine()->getRepository(Project::class);
+        $firstProject = $rep->find($projectsList[0]->getId());
+
         // Else, retrieve selected project or select the first one in the list
-        $projectUrl = $this->get('session')->get('selectedProject', $projectsList[0]->getUrl());
+        $projectUrl = $this->get('session')->get('selectedProject', $firstProject->getUrl());
 
         // Just check if the user is still a project admin or if the project exists. If not, just take the first one
-        if ($projectUrl != $projectsList[0]->getUrl()) {
-            $rep = $this->getDoctrine()->getRepository(Project::class);
+        if ($projectUrl != $firstProject->getUrl()) {
             $proj = $rep->findOneByUrl($projectUrl);
             if ($proj == null || !$this->isGranted('PROJECT_ADMIN', $proj)) {
-                $projectUrl = $projectsList[0]->getUrl();
+                $projectUrl = $firstProject->getUrl();
             }
         }
 
