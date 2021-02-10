@@ -49,8 +49,12 @@ class API_SearchController extends AbstractFOSRestController {
 
         if (strlen($term) < 2) return $this->view($a);
 
+        /** @var User $user */
+        $user = $this->getUser();
+        $campus = $this->isGranted('ROLE_ADMIN') ? '' : $user->getCampus();
+
         $rep = $this->getDoctrine()->getRepository(Project::class);
-        $projects = $rep->search($term);
+        $projects = $rep->search($term, $campus);
         foreach ($projects as $p) {
             $a[] = [
                 "name" => $p->getName(),
@@ -62,7 +66,7 @@ class API_SearchController extends AbstractFOSRestController {
         }
 
         $rep = $this->getDoctrine()->getRepository(Event::class);
-        $events = $rep->search($term);
+        $events = $rep->search($term, $campus);
         foreach ($events as $e) {
             $a[] = [
                 "name" => $e->getTitle(),
@@ -73,7 +77,7 @@ class API_SearchController extends AbstractFOSRestController {
         }
 
         $rep = $this->getDoctrine()->getRepository(Article::class);
-        $articles = $rep->search($term);
+        $articles = $rep->search($term, $campus);
         foreach ($articles as $e) {
             $a[] = [
                 "name" => $e->getTitle(),

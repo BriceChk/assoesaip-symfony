@@ -42,12 +42,15 @@ class ArticleRepository extends ServiceEntityRepository
         ;
     }
 
-    public function search($value): array
+    public function search($value, $campus): array
     {
         return $this->createQueryBuilder('p')
+            ->innerJoin("p.project", "project")
             ->where("p.published = 1")
             ->andWhere("p.title LIKE :val OR p.abstract LIKE :val")
+            ->andWhere("project.campus LIKE :campus")
             ->setParameter('val', '%' . $value . '%')
+            ->setParameter('campus', '%'.$campus.'%')
             ->orderBy('p.datePublished', 'DESC')
             ->getQuery()
             ->getResult()

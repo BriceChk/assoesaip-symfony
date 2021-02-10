@@ -54,12 +54,14 @@ class ProjectRepository extends ServiceEntityRepository
         }
     }
 
-    public function search($value): array
+    public function search($value, $campus = ''): array
     {
         return $this->createQueryBuilder('p')
             ->andWhere("p.name LIKE :val")
             ->orWhere("p.keywords LIKE :val")
+            ->andWhere("p.campus LIKE :campus")
             ->setParameter('val', '%' . $value . '%')
+            ->setParameter('campus', '%' . $campus . '%')
             ->orderBy('p.name', 'ASC')
             ->getQuery()
             ->getResult()
