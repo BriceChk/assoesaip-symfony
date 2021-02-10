@@ -24,7 +24,7 @@ $(document).ready(function () {
 
                 let newLi = $('#member-template').clone();
                 newLi.attr('id', user.id);
-                newLi.html(newLi.html().replace('%id%', user.id).replace('%name%', user.first_name + ' ' + user.last_name).replace('%email%', user.email));
+                newLi.html(newLi.html().replace('%id%', user.id).replace('%name%', user.first_name + ' ' + user.last_name).replace('%email%', user.username));
 
                 let itemFound = false;
                 $('#members-list li').each(function () {
