@@ -20,9 +20,9 @@
                     <div class="row">
                         <div class="col-auto py-2 text-center">
                             {% if n.project.logoFileName != null %}
-                                <img src="{{ vich_uploader_asset(n.project, 'logoFile') | imagine_filter('thumbnail') }}" alt="Logo projet" style="height: 50px; width: auto">
+                                <img src="{{ vich_uploader_asset(n.project, 'logoFile') | imagine_filter('thumbnail') }}" alt="Logo projet" style="max-height: 50px; max-width: 50px">
                             {% else %}
-                                <img src="{{ asset('build/images/project-placeholder.png') | imagine_filter('thumbnail') }}" alt="Logo projet" style="height: 50px; width: auto">
+                                <img src="{{ asset('build/images/project-placeholder.png') | imagine_filter('thumbnail') }}" alt="Logo projet" style="max-height: 50px; max-width: 50px">
                             {% endif %}
                         </div>
 

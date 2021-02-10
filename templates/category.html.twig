@@ -44,9 +44,9 @@
                                <div class="row asso-category">
                                    <div class="col-xl-auto my-auto text-center">
                                        {% if project.logoFileName != null %}
-                                           <img src="{{ vich_uploader_asset(project, 'logoFile') | imagine_filter('thumbnail') }}" alt="Logo projet" style="height: 100px; width: auto">
+                                           <img src="{{ vich_uploader_asset(project, 'logoFile') | imagine_filter('thumbnail') }}" alt="Logo projet" style="max-height: 100px; max-width: 100px">
                                        {% else %}
-                                           <img src="{{ asset('build/images/project-placeholder.png') | imagine_filter('thumbnail') }}" alt="Logo projet" style="height: 100px; width: auto">
+                                           <img src="{{ asset('build/images/project-placeholder.png') | imagine_filter('thumbnail') }}" alt="Logo projet" style="max-height: 100px; max-width: 100px">
                                        {% endif %}
                                    </div>
                                    <div class="col-xl">
@@ -68,9 +68,9 @@
                                                <div class="card-body row">
                                                    <div class="col-xl-auto my-auto text-center">
                                                        {% if childProject.logoFileName != null %}
-                                                           <img src="{{ vich_uploader_asset(childProject, 'logoFile') | imagine_filter('thumbnail') }}" alt="Logo projet" style="height: 80px; width: auto">
+                                                           <img src="{{ vich_uploader_asset(childProject, 'logoFile') | imagine_filter('thumbnail') }}" alt="Logo projet" style="max-height: 80px; max-width: 80px">
                                                        {% else %}
-                                                           <img src="{{ asset('build/images/project-placeholder.png') | imagine_filter('thumbnail') }}" alt="Logo projet" style="height: 80px; width: auto">
+                                                           <img src="{{ asset('build/images/project-placeholder.png') | imagine_filter('thumbnail') }}" alt="Logo projet" style="max-height: 80px; max-width: 80px">
                                                        {% endif %}
                                                    </div>
                                                    <div class="col-xl">
