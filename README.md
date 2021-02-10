@@ -17,5 +17,6 @@ Create a file named `.env.local` to setup your dev env variables.
 - Cafet' reservations with payments
 - Polls
 - Yearly cleaning process (roombooks, oldest old users, promo update) 
+- Campus automatique (liste des projets admin)
 
 <-- WIP -->
