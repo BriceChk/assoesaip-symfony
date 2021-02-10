@@ -41,8 +41,9 @@ class MigrationController extends AbstractController
         return $mysqli;
     }
 
-    /**
-     * @Route("/migrate/users", name="migration_users")
+    /*
+     * //@Route("/migrate/users", name="migration_users")
+     * //@IsGranted("ROLE_ADMIN")
      */
     public function index(): Response
     {
@@ -79,9 +80,42 @@ class MigrationController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/migrate/projects", name="migration_projects")
-     * @IsGranted("ROLE_ADMIN")
+    /*
+     * //@Route("/migrate/profilepics", name="migration_pp")
+     * //@IsGranted("ROLE_ADMIN")
+     */
+    public function profilepics(): Response
+    {
+        $this->l('scanning directory');
+        $directory = '/var/www/asso-esaip.bricechk.fr/public/images/profile-pics';
+        $scanned_directory = array_diff(scandir($directory), array('..', '.'));
+        $this->l('checking files');
+
+        $em = $this->getDoctrine()->getManager();
+        $rep = $this->getDoctrine()->getRepository(User::class);
+        foreach ($scanned_directory as $f) {
+            $msid = explode('.', $f)[0];
+
+            $u = $rep->findOneBy(['msId' => $msid]);
+            if ($u == null) {
+                $this->l('No user found for ' . $msid);
+            } else {
+                $u->setAvatarFileName($f);
+                $em->persist($u);
+                $this->l('found picture for ' . $u->getFullName());
+            }
+        }
+        $this->l('flushing');
+        $em->flush();
+
+        return $this->render('migration/index.html.twig', [
+            'messages' => $this->messages,
+        ]);
+    }
+
+    /*
+     * //@Route("/migrate/projects", name="migration_projects")
+     * //@IsGranted("ROLE_ADMIN")
      */
     public function projects(SluggerInterface $slugger): Response
     {
