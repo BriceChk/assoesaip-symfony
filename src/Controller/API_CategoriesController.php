@@ -26,7 +26,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class API_CategoriesController extends AbstractFOSRestController {
 
     /**
-     * Get all visible Categories.
+     * Get all visible Categories that have at least one project on the User's campus.
      * @OA\Response (
      *     response = 200,
      *     description = "The list of Categories",
