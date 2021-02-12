@@ -25,7 +25,7 @@ class NewsRepository extends ServiceEntityRepository
      * @param string $campus
      * @return News[] Returns an array of News objects
      */
-    public function findLatestNews($count, $campus = "A"): array {
+    public function findLatestNews($count, $campus = ""): array {
         return $this->createQueryBuilder('n')
             ->innerJoin('n.project', 'p')
             ->andWhere('p.campus LIKE :val')
