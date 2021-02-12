@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\AssoEsaipSettings;
 use App\Entity\CafetItem;
 use DateInterval;
 use DateTime;
@@ -20,10 +21,15 @@ class CafetController extends AbstractController
      */
     public function index(): Response
     {
+        $settingsRep = $this->getDoctrine()->getRepository(AssoEsaipSettings::class);
+        $open = $settingsRep->isCafetOpen();
+        $message = $settingsRep->getCafetMessage();
+
         $rep = $this->getDoctrine()->getRepository(CafetItem::class);
         $items = $rep->findAll();
 
         $date = new DateTime('now');
+        $now = new DateTime('now');
 
         // Add one day to the date if time is past 12h45
         $testDate = new DateTime('now');
@@ -58,6 +64,9 @@ class CafetController extends AbstractController
             }
             if (count($repas) == 0) {
                 $date = $date->add(new DateInterval('P1D'));
+                if ($date->diff($now)->days > 7) {
+                    break;
+                }
             }
         }
 
@@ -69,6 +78,8 @@ class CafetController extends AbstractController
             'boissons' => $boissons,
             'desserts' => $desserts,
             'day' => $formatter->format($date),
+            'open' => $open,
+            'message' => $message
         ]);
     }
 }
