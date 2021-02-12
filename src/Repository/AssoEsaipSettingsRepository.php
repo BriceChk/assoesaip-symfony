@@ -68,7 +68,37 @@ class AssoEsaipSettingsRepository extends ServiceEntityRepository
         return $setting->getValue();
     }
 
+    public function getCafetMessage(): string
+    {
+        /** @var AssoEsaipSettings $setting */
+        try {
+            $setting = $this->createQueryBuilder('a')
+                ->andWhere('a.name = :val')
+                ->setParameter('val', 'cafet_message')
+                ->getQuery()
+                ->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            return '';
+        }
 
+        return $setting->getValue();
+    }
+
+    public function isCafetOpen(): bool
+    {
+        /** @var AssoEsaipSettings $setting */
+        try {
+            $setting = $this->createQueryBuilder('a')
+                ->andWhere('a.name = :val')
+                ->setParameter('val', 'cafet_open')
+                ->getQuery()
+                ->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            return '';
+        }
+
+        return $setting->getValue() == '1';
+    }
 
     // /**
     //  * @return AssoEsaipSettings[] Returns an array of AssoEsaipSettings objects

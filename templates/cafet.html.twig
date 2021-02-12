@@ -8,36 +8,46 @@
     <main role="main">
         <div class="jumbotron text-center">
             <h1 class="display-4">La Cafet'</h1>
-            <p class="lead">Retrouve le menu de la Cafet', et résèrve tes repas ! La Cafet' est ouverte de 12h à 12h45.</p>
-            <div class="card bg-danger mx-auto" style="width: 11rem">
-                La Cafet' est fermée
+            <p class="lead">{{ message }}</p>
+            <div class="card bg-{{ open ? 'success' : 'danger' }} mx-auto" style="width: 11rem">
+                La Cafet' est {{ open ? 'ouverte' : 'fermée' }}
             </div>
         </div>
         <div class="container-fluid pb-5">
             <div class="row">
                 <div class="col-lg-10 offset-lg-1">
-                    <h1>Menu de {{ day }}</h1>
-                    <hr>
-                    <h3>Repas</h3>
-                    <div class="row">
-                        {% for i in repas %}
-                            {{ cafet_item(i) }}
-                        {% endfor %}
-                    </div>
-                    <br>
-                    <h3>Desserts</h3>
-                    <div class="row">
-                        {% for i in desserts %}
-                            {{ cafet_item(i) }}
-                        {% endfor %}
-                    </div>
-                    <br>
-                    <h3>Boissons</h3>
-                    <div class="row">
-                        {% for i in boissons %}
-                            {{ cafet_item(i) }}
-                        {% endfor %}
-                    </div>
+                    {% if repas is not empty %}
+                        <h1>Menu de {{ day }}</h1>
+                        <hr>
+                        <h3>Repas</h3>
+                        <div class="row">
+                            {% for i in repas %}
+                                {{ cafet_item(i) }}
+                            {% endfor %}
+                        </div>
+                        <br>
+                        {% if desserts is not empty %}
+                            <h3>Desserts</h3>
+                            <div class="row">
+                                {% for i in desserts %}
+                                    {{ cafet_item(i) }}
+                                {% endfor %}
+                            </div>
+                            <br>
+                        {% endif %}
+                        {% if boissons is not empty %}
+                            <h3>Boissons</h3>
+                            <div class="row">
+                                {% for i in boissons %}
+                                    {{ cafet_item(i) }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-primary" role="alert">
+                            Aucun repas n'est prévu à la Cafet'.
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
