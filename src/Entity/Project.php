@@ -307,6 +307,14 @@ class Project
         return $this->childrenProjects;
     }
 
+    public function filterSameCampusChildrenProjects(): Collection
+    {
+        $this->childrenProjects = $this->childrenProjects->filter(function (Project $p) {
+            return $p->getCategory() == $this->getCategory();
+        });
+        return $this->childrenProjects;
+    }
+
     public function getKeywords(): ?string
     {
         return $this->keywords;
