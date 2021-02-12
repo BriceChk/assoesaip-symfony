@@ -42,7 +42,22 @@ class API_CategoriesController extends AbstractFOSRestController {
      */
     public function listVisibleCategories() {
         $rep = $this->getDoctrine()->getRepository(ProjectCategory::class);
-        return $rep->findBy(['visible' => true], ['listOrder' => 'ASC']);
+        $categs = $rep->findBy(['visible' => true], ['listOrder' => 'ASC']);
+
+        $admin = $this->isGranted('ROLE_ADMIN');
+
+        // Filter categories to display only the ones that have projects in them (that changes depending on the campus)
+        foreach ($categs as $c) {
+            $projects = $c->getProjects()->filter(function (Project $p) use ($admin) {
+                return $admin || $p->getCampus() == $this->getUser()->getCampus();
+            });
+
+            if ($projects->isEmpty()) {
+                unset($categs[array_search($c, $categs)]);
+            }
+        }
+
+        return $categs;
     }
 
     /**
