@@ -65,6 +65,10 @@ $(document).ready(function () {
     };
 
     $("#global-search").easyAutocomplete(options);
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
 });
 
 String.prototype.sansAccent = function(){
