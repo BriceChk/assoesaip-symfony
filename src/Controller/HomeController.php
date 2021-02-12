@@ -26,18 +26,15 @@ class HomeController extends AbstractController
 
         /** @var User $user */
         $user = $this->getUser();
-        $campus = $user != null ? $user->getCampus() : 'A';
 
-        $projectRepo = $this->getDoctrine()->getRepository(Project::class);
-        if ($campus == 'A') {
-            $projects = $projectRepo->findAll();
+        $newsRepo = $this->getDoctrine()->getRepository(News::class);
+
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $news = $newsRepo->findLatestNews(20);
         } else {
-            $projects = $projectRepo->findBy(['campus' => $campus], null, 30, null);
-        }
-
-        $news = array();
-        foreach ($projects as $p) {
-            $news = array_merge($news, $p->getNews()->toArray());
+            /** @var User $user */
+            $user = $this->getUser();
+            $news = $newsRepo->findLatestNews(20, $user->getCampus());
         }
 
         return $this->render('home.html.twig', [
