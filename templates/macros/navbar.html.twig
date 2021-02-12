@@ -30,7 +30,7 @@
 
         <ul class="navbar-nav mr-auto">
             <li class="nav-item dropdown" id="nav-projects-dropdown">
-                <a id="navProjectsDropdown" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">Parcourir les clubs & assos</a>
+                <a id="navProjectsDropdown" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">Clubs & assos</a>
                 <ul class="dropdown-menu border-0 shadow" aria-labelledby="navProjectsDropdown">
                     {{ render(controller(
                         'App\\Controller\\NavbarController::renderCategories', {isAdmin: is_granted('ROLE_ADMIN'), withProjects: true}
@@ -38,7 +38,7 @@
                 </ul>
             </li>
             <li class="nav-item dropdown" id="nav-categories-dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navCategDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Parcourir les clubs & assos</a>
+                <a class="nav-link dropdown-toggle" href="#" id="navCategDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Clubs & assos</a>
                 <div class="dropdown-menu" aria-labelledby="navCategDropdown">
                     {{ render(controller(
                         'App\\Controller\\NavbarController::renderCategories', {isAdmin: is_granted('ROLE_ADMIN'), withProjects: false}

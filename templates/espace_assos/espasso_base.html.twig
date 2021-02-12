@@ -70,7 +70,7 @@
 
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item dropdown">
-                    <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">Parcourir les clubs & assos</a>
+                    <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">Clubs & assos</a>
                     <ul class="dropdown-menu border-0 shadow" aria-labelledby="navbarDropdownLink">
                         {{ render(controller(
                             'App\\Controller\\NavbarController::renderCategories', {isAdmin: is_granted('ROLE_ADMIN'), withProjects: false}
