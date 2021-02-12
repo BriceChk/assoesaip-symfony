@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use App\Entity\AssoEsaipSettings;
 use App\Entity\CafetItem;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -30,6 +31,16 @@ class API_CafetController extends AbstractFOSRestController {
      */
     public function getCafetItemsList(): array {
         $rep = $this->getDoctrine()->getRepository(CafetItem::class);
-        return $rep->findAll();
+        $items = $rep->findAll();
+
+        $settingsRep = $this->getDoctrine()->getRepository(AssoEsaipSettings::class);
+        $open = $settingsRep->isCafetOpen();
+        $message = $settingsRep->getCafetMessage();
+
+        return [
+            'items' => $items,
+            'is_open' => $open,
+            'message' => $message
+        ];
     }
 }
