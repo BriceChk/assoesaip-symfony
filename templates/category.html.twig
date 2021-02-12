@@ -35,6 +35,36 @@
                            {% set notConnected = app.user == null or is_granted('ROLE_ADMIN') %}
                            {% set campus = notConnected ? 'A' : app.user.campus %}
 
+                           <div class="row pt-3">
+                               {% for project in category.projects
+                                   | filter(p => p.type != "Association")
+                                   | filter(p => campus in p.campus)
+                                   | filter(p => p.parentProject != null and p.category != p.parentProject.category)
+                                   | sort((a, b) => a.name <=> b.name)
+                               %}
+                                   <div class="col-lg-4 d-flex">
+                                       <div class="card mb-4 box-shadow flex-fill card-link border-esaip">
+                                           <div class="card-body row">
+                                               <div class="col-xl-auto my-auto text-center">
+                                                   {% if project.logoFileName != null %}
+                                                       <img src="{{ vich_uploader_asset(project, 'logoFile') | imagine_filter('thumbnail') }}" alt="Logo projet" style="max-height: 80px; max-width: 80px">
+                                                   {% else %}
+                                                       <img src="{{ asset('build/images/project-placeholder.png') | imagine_filter('thumbnail') }}" alt="Logo projet" style="max-height: 80px; max-width: 80px">
+                                                   {% endif %}
+                                               </div>
+                                               <div class="col-xl">
+                                                   <div class="d-flex flex-column">
+                                                       <h5>{{ project.name }}</h5>
+                                                       <span class="card-text">{{ project.description }}</span>
+                                                   </div>
+                                               </div>
+                                           </div>
+                                           <a class="stretched-link" href="{{ path('project', {'url': project.url}) }}"></a>
+                                       </div>
+                                   </div>
+                               {% endfor %}
+                           </div>
+
                            {% for project in category.projects
                                | filter(project => project.type == "Association")
                                | filter(project => campus in project.campus)
