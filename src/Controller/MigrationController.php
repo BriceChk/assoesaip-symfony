@@ -62,8 +62,8 @@ class MigrationController extends AbstractController
             $user->setLastName($r['surname']);
             $user->setUsername($r['email']);
             $user->setMsId($r['ms_id']);
-            $user->setFirstLogin($r['premiere_co']);
-            $user->setLastLogin($r['derniere_co']);
+            $user->setFirstLogin(new DateTime($r['premiere_co']));
+            $user->setLastLogin(new DateTime($r['derniere_co']));
             if ($r['admin']) {
                 $user->setRoles(['ROLE_ADMIN']);
             }
