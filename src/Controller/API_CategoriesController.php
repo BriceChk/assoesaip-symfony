@@ -94,9 +94,26 @@ class API_CategoriesController extends AbstractFOSRestController {
             return $response;
         }
 
-        return $categ->getProjects()->filter(function (Project $p) {
-            return $p->getType() == 'Association' && ($p->getCampus() == $this->getUser()->getCampus() || $this->isGranted('ROLE_ADMIN'));
+        $clubs = $categ->getProjects()->filter(function (Project $p) {
+            return $p->getType() != 'Association' && $p->getParentProject() != null && $p->getParentProject()->getCategory() != $p->getCategory()&& ($p->getCampus() == $this->getUser()->getCampus() || $this->isGranted('ROLE_ADMIN'));
         })->getValues();
+
+        $assos = $categ->getProjects()->filter(function (Project $p) {
+            $condition = $p->getType() == 'Association' && ($p->getCampus() == $this->getUser()->getCampus() || $this->isGranted('ROLE_ADMIN'));
+            if ($condition) {
+                $p->filterSameCampusChildrenProjects();
+            }
+            return $condition;
+        })->getValues();
+
+        usort($clubs, function ($a, $b) {
+            return strcmp($a->getName(), $b->getName());
+        });
+        usort($assos, function ($a, $b) {
+            return strcmp($a->getName(), $b->getName());
+        });
+
+        return array_merge($clubs, $assos);
     }
 
     /**
