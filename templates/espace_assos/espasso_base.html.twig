@@ -57,9 +57,11 @@
                     <a class="nav-link" href="{{ path('calendar') }}">Calendrier</a>
                 </li>
 
-                <li class="nav-item {{ app.request.get('_route') == 'cafet' ? 'active' }}">
-                    <a class="nav-link" href="{{ path('cafet') }}">La Cafet'</a>
-                </li>
+                {% if app.user.campus == "Angers" %}
+                    <li class="nav-item {{ app.request.get('_route') == 'cafet' ? 'active' }}">
+                        <a class="nav-link" href="{{ url('cafet') }}">La Cafet'</a>
+                    </li>
+                {% endif %}
             </ul>
 
             <ul class="navbar-nav">
