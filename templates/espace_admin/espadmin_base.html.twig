@@ -31,7 +31,7 @@
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-xl navbar-dark bg-dark  elevation-2">
+    <nav class="navbar navbar-expand-xl navbar-esaip elevation-2">
         <ul class="navbar-nav" style="margin-right: 20px; margin-left: 5px;">
             <li class="nav-item">
                 <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
@@ -39,7 +39,7 @@
         </ul>
         <a class="navbar-brand" href="/">
             <img src="{{ asset('build/images/icons/android-chrome-144x144.png') }}" style="margin-right: 10px; margin-top: -5px; width: 36px; height: 36px;" alt="logo_esaip">
-            Asso'<b class="esaip-color">e</b>saip
+            Asso'esaip
         </a>
 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -81,7 +81,7 @@
     <!-- /.navbar -->
 
     <!-- Main Sidebar Container -->
-    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <aside class="main-sidebar navbar-esaip sidebar-light-white elevation-4">
         <!-- Sidebar -->
         <div class="sidebar">
             {% set route = app.request.get('_route') %}
@@ -90,43 +90,43 @@
             <nav class="mt-2">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                     <li class="nav-item">
-                        <a href="{{ path('espace_admin') }}" class="nav-link {{ route == 'espace_admin' ? 'active' }}">
+                        <a href="{{ path('espace_admin') }}" class="nav-link {{ route == 'espace_admin' ? 'active' : 'text-white' }}">
                             <i class="nav-icon fas fa-home"></i>
                             <p>Accueil</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ path('espace_admin_projects') }}" class="nav-link {{ route == 'espace_admin_projects' ? 'active' }}">
+                        <a href="{{ path('espace_admin_projects') }}" class="nav-link {{ route == 'espace_admin_projects' ? 'active' : 'text-white' }}">
                             <i class="nav-icon fas fa-project-diagram"></i>
                             <p>Projets</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ path('espace_admin_categories') }}" class="nav-link {{ route == 'espace_admin_categories' ? 'active' }}">
+                        <a href="{{ path('espace_admin_categories') }}" class="nav-link {{ route == 'espace_admin_categories' ? 'active' : 'text-white' }}">
                             <i class="nav-icon fas fa-list"></i>
                             <p>Catégories</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ path('espace_admin_admins') }}" class="nav-link {{ route == 'espace_admin_admins' ? 'active' }}">
+                        <a href="{{ path('espace_admin_admins') }}" class="nav-link {{ route == 'espace_admin_admins' ? 'active' : 'text-white' }}">
                             <i class="nav-icon fas fa-users-cog"></i>
                             <p>Admins</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ path('espace_admin_roombooks') }}" class="nav-link {{ route == 'espace_admin_roombooks' ? 'active' }}">
+                        <a href="{{ path('espace_admin_roombooks') }}" class="nav-link {{ route == 'espace_admin_roombooks' ? 'active' : 'text-white' }}">
                             <i class="nav-icon fas fa-map-marker-alt"></i>
                             <p>Réservations de salle</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ path('espace_admin_news_list') }}" class="nav-link {{ 'espace_admin_news' in route ? 'active' }}">
+                        <a href="{{ path('espace_admin_news_list') }}" class="nav-link {{ 'espace_admin_news' in route ? 'active' : 'text-white' }}">
                             <i class="nav-icon fas fa-newspaper"></i>
                             <p>News vie asso</p>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{ path('espace_admin_ressources') }}" class="nav-link {{ route == 'espace_admin_ressources' ? 'active' }}">
+                        <a href="{{ path('espace_admin_ressources') }}" class="nav-link {{ route == 'espace_admin_ressources' ? 'active' : 'text-white' }}">
                             <i class="nav-icon fas fa-pager"></i>
                             <p>Pages ressources</p>
                         </a>

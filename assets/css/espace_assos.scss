@@ -13,10 +13,6 @@ aside {
   margin-top: 58px;
 }
 
-[class*=sidebar-dark-] {
-  background-color: #33383e;
-}
-
 /* Correction cards espace assos */
 .card-title {
   margin-bottom: .2rem;
@@ -61,4 +57,9 @@ aside {
 /* Display line breaks in Asso'esaip News */
 .aenews-content {
   white-space: pre-line;
+}
+
+/* Color the links in the sidebar */
+.sidebar-light-white .nav-link {
+  color: white;
 }

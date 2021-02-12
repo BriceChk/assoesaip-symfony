@@ -31,7 +31,7 @@
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-xl navbar-dark bg-dark  elevation-2">
+    <nav class="navbar navbar-expand-xl navbar-esaip  elevation-2">
         <ul class="navbar-nav" style="margin-right: 20px; margin-left: 5px;">
             <li class="nav-item">
                 <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
@@ -39,7 +39,7 @@
         </ul>
         <a class="navbar-brand" href="/">
             <img src="{{ asset('build/images/icons/android-chrome-144x144.png') }}" style="margin-right: 10px; margin-top: -5px; width: 36px; height: 36px;" alt="logo_esaip">
-            Asso'<b class="esaip-color">e</b>saip
+            Asso'esaip
         </a>
 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -107,7 +107,7 @@
     <!-- /.navbar -->
 
     <!-- Main Sidebar Container -->
-    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <aside class="main-sidebar sidebar-light-white navbar-esaip elevation-4">
         <!-- Sidebar -->
         <div class="sidebar">
             {% set url = {url: app.request.get('url', 'no-url')} %}
@@ -139,31 +139,31 @@
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                     {% if noProject is not defined %}
                         <li class="nav-item">
-                            <a href="{{ path(hasUrl ? 'espace_assos' : 'espace_assos_no_project', url) }}" class="nav-link {{ route == 'espace_assos' ? 'active' }}">
+                            <a href="{{ path(hasUrl ? 'espace_assos' : 'espace_assos_no_project', url) }}" class="nav-link {{ route == 'espace_assos' ? 'active' : 'text-white' }}">
                                 <i class="nav-icon fas fa-th"></i>
                                 <p>Tableau de bord</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ path(hasUrl ? 'espace_assos_infos' : 'espace_assos_no_project', url) }}" class="nav-link {{ route == 'espace_assos_infos' ? 'active' }}">
+                            <a href="{{ path(hasUrl ? 'espace_assos_infos' : 'espace_assos_no_project', url) }}" class="nav-link {{ route == 'espace_assos_infos' ? 'active' : 'text-white' }}">
                                 <i class="nav-icon fas fa-project-diagram"></i>
                                 <p>Informations du projet</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ path(hasUrl ? 'espace_assos_pages' : 'espace_assos_no_project', url) }}" class="nav-link {{ route == 'espace_assos_pages' ? 'active' }}">
+                            <a href="{{ path(hasUrl ? 'espace_assos_pages' : 'espace_assos_no_project', url) }}" class="nav-link {{ route == 'espace_assos_pages' ? 'active' : 'text-white' }}">
                                 <i class="nav-icon fas fa-pager"></i>
                                 <p>Pages</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ path(hasUrl ? 'espace_assos_articles_list' : 'espace_assos_no_project', url) }}" class="nav-link {{ 'espace_assos_articles' in route ? 'active' }}">
+                            <a href="{{ path(hasUrl ? 'espace_assos_articles_list' : 'espace_assos_no_project', url) }}" class="nav-link {{ 'espace_assos_articles' in route ? 'active' : 'text-white' }}">
                                 <i class="nav-icon fas fa-newspaper"></i>
                                 <p>Articles</p>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ path(hasUrl ? 'espace_assos_events_list' : 'espace_assos_no_project', url) }}" class="nav-link {{ 'espace_assos_events' in route ? 'active' }}">
+                            <a href="{{ path(hasUrl ? 'espace_assos_events_list' : 'espace_assos_no_project', url) }}" class="nav-link {{ 'espace_assos_events' in route ? 'active' : 'text-white' }}">
                                 <i class="nav-icon fas fa-calendar-alt"></i>
                                 <p>Événements</p>
                             </a>
@@ -171,7 +171,7 @@
 
                         {% if app.user.campus == 'Angers' %}
                             <li class="nav-item">
-                                <a href="{{ path(hasUrl ? 'espace_assos_room_booking' : 'espace_assos_no_project', url) }}" class="nav-link {{ route == 'espace_assos_room_booking' ? 'active' }}">
+                                <a href="{{ path(hasUrl ? 'espace_assos_room_booking' : 'espace_assos_no_project', url) }}" class="nav-link {{ route == 'espace_assos_room_booking' ? 'active' : 'text-white' }}">
                                     <i class="nav-icon fas fa-map-marker-alt"></i>
                                     <p>
                                         Réservation de salle
@@ -182,9 +182,9 @@
 
                     {% endif %}
 
-                    <li class="nav-header">Ressources</li>
+                    <li class="nav-header text-white">Ressources</li>
                     <li class="nav-item">
-                        <a href="{{ path('espace_assos_ressources_summary') }}" class="nav-link {{ route == 'espace_assos_ressources_summary' ? 'active' }}">
+                        <a href="{{ path('espace_assos_ressources_summary') }}" class="nav-link {{ route == 'espace_assos_ressources_summary' ? 'active' : 'text-white' }}">
                             <i class="nav-icon fas fa-th"></i>
                             <p>Sommaire</p>
                         </a>
@@ -194,7 +194,6 @@
                     )) }}
                 </ul>
             </nav>
-
         </div>
         <!-- /.sidebar -->
     </aside>
