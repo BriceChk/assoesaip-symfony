@@ -62,7 +62,7 @@
                                </div>
                                <hr>
                                <div class="row">
-                                   {% for childProject in project.childrenProjects %}
+                                   {% for childProject in project.childrenProjects | filter(p => p.category == project.category) | sort((a, b) => a.name <=> b.name) %}
                                        <div class="col-lg-4 d-flex">
                                            <div class="card mb-4 box-shadow flex-fill card-link border-esaip">
                                                <div class="card-body row">
