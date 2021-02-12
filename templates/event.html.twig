@@ -88,7 +88,7 @@
                         <div class="card-header text-left">
                             Auteur
                         </div>
-                        <div class="widget-user-header" data-toggle="tooltip" title="{{ article.author.username }}">
+                        <div class="widget-user-header" data-toggle="tooltip" title="{{ event.author.username }}">
                             <div class="widget-user-image">
                                 {% if event.author.avatarFileName != null %}
                                     <img id="photo" class="img-circle elevation-2" src="{{ vich_uploader_asset(event.author, 'avatarFile') | imagine_filter('thumbnail') }}" alt="Photo auteur">
