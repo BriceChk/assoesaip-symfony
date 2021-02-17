@@ -11,7 +11,7 @@
     <main role="main">
         <div class="jumbotron text-center">
             <h1 class="display-4">Calendrier</h1>
-            <p class="lead">Les évenements de toutes les clubs de ton campus sont regroupés ici.</p>
+            <p class="lead">Les événements de tous les clubs de ton campus sont regroupés ici.</p>
             {% for c in categs | sort((a, b) => a.name <=> b.name) %}
                 <span class="badge badge-pill badge-primary" style="background-color: {{ c.color }}">{{ c.name }}</span>
             {% endfor %}
