@@ -8,7 +8,7 @@ exercise_html_purifier:
                 Core.Encoding: 'UTF-8'
                 # full configuration reference: http://htmlpurifier.org/live/configdoc/plain.html
                 HTML.SafeIframe: true
-                URI.SafeIframeRegexp: '%%^(https?:)?\/\/(www\.youtube(?:-nocookie)?\.com\/embed\/|player\.vimeo\.com\/video\/|www.helloasso.com\/)%%'
+                URI.SafeIframeRegexp: '%%^(https?:)?\/\/(www\.youtube(?:-nocookie)?\.com\/embed\/|player\.vimeo\.com\/video\/|www.helloasso.com\/|forms\.office\.com\/Pages\/ResponsePage.aspx)%%'
                 Attr.AllowedFrameTargets:
                     - '_blank'
 
