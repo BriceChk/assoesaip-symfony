@@ -150,7 +150,11 @@ class EspaceAssosController extends AbstractController
         $rep = $this->getDoctrine()->getRepository(ProjectCategory::class);
         $categories = $rep->findAll();
         $assRep = $this->getDoctrine()->getRepository(Project::class);
-        $assos = $assRep->findBy(['type' => 'Association', 'campus' => $this->getGoodUser()->getCampus()]);
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $assos = $assRep->findBy(['type' => 'Association']);
+        } else {
+            $assos = $assRep->findBy(['type' => 'Association', 'campus' => $this->getGoodUser()->getCampus()]);
+        }
 
         return $this->render('espace_assos/infos.html.twig', [
             'project' => $proj,
