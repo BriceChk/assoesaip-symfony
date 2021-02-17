@@ -39,6 +39,8 @@ class ImageCacheSubscriber implements EventSubscriber {
         ];
     }
 
+    // TODO Ajouter les manquants
+
     public function preRemove(LifecycleEventArgs $args) {
         $entity = $args->getEntity();
         if ($entity instanceof User) {
