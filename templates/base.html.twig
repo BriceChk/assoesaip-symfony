@@ -1,55 +1,47 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="description" content="Asso'esaip est la plateforme associative de l'esaip. Elle regroupe les informations sur tous les clubs, projets et associations des étudiants.">
-        <meta name="author" content="BDE ESAIP Angers">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Asso'esaip est la plateforme associative de l'ESAIP. Elle regroupe les informations sur tous les clubs, projets et associations des étudiants.">
+    <meta name="keywords" content="esaip, vie associative, vie étudiante, école d'ingénieurs">
+    <meta name="author" content="BDE ESAIP Angers">
 
-        <title>{% block title %}Asso'esaip{% endblock %}</title>
+    <title>{% block title %}Asso'esaip{% endblock %}</title>
 
-        {% block stylesheets %}
-            <!-- Icones -->
-            <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('build/images/icons/apple-touch-icon.png') }}">
-            <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('build/images/icons/favicon-32x32.png') }}">
-            <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('build/images/icons/favicon-16x16.png') }}">
-            <link rel="mask-icon" href="{{ asset('build/images/icons/safari-pinned-tab.svg') }}" color="#5bbad5">
-            <link rel="icon" href="{{ asset('build/images/icons/fav.ico') }}" type="image/x-icon" />
-            <link rel="shortcut icon" href="{{ asset('build/images/icons/fav.ico') }}" type="image/x-icon" />
-            <meta name="msapplication-config" content="{{ asset('build/images/icons/browserconfig.xml') }}">
-            <meta name="msapplication-TileColor" content="#212529">
-            <meta name="theme-color" content="#212529">
+    {% block stylesheets %}
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('build/images/icons/apple-touch-icon.png') }}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('build/images/icons/favicon-32x32.png') }}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('build/images/icons/favicon-16x16.png') }}">
+        <link rel="manifest" href="{{ asset('build/images/icons/site.webmanifest') }}">
+        <link rel="mask-icon" href="{{ asset('build/images/icons/safari-pinned-tab.svg') }}" color="#0077b6">
+        <link rel="shortcut icon" href="{{ asset('build/images/icons/favicon.ico') }}">
+        <meta name="msapplication-TileColor" content="#0077b6">
+        <meta name="msapplication-config" content="{{ asset('/build/images/icons/browserconfig.xml') }}">
+        <meta name="theme-color" content="#0077b6">
 
-            {{ encore_entry_link_tags('app') }}
+        {{ encore_entry_link_tags('app') }}
 
-            <!-- TODO: Enlever noindex en prod -->
-            <meta name="robots" content="noindex">
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-J5MNBGC76R"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
 
-            <!-- Social meta -->
-            <meta name="twitter:card" content="summary" />
-            <meta name="twitter:creator" content="@groupeesaip" />
-            <meta name="twitter:site" content="@groupeesaip" />
-            <meta name="twitter:title" content="Asso'esaip" />
-            <meta name="twitter:description" content="La plateforme associative de l'esaip" />
-            <meta name="twitter:image" content="https://asso.esaip.org/images/icons/android-chrome-512x512.png" />
-
-            <meta property="og:url" content="https://asso.esaip.org" />
-            <meta property="og:type" content="website" />
-            <meta property="og:title" content="Asso'esaip" />
-            <meta property="og:site_name" content="Asso'esaip" />
-            <meta property="og:description" content="La plateforme associative de l'esaip" />
-            <meta property="og:image" content="https://asso.esaip.org/images/icons/android-chrome-512x512.png" />
-        {% endblock %}
-    </head>
-
-    <header>
-        {% include 'macros/navbar.html.twig' %}
-    </header>
-
-    <body class="bg-white">
-    {% block body %}{% endblock %}
-    {% block javascripts %}
-        {{ encore_entry_script_tags('app') }}
+            gtag('config', 'G-J5MNBGC76R');
+        </script>
     {% endblock %}
-    </body>
+</head>
+
+<header>
+    {% include 'macros/navbar.html.twig' %}
+</header>
+
+<body class="bg-white">
+{% block body %}{% endblock %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}
+</body>
 </html>
