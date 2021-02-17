@@ -2,12 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\AssoEsaipSettings;
 use App\Entity\News;
-use App\Entity\Project;
 use App\Entity\ProjectCategory;
 use App\Entity\User;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -15,10 +12,13 @@ class HomeController extends AbstractController
 {
     /**
      * @Route("/", name="home")
-     * @IsGranted("ROLE_USER")
      */
     public function index()
     {
+        if ($this->getUser() == null) {
+            return $this->render('login.html.twig');
+        }
+
         $categRepo = $this->getDoctrine()->getRepository(ProjectCategory::class);
         $categories = $categRepo->findBy(array('visible' => 1), array('listOrder' => 'ASC'));
 

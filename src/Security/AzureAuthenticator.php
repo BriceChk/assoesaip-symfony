@@ -102,7 +102,7 @@ class AzureAuthenticator extends SocialAuthenticator
         $message = strtr($exception->getMessageKey(), $exception->getMessageData());
 
         //return new Response($message, Response::HTTP_FORBIDDEN);
-        return new RedirectResponse('/login-office');
+        return new RedirectResponse('/');
     }
 
     /**
@@ -128,7 +128,7 @@ class AzureAuthenticator extends SocialAuthenticator
         $session->set('redirect_uri', $uri);
 
         return new RedirectResponse(
-            '/login-office', // might be the site, where users choose their oauth provider
+            '/', // might be the site, where users choose their oauth provider
             Response::HTTP_TEMPORARY_REDIRECT
         );
     }
