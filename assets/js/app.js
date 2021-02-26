@@ -4,19 +4,21 @@
  * We recommend including the built version of this JavaScript file
  * (and its CSS file) in your base layout (base.html.twig).
  */
+// Delete the old service worker (from the pre-symfony site) because offline-plugin
+// has a smaller scope (on /build/) so it causes problems.
+navigator.serviceWorker.getRegistrations().then(function (registrations) {
+    for (let registration of registrations) {
+        if (registration.scope === 'https://asso.esaip.org/') registration.unregister();
+    }
+});
+
 require('offline-plugin/runtime').install();
 
 import $ from 'jquery';
-global.$ = global.jQuery = $;
-
 import "bootstrap";
 import "admin-lte";
 
 import toastr from "toastr";
-require('easy-autocomplete/dist/jquery.easy-autocomplete');
-
-global.toastr = toastr;
-
 import "admin-lte/dist/css/adminlte.css";
 import "@fortawesome/fontawesome-free/css/all.css";
 import 'toastr/toastr.scss';
@@ -24,7 +26,13 @@ import 'easy-autocomplete/dist/easy-autocomplete.css';
 import "../css/bs_custom.scss"
 import "../css/app.scss";
 
-window.error = function(data) {
+global.$ = global.jQuery = $;
+
+require('easy-autocomplete/dist/jquery.easy-autocomplete');
+
+global.toastr = toastr;
+
+window.error = function (data) {
     let errors = data.responseJSON;
     let s = '';
     for (let i = 0; i < errors.length; i++) {
