@@ -464,7 +464,7 @@ class API_ArticleController extends AbstractFOSRestController {
         $em->persist($image);
         $em->flush();
 
-        $response->setContent('/images/uploaded-images/' . $image->getFileName());
+        $response->setContent('https://' . $request->getHttpHost() . '/images/uploaded-images/' . $image->getFileName());
         return $response;
     }
 }

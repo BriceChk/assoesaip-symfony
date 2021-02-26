@@ -15,7 +15,6 @@ use FOS\RestBundle\Controller\Annotations\View;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -653,7 +652,7 @@ class API_ProjectController extends AbstractFOSRestController {
         $em->persist($image);
         $em->flush();
 
-        $response->setContent('/images/uploaded-images/' . $image->getFileName());
+        $response->setContent('https://' . $request->getHttpHost() . '/images/uploaded-images/' . $image->getFileName());
         return $response;
     }
 
