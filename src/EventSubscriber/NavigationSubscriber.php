@@ -7,7 +7,6 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -61,7 +60,7 @@ class NavigationSubscriber implements EventSubscriberInterface
         $this->em->persist($user);
         $this->em->flush();
 
-        if ($event->getRequest()->attributes->get('_route') == 'profile') {
+        if ($event->getRequest()->attributes->get('_route') == 'profile' || strpos($event->getRequest()->getRequestUri(), '/api/') !== false) {
             return;
         }
 
