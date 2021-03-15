@@ -330,14 +330,17 @@ class API_ArticleController extends AbstractFOSRestController {
             $article->setAuthor($this->getUser());
             $article->setDatePublished(new DateTime('now'));
 
-            $slug = $slugger->slug($json['title']);
-            $test = $rep->findBy(['url' => $slug]);
-            while (count($test) != 0 && $test == $article->getProject()) {
-                $slug .= '-1';
-                $test = $rep->findBy(['url' => $slug]);
+            $originalSlug = $slugger->slug($json['title'])->lower();
+            $count = 0;
+            $testSlug = $originalSlug;
+            $test = $rep->findBy(['url' => $testSlug]);
+            while (count($test) != 0) {
+                $count++;
+                $testSlug = $originalSlug . '-' . $count;
+                $test = $rep->findBy(['url' => $testSlug]);
             }
 
-            $article->setUrl($slug);
+            $article->setUrl($testSlug);
 
             if (!$article->isPrivate()) {
                 $publishNews = true; // Si il n'est pas privé, on publie la news
