@@ -55,8 +55,7 @@ class ProjectMember
      */
     private $orderPosition = 1;
 
-    public function getId(): ?int
-    {
+    public function getId(): ?int {
         return $this->id;
     }
 

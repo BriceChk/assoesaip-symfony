@@ -1,20 +1,20 @@
 {
-    "_readme": [
-        "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
-        "This file is @generated automatically"
-    ],
-    "content-hash": "2fd0fe0ab976b9f4d1bf4b34fec911cd",
-    "packages": [
-        {
-            "name": "cocur/slugify",
-            "version": "v4.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/cocur/slugify.git",
-                "reference": "3f1ffc300f164f23abe8b64ffb3f92d35cec8307"
-            },
-            "dist": {
+  "_readme": [
+    "This file locks the dependencies of your project to a known state",
+    "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+    "This file is @generated automatically"
+  ],
+  "content-hash": "4779d25f7e862ea27a7f5b6df37e568b",
+  "packages": [
+    {
+      "name": "cocur/slugify",
+      "version": "v4.0.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/cocur/slugify.git",
+        "reference": "3f1ffc300f164f23abe8b64ffb3f92d35cec8307"
+      },
+      "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/cocur/slugify/zipball/3f1ffc300f164f23abe8b64ffb3f92d35cec8307",
                 "reference": "3f1ffc300f164f23abe8b64ffb3f92d35cec8307",
@@ -597,61 +597,61 @@
             ],
             "time": "2020-11-14T20:26:58+00:00"
         },
-        {
-            "name": "doctrine/doctrine-bundle",
-            "version": "2.2.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/doctrine/DoctrineBundle.git",
-                "reference": "015fdd490074d4daa891e2d1df998dc35ba54924"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/DoctrineBundle/zipball/015fdd490074d4daa891e2d1df998dc35ba54924",
-                "reference": "015fdd490074d4daa891e2d1df998dc35ba54924",
-                "shasum": ""
-            },
+    {
+      "name": "doctrine/doctrine-bundle",
+      "version": "2.3.1",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/doctrine/DoctrineBundle.git",
+        "reference": "a08bc3b4d8567cdff05e89b272ba1e06e9d71c21"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/doctrine/DoctrineBundle/zipball/a08bc3b4d8567cdff05e89b272ba1e06e9d71c21",
+        "reference": "a08bc3b4d8567cdff05e89b272ba1e06e9d71c21",
+        "shasum": ""
+      },
             "require": {
-                "doctrine/dbal": "^2.9.0|^3.0",
-                "doctrine/persistence": "^1.3.3|^2.0",
-                "doctrine/sql-formatter": "^1.0.1",
-                "php": "^7.1 || ^8.0",
-                "symfony/cache": "^4.3.3|^5.0",
-                "symfony/config": "^4.3.3|^5.0",
-                "symfony/console": "^3.4.30|^4.3.3|^5.0",
-                "symfony/dependency-injection": "^4.3.3|^5.0",
-                "symfony/doctrine-bridge": "^4.3.7|^5.0",
-                "symfony/framework-bundle": "^3.4.30|^4.3.3|^5.0",
-                "symfony/service-contracts": "^1.1.1|^2.0"
+              "doctrine/dbal": "^2.9.0|^3.0",
+              "doctrine/persistence": "^1.3.3|^2.0",
+              "doctrine/sql-formatter": "^1.0.1",
+              "php": "^7.1 || ^8.0",
+              "symfony/cache": "^4.3.3|^5.0",
+              "symfony/config": "^4.3.3|^5.0",
+              "symfony/console": "^3.4.30|^4.3.3|^5.0",
+              "symfony/dependency-injection": "^4.3.3|^5.0",
+              "symfony/doctrine-bridge": "^4.4.7|^5.0",
+              "symfony/framework-bundle": "^3.4.30|^4.3.3|^5.0",
+              "symfony/service-contracts": "^1.1.1|^2.0"
             },
             "conflict": {
                 "doctrine/orm": "<2.6",
                 "twig/twig": "<1.34|>=2.0,<2.4"
             },
             "require-dev": {
-                "doctrine/coding-standard": "^8.0",
-                "doctrine/orm": "^2.6",
-                "friendsofphp/proxy-manager-lts": "^1.0",
-                "phpunit/phpunit": "^7.5 || ^8.0 || ^9.3",
-                "symfony/phpunit-bridge": "^4.2",
-                "symfony/property-info": "^4.3.3|^5.0",
-                "symfony/proxy-manager-bridge": "^3.4|^4.3.3|^5.0",
-                "symfony/twig-bridge": "^3.4.30|^4.3.3|^5.0",
-                "symfony/validator": "^3.4.30|^4.3.3|^5.0",
-                "symfony/web-profiler-bundle": "^3.4.30|^4.3.3|^5.0",
-                "symfony/yaml": "^3.4.30|^4.3.3|^5.0",
-                "twig/twig": "^1.34|^2.12|^3.0"
+              "doctrine/coding-standard": "^8.0",
+              "doctrine/orm": "^2.6",
+              "friendsofphp/proxy-manager-lts": "^1.0",
+              "phpunit/phpunit": "^7.5 || ^8.0 || ^9.3",
+              "psalm/plugin-phpunit": "^0.15.1",
+              "psalm/plugin-symfony": "^2.2.4",
+              "symfony/phpunit-bridge": "^5.2",
+              "symfony/property-info": "^4.3.3|^5.0",
+              "symfony/proxy-manager-bridge": "^3.4|^4.3.3|^5.0",
+              "symfony/security-bundle": "^4.4|5.0",
+              "symfony/twig-bridge": "^3.4.30|^4.3.3|^5.0",
+              "symfony/validator": "^3.4.30|^4.3.3|^5.0",
+              "symfony/web-profiler-bundle": "^3.4.30|^4.3.3|^5.0",
+              "symfony/yaml": "^3.4.30|^4.3.3|^5.0",
+              "twig/twig": "^1.34|^2.12|^3.0",
+              "vimeo/psalm": "^4.7"
             },
             "suggest": {
-                "doctrine/orm": "The Doctrine ORM integration is optional in the bundle.",
-                "symfony/web-profiler-bundle": "To use the data collector."
+              "doctrine/orm": "The Doctrine ORM integration is optional in the bundle.",
+              "ext-pdo": "*",
+              "symfony/web-profiler-bundle": "To use the data collector."
             },
             "type": "symfony-bundle",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.3.x-dev"
-                }
-            },
             "autoload": {
                 "psr-4": {
                     "Doctrine\\Bundle\\DoctrineBundle\\": ""
@@ -689,7 +689,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/DoctrineBundle/issues",
-                "source": "https://github.com/doctrine/DoctrineBundle/tree/2.2.3"
+              "source": "https://github.com/doctrine/DoctrineBundle/tree/2.3.1"
             },
             "funding": [
                 {
@@ -705,7 +705,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-01-19T20:29:53+00:00"
+      "time": "2021-04-05T14:21:02+00:00"
         },
         {
             "name": "doctrine/doctrine-migrations-bundle",
@@ -1533,25 +1533,82 @@
                 "issues": "https://github.com/egulias/EmailValidator/issues",
                 "source": "https://github.com/egulias/EmailValidator/tree/2.1.25"
             },
-            "funding": [
-                {
-                    "url": "https://github.com/egulias",
-                    "type": "github"
-                }
-            ],
-            "time": "2020-12-29T14:50:06+00:00"
+          "funding": [
+            {
+              "url": "https://github.com/egulias",
+              "type": "github"
+            }
+          ],
+          "time": "2020-12-29T14:50:06+00:00"
         },
+    {
+      "name": "eko/feedbundle",
+      "version": "2.1.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/eko/FeedBundle.git",
+        "reference": "ae6ba9137f6b54b0b93cb18b1c3776629e9f7ec1"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/eko/FeedBundle/zipball/ae6ba9137f6b54b0b93cb18b1c3776629e9f7ec1",
+        "reference": "ae6ba9137f6b54b0b93cb18b1c3776629e9f7ec1",
+        "shasum": ""
+      },
+      "require": {
+        "laminas/laminas-feed": "^2.4",
+        "php": "^7.2 || ^8.0",
+        "symfony/framework-bundle": "^4.4|^5.2",
+        "symfony/translation": "^4.4|^5.2"
+      },
+      "require-dev": {
+        "doctrine/orm": "^2.7",
+        "phpunit/phpunit": "^8.5 || ^9.5"
+      },
+      "suggest": {
+        "doctrine/orm": "~2.7"
+      },
+      "type": "symfony-bundle",
+      "autoload": {
+        "psr-4": {
+          "Eko\\FeedBundle\\": ""
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
         {
-            "name": "exercise/htmlpurifier-bundle",
-            "version": "v3.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Exercise/HTMLPurifierBundle.git",
-                "reference": "32f4709006e810efd8a72466a8e9d0672df4bc24"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Exercise/HTMLPurifierBundle/zipball/32f4709006e810efd8a72466a8e9d0672df4bc24",
+          "name": "Vincent Composieux",
+          "email": "vincent.composieux@gmail.com"
+        }
+      ],
+      "description": "A Symfony bundle to build RSS feeds from entities",
+      "homepage": "http://github.com/eko/FeedBundle",
+      "keywords": [
+        "atom",
+        "bundle",
+        "feed",
+        "rss"
+      ],
+      "support": {
+        "issues": "https://github.com/eko/FeedBundle/issues",
+        "source": "https://github.com/eko/FeedBundle/tree/2.1.0"
+      },
+      "time": "2021-02-26T14:28:01+00:00"
+    },
+    {
+      "name": "exercise/htmlpurifier-bundle",
+      "version": "v3.1.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/Exercise/HTMLPurifierBundle.git",
+        "reference": "32f4709006e810efd8a72466a8e9d0672df4bc24"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/Exercise/HTMLPurifierBundle/zipball/32f4709006e810efd8a72466a8e9d0672df4bc24",
                 "reference": "32f4709006e810efd8a72466a8e9d0672df4bc24",
                 "shasum": ""
             },
@@ -3241,25 +3298,88 @@
                 "rss": "https://github.com/laminas/laminas-code/releases.atom",
                 "source": "https://github.com/laminas/laminas-code"
             },
-            "funding": [
-                {
-                    "url": "https://funding.communitybridge.org/projects/laminas-project",
-                    "type": "community_bridge"
-                }
-            ],
-            "time": "2020-12-30T16:16:14+00:00"
+          "funding": [
+            {
+              "url": "https://funding.communitybridge.org/projects/laminas-project",
+              "type": "community_bridge"
+            }
+          ],
+          "time": "2020-12-30T16:16:14+00:00"
         },
+    {
+      "name": "laminas/laminas-escaper",
+      "version": "2.7.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/laminas/laminas-escaper.git",
+        "reference": "5e04bc5ae5990b17159d79d331055e2c645e5cc5"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/laminas/laminas-escaper/zipball/5e04bc5ae5990b17159d79d331055e2c645e5cc5",
+        "reference": "5e04bc5ae5990b17159d79d331055e2c645e5cc5",
+        "shasum": ""
+      },
+      "require": {
+        "laminas/laminas-zendframework-bridge": "^1.0",
+        "php": "^7.3 || ~8.0.0"
+      },
+      "replace": {
+        "zendframework/zend-escaper": "^2.6.1"
+      },
+      "require-dev": {
+        "laminas/laminas-coding-standard": "~1.0.0",
+        "phpunit/phpunit": "^9.3",
+        "psalm/plugin-phpunit": "^0.12.2",
+        "vimeo/psalm": "^3.16"
+      },
+      "suggest": {
+        "ext-iconv": "*",
+        "ext-mbstring": "*"
+      },
+      "type": "library",
+      "autoload": {
+        "psr-4": {
+          "Laminas\\Escaper\\": "src/"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "BSD-3-Clause"
+      ],
+      "description": "Securely and safely escape HTML, HTML attributes, JavaScript, CSS, and URLs",
+      "homepage": "https://laminas.dev",
+      "keywords": [
+        "escaper",
+        "laminas"
+      ],
+      "support": {
+        "chat": "https://laminas.dev/chat",
+        "docs": "https://docs.laminas.dev/laminas-escaper/",
+        "forum": "https://discourse.laminas.dev",
+        "issues": "https://github.com/laminas/laminas-escaper/issues",
+        "rss": "https://github.com/laminas/laminas-escaper/releases.atom",
+        "source": "https://github.com/laminas/laminas-escaper"
+      },
+      "funding": [
         {
-            "name": "laminas/laminas-eventmanager",
-            "version": "3.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laminas/laminas-eventmanager.git",
-                "reference": "1940ccf30e058b2fd66f5a9d696f1b5e0027b082"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-eventmanager/zipball/1940ccf30e058b2fd66f5a9d696f1b5e0027b082",
+          "url": "https://funding.communitybridge.org/projects/laminas-project",
+          "type": "community_bridge"
+        }
+      ],
+      "time": "2020-11-17T21:26:43+00:00"
+    },
+    {
+      "name": "laminas/laminas-eventmanager",
+      "version": "3.3.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/laminas/laminas-eventmanager.git",
+        "reference": "1940ccf30e058b2fd66f5a9d696f1b5e0027b082"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/laminas/laminas-eventmanager/zipball/1940ccf30e058b2fd66f5a9d696f1b5e0027b082",
                 "reference": "1940ccf30e058b2fd66f5a9d696f1b5e0027b082",
                 "shasum": ""
             },
@@ -3310,26 +3430,164 @@
                 "docs": "https://docs.laminas.dev/laminas-eventmanager/",
                 "forum": "https://discourse.laminas.dev",
                 "issues": "https://github.com/laminas/laminas-eventmanager/issues",
-                "rss": "https://github.com/laminas/laminas-eventmanager/releases.atom",
-                "source": "https://github.com/laminas/laminas-eventmanager"
+              "rss": "https://github.com/laminas/laminas-eventmanager/releases.atom",
+              "source": "https://github.com/laminas/laminas-eventmanager"
             },
-            "funding": [
-                {
-                    "url": "https://funding.communitybridge.org/projects/laminas-project",
-                    "type": "community_bridge"
-                }
-            ],
-            "time": "2020-08-25T11:10:44+00:00"
-        },
+      "funding": [
         {
-            "name": "laminas/laminas-zendframework-bridge",
-            "version": "1.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laminas/laminas-zendframework-bridge.git",
-                "reference": "6ede70583e101030bcace4dcddd648f760ddf642"
-            },
-            "dist": {
+          "url": "https://funding.communitybridge.org/projects/laminas-project",
+          "type": "community_bridge"
+        }
+      ],
+      "time": "2020-08-25T11:10:44+00:00"
+    },
+    {
+      "name": "laminas/laminas-feed",
+      "version": "2.14.1",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/laminas/laminas-feed.git",
+        "reference": "463fdae515fba30633906098c258d3b2c733c15c"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/laminas/laminas-feed/zipball/463fdae515fba30633906098c258d3b2c733c15c",
+        "reference": "463fdae515fba30633906098c258d3b2c733c15c",
+        "shasum": ""
+      },
+      "require": {
+        "ext-dom": "*",
+        "ext-libxml": "*",
+        "laminas/laminas-escaper": "^2.5.2",
+        "laminas/laminas-stdlib": "^3.2.1",
+        "laminas/laminas-zendframework-bridge": "^1.0",
+        "php": "^7.3 || ~8.0.0"
+      },
+      "conflict": {
+        "laminas/laminas-servicemanager": "<3.3"
+      },
+      "replace": {
+        "zendframework/zend-feed": "^2.12.0"
+      },
+      "require-dev": {
+        "laminas/laminas-cache": "^2.7.2",
+        "laminas/laminas-coding-standard": "~1.0.0",
+        "laminas/laminas-db": "^2.8.2",
+        "laminas/laminas-http": "^2.7",
+        "laminas/laminas-servicemanager": "^3.3",
+        "laminas/laminas-validator": "^2.10.1",
+        "phpunit/phpunit": "^9.3",
+        "psalm/plugin-phpunit": "^0.13.0",
+        "psr/http-message": "^1.0.1",
+        "vimeo/psalm": "^4.1"
+      },
+      "suggest": {
+        "laminas/laminas-cache": "Laminas\\Cache component, for optionally caching feeds between requests",
+        "laminas/laminas-db": "Laminas\\Db component, for use with PubSubHubbub",
+        "laminas/laminas-http": "Laminas\\Http for PubSubHubbub, and optionally for use with Laminas\\Feed\\Reader",
+        "laminas/laminas-servicemanager": "Laminas\\ServiceManager component, for easily extending ExtensionManager implementations",
+        "laminas/laminas-validator": "Laminas\\Validator component, for validating email addresses used in Atom feeds and entries when using the Writer subcomponent",
+        "psr/http-message": "PSR-7 ^1.0.1, if you wish to use Laminas\\Feed\\Reader\\Http\\Psr7ResponseDecorator"
+      },
+      "type": "library",
+      "autoload": {
+        "psr-4": {
+          "Laminas\\Feed\\": "src/"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "BSD-3-Clause"
+      ],
+      "description": "provides functionality for consuming RSS and Atom feeds",
+      "homepage": "https://laminas.dev",
+      "keywords": [
+        "feed",
+        "laminas"
+      ],
+      "support": {
+        "chat": "https://laminas.dev/chat",
+        "docs": "https://docs.laminas.dev/laminas-feed/",
+        "forum": "https://discourse.laminas.dev",
+        "issues": "https://github.com/laminas/laminas-feed/issues",
+        "rss": "https://github.com/laminas/laminas-feed/releases.atom",
+        "source": "https://github.com/laminas/laminas-feed"
+      },
+      "funding": [
+        {
+          "url": "https://funding.communitybridge.org/projects/laminas-project",
+          "type": "community_bridge"
+        }
+      ],
+      "time": "2021-04-01T19:26:09+00:00"
+    },
+    {
+      "name": "laminas/laminas-stdlib",
+      "version": "3.3.1",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/laminas/laminas-stdlib.git",
+        "reference": "d81c7ffe602ed0e6ecb18691019111c0f4bf1efe"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/laminas/laminas-stdlib/zipball/d81c7ffe602ed0e6ecb18691019111c0f4bf1efe",
+        "reference": "d81c7ffe602ed0e6ecb18691019111c0f4bf1efe",
+        "shasum": ""
+      },
+      "require": {
+        "laminas/laminas-zendframework-bridge": "^1.0",
+        "php": "^7.3 || ^8.0"
+      },
+      "replace": {
+        "zendframework/zend-stdlib": "^3.2.1"
+      },
+      "require-dev": {
+        "laminas/laminas-coding-standard": "~1.0.0",
+        "phpbench/phpbench": "^0.17.1",
+        "phpunit/phpunit": "~9.3.7"
+      },
+      "type": "library",
+      "autoload": {
+        "psr-4": {
+          "Laminas\\Stdlib\\": "src/"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "BSD-3-Clause"
+      ],
+      "description": "SPL extensions, array utilities, error handlers, and more",
+      "homepage": "https://laminas.dev",
+      "keywords": [
+        "laminas",
+        "stdlib"
+      ],
+      "support": {
+        "chat": "https://laminas.dev/chat",
+        "docs": "https://docs.laminas.dev/laminas-stdlib/",
+        "forum": "https://discourse.laminas.dev",
+        "issues": "https://github.com/laminas/laminas-stdlib/issues",
+        "rss": "https://github.com/laminas/laminas-stdlib/releases.atom",
+        "source": "https://github.com/laminas/laminas-stdlib"
+      },
+      "funding": [
+        {
+          "url": "https://funding.communitybridge.org/projects/laminas-project",
+          "type": "community_bridge"
+        }
+      ],
+      "time": "2020-11-19T20:18:59+00:00"
+    },
+    {
+      "name": "laminas/laminas-zendframework-bridge",
+      "version": "1.1.1",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/laminas/laminas-zendframework-bridge.git",
+        "reference": "6ede70583e101030bcace4dcddd648f760ddf642"
+      },
+      "dist": {
                 "type": "zip",
                 "url": "https://api.github.com/repos/laminas/laminas-zendframework-bridge/zipball/6ede70583e101030bcace4dcddd648f760ddf642",
                 "reference": "6ede70583e101030bcace4dcddd648f760ddf642",

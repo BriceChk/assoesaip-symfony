@@ -2,15 +2,16 @@
 
 namespace App\Entity;
 
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Eko\FeedBundle\Item\Writer\ItemInterface;
 use JMS\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\NewsRepository")
  */
-class News
-{
+class News implements ItemInterface {
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -38,7 +39,7 @@ class News
      * @ORM\OneToOne(targetEntity="App\Entity\Article", inversedBy="news")
      * @Groups({"news"})
      */
-    private $article;
+    private ?Article $article;
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Event", inversedBy="news")
@@ -65,78 +66,65 @@ class News
      */
     private $starred = false;
 
-    public function getId(): ?int
-    {
+    public function getId(): ?int {
         return $this->id;
     }
 
-    public function getContent(): ?string
-    {
+    public function getContent(): ?string {
         return $this->content;
     }
 
-    public function setContent(string $content): self
-    {
+    public function setContent(string $content): self {
         $this->content = $content;
 
         return $this;
     }
 
-    public function getLink(): ?string
-    {
+    public function getLink(): ?string {
         return $this->link;
     }
 
-    public function setLink(?string $link): self
-    {
+    public function setLink(?string $link): self {
         $this->link = $link == "" ? null : $link;
 
         return $this;
     }
 
-    public function getArticle(): ?Article
-    {
+    public function getArticle(): ?Article {
         return $this->article;
     }
 
-    public function setArticle(?Article $article): self
-    {
+    public function setArticle(?Article $article): self {
         $this->article = $article;
 
         return $this;
     }
 
-    public function getEvent(): ?Event
-    {
+    public function getEvent(): ?Event {
         return $this->event;
     }
 
-    public function setEvent(?Event $event): self
-    {
+    public function setEvent(?Event $event): self {
         $this->event = $event;
 
         return $this;
     }
 
-    public function getDatePublished(): ?\DateTimeInterface
-    {
+    public function getDatePublished(): ?DateTimeInterface {
         return $this->datePublished;
     }
 
-    public function setDatePublished($datePublished): self
-    {
+    public function setDatePublished($datePublished): self {
         $this->datePublished = $datePublished;
 
         return $this;
     }
 
-    public function getProject(): ?Project
-    {
+    public function getProject(): ?Project {
         return $this->project;
     }
 
-    public function setProject(?Project $project): self
-    {
+    public function setProject(?Project $project): self {
         $this->project = $project;
 
         return $this;
@@ -146,15 +134,48 @@ class News
         return $this->project->getCampus();
     }
 
-    public function getStarred(): ?bool
-    {
+    public function getStarred(): ?bool {
         return $this->starred;
     }
 
-    public function setStarred(bool $starred): self
-    {
+    public function setStarred(bool $starred): self {
         $this->starred = $starred;
 
         return $this;
+    }
+
+    public function getFeedItemTitle() {
+        if ($this->article != null) {
+            return $this->article->getTitle();
+        }
+        if ($this->event != null) {
+            return $this->event->getTitle();
+        }
+        return "Actu de " . $this->getProject()->getName();
+    }
+
+    public function getFeedItemDescription(): string {
+        $pName = $this->getProject()->getName() . ' : ';
+        if ($this->article != null) {
+            return $pName . $this->article->getAbstract();
+        }
+        if ($this->event != null) {
+            return $pName . $this->event->getAbstract();
+        }
+        return $pName . $this->getContent();
+    }
+
+    public function getFeedItemLink(): string {
+        if ($this->article != null) {
+            return "https://asso.esaip.org/article/" . $this->article->getUrl();
+        }
+        if ($this->event != null) {
+            return "https://asso.esaip.org/evenement/" . $this->event->getUrl();
+        }
+        return "https://asso.esaip.org/";
+    }
+
+    public function getFeedItemPubDate(): ?DateTimeInterface {
+        return $this->getDatePublished();
     }
 }
