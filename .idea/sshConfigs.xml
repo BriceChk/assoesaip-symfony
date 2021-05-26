@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="SshConfigs">
-    <configs>
-      <sshConfig authType="PASSWORD" host="asso.esaip.org" id="df9e6160-2974-4f2b-8a9a-3b67535702e3" port="22" nameFormat="DESCRIPTIVE" username="bde" />
-    </configs>
-  </component>
-</project>
