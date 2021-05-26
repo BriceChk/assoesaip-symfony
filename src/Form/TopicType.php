@@ -14,12 +14,11 @@ class TopicType extends AbstractType
         $builder
             ->add('title')
             ->add('content')
-            ->add('creationDate')
-            ->add('status')
-            ->add('rejectionMessage')
-            ->add('author')
-            ->add('tags')
-        ;
+            ->add('is_anonymous', CheckboxType::class, array(
+                'label' => 'Voulez-vous rester anonyme ?',
+                "mapped" => false,
+            ))
+            ->add('tags');
     }
 
     public function configureOptions(OptionsResolver $resolver)

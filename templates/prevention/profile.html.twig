@@ -3,4 +3,57 @@
 {% block title %}Hello PreventionController!
 {% endblock %}
 
-{% block body %}{% endblock %}
+{% block body %}
+	<h1>Mon profil</h1>
+	<label for="">Pseudo</label>
+	<input type="text" value="{{user.anonymousId}}" disabled>
+	<input type="checkbox" value="{{user.isAnonymous}}">
+	<label for="">Afficher mon identité lorsque je chat avec le pôle prévention.</label>
+
+	<h2>Mes topics</h2>
+	<table>
+		<thead>
+			<tr>
+				<th>Titre</th>
+				<th>Contenu</th>
+				<th>État</th>
+				<th>Commentaire</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for topic in user.topics %}
+				<tr>
+					<th>
+						<a href="{{path('prevention_view_topic', { 'id': topic.id })}}">{{topic.title}}</a>
+					</th>
+					<th>{{topic.contenu}}</th>
+					<th>{{topic.status}}</th>
+					<th>{{topic.rejectionMessage}}</th>
+					<th></th>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<h2>Mes messages</h2>
+	<table>
+		<thead>
+			<tr>
+				<th>Topic</th>
+				<th>Contenu</th>
+				<th>État</th>
+				<th>Commentaire</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for message in user.messages %}
+				<tr>
+					<a href="{{path('prevention_view_topic', { 'id': topic.id })}}">{{topic.title}}</a>
+					<th>{{message.contenu}}</th>
+					<th>{{message.status}}</th>
+					<th>{{message.rejectionMessage}}</th>
+					<th></th>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% endblock %}

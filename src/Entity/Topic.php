@@ -51,7 +51,7 @@ class Topic
     private $status;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $rejectionMessage;
 
@@ -59,6 +59,11 @@ class Topic
      * @ORM\OneToMany(targetEntity=TopicResponse::class, mappedBy="topic")
      */
     private $topicResponses;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isAnonymous;
 
     public function __construct()
     {
@@ -193,6 +198,31 @@ class Topic
                 $topicResponse->setTopic(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLastUpdate(): ?\DateTimeInterface
+    {
+        $lastUpdate = NULL;
+        foreach ($this->topicResponses as $topicResponse) {
+            if ($lastUpdate == NULL) {
+                $lastUpdate = $topicResponse->getResponseDate();
+            } else if ($lastUpdate < $topicResponse->getResponseDate()) {
+                $lastUpdate = $topicResponse->getResponseDate();
+            }
+        }
+        return $lastUpdate;
+    }
+
+    public function getIsAnonymous(): ?bool
+    {
+        return $this->isAnonymous;
+    }
+
+    public function setIsAnonymous(bool $isAnonymous): self
+    {
+        $this->isAnonymous = $isAnonymous;
 
         return $this;
     }

@@ -3,4 +3,16 @@
 {% block title %}Hello PreventionController!
 {% endblock %}
 
-{% block body %}{% endblock %}
+{% block body %}
+	<h1>Chat</h1>
+	<div id="chat">
+		{% for message in messages %}
+			<div class="message">
+				<p>{{message.content}}</p>
+				<i>{{message.messageDate|date('H:i, d/m/Y')}}</i>
+			</div>
+		{% endfor %}
+	</div>
+	<input type="text">
+	<button>Envoyer</button>
+{% endblock %}

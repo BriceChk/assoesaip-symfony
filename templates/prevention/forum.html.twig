@@ -3,4 +3,38 @@
 {% block title %}Hello PreventionController!
 {% endblock %}
 
-{% block body %}{% endblock %}
+{% block body %}
+	<h1>Forum</h1>
+	<div id="filters">
+		<input type="text">
+		<button>Chercher</button>
+		<select name="" id="">
+			<option value="">Tags</option>
+			{% for tag in tags %}
+				<option value="">{{tag}}</option>
+			{% endfor %}
+		</select>
+		<select name="" id="">
+			<option value="">Trier par</option>
+			<option value="">Date de création</option>
+			<option value="">Dernière modification</option>
+			<option value="">Popularité</option>
+		</select>
+	</div>
+	<div id="topics">
+		{% for topic in topics %}
+			<div class="topic">
+				<h3>{{topic.title}}</h3>
+				<h4>"{{topic.isAnonymous ? topic.author.anonymousId : topic.author.fullname}},
+					{{topic.creationDate}}"</h4>
+				{% for tag in topic.tags %}
+					<i>{{tag.name}}</i>
+				{% endfor %}
+				<p>{{topic.content|slice(0, 255)}}</p>
+				<p>{{topic.responses|length}}</p>
+				<p>{{"Dernière activité le "topic.lastUpdate|date('d/m/Y')}}</p>
+				<a href="{{path('prevention_view_topic', { 'id': topic.id })}}">En savoir plus...</a>
+			</div>
+		{% endfor %}
+	</div>
+{% endblock %}

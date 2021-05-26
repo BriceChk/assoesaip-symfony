@@ -33,7 +33,7 @@ class TopicResponse
     private $status;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $rejectionMessage;
 
@@ -48,6 +48,11 @@ class TopicResponse
      * @ORM\JoinColumn(nullable=false)
      */
     private $author;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isAnonymous;
 
     public function getId(): ?int
     {
@@ -122,6 +127,18 @@ class TopicResponse
     public function setAuthor(?User $author): self
     {
         $this->author = $author;
+
+        return $this;
+    }
+
+    public function getIsAnonymous(): ?bool
+    {
+        return $this->isAnonymous;
+    }
+
+    public function setIsAnonymous(bool $isAnonymous): self
+    {
+        $this->isAnonymous = $isAnonymous;
 
         return $this;
     }

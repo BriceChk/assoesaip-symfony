@@ -99,7 +99,8 @@ class User implements UserInterface
      * @param mixed $firstLogin
      * @return User
      */
-    public function setFirstLogin($firstLogin) {
+    public function setFirstLogin($firstLogin)
+    {
         $this->firstLogin = $firstLogin;
         return $this;
     }
@@ -108,7 +109,8 @@ class User implements UserInterface
      * @param mixed $lastLogin
      * @return User
      */
-    public function setLastLogin($lastLogin) {
+    public function setLastLogin($lastLogin)
+    {
         $this->lastLogin = $lastLogin;
         return $this;
     }
@@ -164,6 +166,11 @@ class User implements UserInterface
      */
     private $messages;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isAnonymous;
+
     public function __construct()
     {
         $this->projects = new ArrayCollection();
@@ -179,31 +186,38 @@ class User implements UserInterface
     /**
      * @ORM\PrePersist
      */
-    public function onPrePersist() {
+    public function onPrePersist()
+    {
         $this->firstLogin = $this->lastLogin = new DateTime('NOW');
     }
 
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
-    public function getFirstName() {
+    public function getFirstName()
+    {
         return $this->firstName;
     }
 
-    public function setFirstName($firstName): void {
+    public function setFirstName($firstName): void
+    {
         $this->firstName = $firstName;
     }
 
-    public function getLastName() {
+    public function getLastName()
+    {
         return $this->lastName;
     }
 
-    public function setLastName($lastName): void {
+    public function setLastName($lastName): void
+    {
         $this->lastName = $lastName;
     }
 
-    public function getFullName() {
+    public function getFullName()
+    {
         return $this->firstName . ' ' . $this->lastName;
     }
 
@@ -211,26 +225,31 @@ class User implements UserInterface
      * @Serializer\VirtualProperty()
      * @return string
      */
-    public function getFullNameAndEmail() {
+    public function getFullNameAndEmail()
+    {
         return $this->getFullName() . ' (' . $this->username . ')';
     }
 
-    public function getUsername() {
+    public function getUsername()
+    {
         return $this->username;
     }
 
-    public function setUsername($username): void {
+    public function setUsername($username): void
+    {
         $this->username = $username;
     }
 
-    public function getEmail() {
+    public function getEmail()
+    {
         return $this->username;
     }
 
     /**
      * @return File|null
      */
-    public function getAvatarFile(): ?File {
+    public function getAvatarFile(): ?File
+    {
         return $this->avatarFile;
     }
 
@@ -238,7 +257,8 @@ class User implements UserInterface
      * @param File|null $avatarFile
      * @return User
      */
-    public function setAvatarFile(?File $avatarFile): User {
+    public function setAvatarFile(?File $avatarFile): User
+    {
         $this->avatarFile = $avatarFile;
 
         if ($this->avatarFile instanceof UploadedFile) {
@@ -248,44 +268,54 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getAvatarFileName() {
+    public function getAvatarFileName()
+    {
         return $this->avatarFileName;
     }
 
-    public function setAvatarFileName($avatarFileName) {
+    public function setAvatarFileName($avatarFileName)
+    {
         $this->avatarFileName = $avatarFileName;
         return $this;
     }
 
-    public function getPromo() {
+    public function getPromo()
+    {
         return $this->promo;
     }
 
-    public function setPromo($promo): void {
+    public function setPromo($promo): void
+    {
         $this->promo = $promo;
     }
 
-    public function getCampus() {
+    public function getCampus()
+    {
         return $this->campus;
     }
 
-    public function setCampus($campus): void {
+    public function setCampus($campus): void
+    {
         $this->campus = $campus;
     }
 
-    public function getFirstLogin() {
+    public function getFirstLogin()
+    {
         return $this->firstLogin;
     }
 
-    public function getLastLogin() {
+    public function getLastLogin()
+    {
         return $this->lastLogin;
     }
 
-    public function updateLastLogin(): void {
+    public function updateLastLogin(): void
+    {
         $this->lastLogin = new DateTime('now');
     }
 
-    public function getRoles(): array {
+    public function getRoles(): array
+    {
         $roles = $this->roles;
 
         // Identified user must have at least one role, default is ROLE_USER
@@ -294,18 +324,22 @@ class User implements UserInterface
         return array_unique($roles);
     }
 
-    public function setRoles(array $roles): void {
+    public function setRoles(array $roles): void
+    {
         $this->roles = $roles;
     }
 
-    public function getSalt(): ?string {
+    public function getSalt(): ?string
+    {
         return null;
     }
 
-    public function eraseCredentials(): void {
+    public function eraseCredentials(): void
+    {
     }
 
-    public function getPassword() {
+    public function getPassword()
+    {
     }
 
     /**
@@ -572,6 +606,23 @@ class User implements UserInterface
                 $message->setAuthor(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAnonymousId(): string
+    {
+        return "Anonymous";
+    }
+
+    public function getIsAnonymous(): ?bool
+    {
+        return $this->isAnonymous;
+    }
+
+    public function setIsAnonymous(bool $isAnonymous): self
+    {
+        $this->isAnonymous = $isAnonymous;
 
         return $this;
     }

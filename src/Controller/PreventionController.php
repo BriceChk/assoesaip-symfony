@@ -2,9 +2,14 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Entity\Tag;
+use App\Entity\Topic;
+use App\Form\TopicType;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class PreventionController extends AbstractController
 {
@@ -21,7 +26,13 @@ class PreventionController extends AbstractController
      */
     public function forum(): Response
     {
-        return $this->render('prevention/forum.html.twig', []);
+        $doc = $this->getDoctrine();
+        $topics = $doc->getRepository(Topic::class)->findAll();
+        $tags = $doc->getRepository(Tag::class)->findAll();
+        return $this->render('prevention/forum.html.twig', [
+            'topics' => $topics,
+            'tags' => $tags
+        ]);
     }
 
     /**
@@ -35,9 +46,29 @@ class PreventionController extends AbstractController
     /**
      * @Route("/prevention/topic/add", name="prevention_add_topic")
      */
-    public function add_topic(): Response
+    public function add_topic(Topic $topic, Request $request): Response
     {
-        return $this->render('prevention/add_topic.html.twig', []);
+        $topic = new Topic();
+        $form = $this->createForm(TopicType::class, $topic);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $topic->setCreationDate(new \DateTime());
+            $topic->setAuthor($this->getUser());
+            $topic->setIsAnonymous($form->get('is_anonymous')->getData());
+            $topic->setStatus('pending');
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($topic);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('prevention_forum');
+        }
+
+        return $this->render('prevention/add_topic.html.twig', [
+            'topic' => $topic,
+            'form' => $form->createView()
+        ]);
     }
 
     /**
@@ -45,7 +76,11 @@ class PreventionController extends AbstractController
      */
     public function chat(): Response
     {
-        return $this->render('prevention/chat.html.twig', []);
+        $doc = $this->getDoctrine();
+        $messages = $doc->getRepository(Messages::class)->findBy(['user' => $this->getUser()], ['messageDate' => 'ASC']);
+        return $this->render('prevention/chat.html.twig', [
+            'messages' => $messages
+        ]);
     }
 
     /**
@@ -54,7 +89,9 @@ class PreventionController extends AbstractController
     public function profile(): Response
     {
         $user = $this->getUser();
-        return $this->render('prevention/profile.html.twig', []);
+        return $this->render('prevention/profile.html.twig', [
+            'user' => $user
+        ]);
     }
 
     /**
