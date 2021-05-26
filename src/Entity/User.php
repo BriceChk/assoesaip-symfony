@@ -149,6 +149,21 @@ class User implements UserInterface
      */
     private $fcmTokens;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Topic::class, mappedBy="auteur")
+     */
+    private $topics;
+
+    /**
+     * @ORM\OneToMany(targetEntity=TopicResponse::class, mappedBy="auteur")
+     */
+    private $topicReponses;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Message::class, mappedBy="auteur")
+     */
+    private $messages;
+
     public function __construct()
     {
         $this->projects = new ArrayCollection();
@@ -156,6 +171,9 @@ class User implements UserInterface
         $this->events = new ArrayCollection();
         $this->roomBooks = new ArrayCollection();
         $this->fcmTokens = new ArrayCollection();
+        $this->topics = new ArrayCollection();
+        $this->topicReponses = new ArrayCollection();
+        $this->messages = new ArrayCollection();
     }
 
     /**
@@ -464,6 +482,96 @@ class User implements UserInterface
     public function setMsId(string $msId): self
     {
         $this->msId = $msId;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Topic[]
+     */
+    public function getTopics(): Collection
+    {
+        return $this->topics;
+    }
+
+    public function addTopic(Topic $topic): self
+    {
+        if (!$this->topics->contains($topic)) {
+            $this->topics[] = $topic;
+            $topic->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTopic(Topic $topic): self
+    {
+        if ($this->topics->removeElement($topic)) {
+            // set the owning side to null (unless already changed)
+            if ($topic->getAuthor() === $this) {
+                $topic->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TopicResponse[]
+     */
+    public function getTopicReponses(): Collection
+    {
+        return $this->topicReponses;
+    }
+
+    public function addTopicReponse(TopicResponse $topicReponse): self
+    {
+        if (!$this->topicReponses->contains($topicReponse)) {
+            $this->topicReponses[] = $topicReponse;
+            $topicReponse->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTopicReponse(TopicResponse $topicReponse): self
+    {
+        if ($this->topicReponses->removeElement($topicReponse)) {
+            // set the owning side to null (unless already changed)
+            if ($topicReponse->getAuthor() === $this) {
+                $topicReponse->setAuthor(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Message[]
+     */
+    public function getMessages(): Collection
+    {
+        return $this->messages;
+    }
+
+    public function addMessage(Message $message): self
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages[] = $message;
+            $message->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessage(Message $message): self
+    {
+        if ($this->messages->removeElement($message)) {
+            // set the owning side to null (unless already changed)
+            if ($message->getAuthor() === $this) {
+                $message->setAuthor(null);
+            }
+        }
 
         return $this;
     }
