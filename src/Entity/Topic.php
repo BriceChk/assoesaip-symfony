@@ -2,10 +2,10 @@
 
 namespace App\Entity;
 
-use App\Repository\TopicRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\TopicRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass=TopicRepository::class)
@@ -41,7 +41,7 @@ class Topic
     private $author;
 
     /**
-     * @ORM\ManyToMany(targetEntity=tag::class, inversedBy="topics")
+     * @ORM\ManyToMany(targetEntity=Tag::class, inversedBy="topics")
      */
     private $tags;
 
