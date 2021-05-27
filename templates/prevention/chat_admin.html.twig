@@ -7,7 +7,13 @@
 	<main>
 		<div class="home-header text-center">
 			<h1 class="display-4">Chat</h1>
-			<p class="lead">Discutez avec le pôle prévention</p>
+		</div>
+		<div id="users">
+			{% for author in authors %}
+				<ul>
+					<li onclick="load({{author.id}})">{{author.fullName}}</li>
+				</ul>
+			{% endfor %}
 		</div>
 		<div id="chat">
 			{% for message in messages %}
@@ -23,8 +29,16 @@
 {% endblock %}
 {% block javascripts %}
 	<script>
-		setInterval(() => {
-$("#chat").load('{{ asset("prevention/chat.php") }}', {userId: 512});
+		let interval = null;
+function load(id) {
+clearInterval(interval);
+getData(id);
+interval = setInterval(() => {
+getData(id);
 }, 5000);
+}
+function getData(id) {
+$("#chat").load('{{ asset("prevention/chat.php") }}', {userId: id});
+}
 	</script>
 {% endblock %}

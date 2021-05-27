@@ -23,7 +23,7 @@ class TopicResponse
     private $responseDate;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="text", length=65535)
      */
     private $content;
 
@@ -33,7 +33,7 @@ class TopicResponse
     private $status;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="text", length=65535, nullable=true)
      */
     private $rejectionMessage;
 

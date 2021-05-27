@@ -1,6 +1,20 @@
-{% extends 'base.html.twig' %}
+{% extends 'prevention/prevention_base.html.twig' %}
 
 {% block title %}Hello PreventionController!
 {% endblock %}
 
-{% block body %}{% endblock %}
+{% block body %}
+	<main>
+		<div class="home-header text-center">
+			<h1 class="display-4">Proposer un topic</h1>
+			<p class="lead">Votre topic devra être validé par le pôle prévention avant d'être visible publiquement.</p>
+		</div>
+		{{ form_start(form) }}
+		{{ form_row(form.title) }}
+		{{ form_row(form.content) }}
+		{{ form_row(form.is_anonymous) }}
+		{{ form_row(form.tags) }}
+		<button>Proposer</button>
+		{{ form_end(form) }}
+	</main>
+{% endblock %}

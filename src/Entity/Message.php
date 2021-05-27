@@ -24,7 +24,7 @@ class Message
     private $author;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="text", length=65535)
      */
     private $content;
 
@@ -32,6 +32,11 @@ class Message
      * @ORM\Column(type="datetime")
      */
     private $messageDate;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isPrevention;
 
     public function getId(): ?int
     {
@@ -70,6 +75,18 @@ class Message
     public function setMessageDate(\DateTimeInterface $messageDate): self
     {
         $this->messageDate = $messageDate;
+
+        return $this;
+    }
+
+    public function getIsPrevention(): ?bool
+    {
+        return $this->isPrevention;
+    }
+
+    public function setIsPrevention(bool $isPrevention): self
+    {
+        $this->isPrevention = $isPrevention;
 
         return $this;
     }

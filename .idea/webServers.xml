@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="c65a7439-af8d-48c7-a8a3-01c495297381" name="BDE_DEV">
+        <fileTransfer rootFolder="/var/www/bde-dev.esaip.org" accessType="SFTP" host="asso.esaip.org" port="22" sshConfigId="7bf0ccd1-ddda-4343-ad5a-3801d6915e38" sshConfig="bde@asso.esaip.org:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

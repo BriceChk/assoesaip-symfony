@@ -1,28 +1,30 @@
-{% extends 'base.html.twig' %}
+{% extends 'prevention/prevention_base.html.twig' %}
 
-{% block title %}Hello PreventionController!
+{% block title %}Asso'esaip - Topic
 {% endblock %}
 
 {% block body %}
-	<div id="topic">
-		<h1>{{topic.title}}</h1>
-		<h2>"{{topic.isAnonymous ? topic.author.getAnonymousId : topic.author.fullname}},
-			{{topic.creationDate}}"</h2>
-		{% for tag in topic.tags %}
-			<i>{{tag.name}}</i>
-		{% endfor %}
-		<p>{{topic.content}}</p>
-	</div>
-	<h2>Réponses</h2>
-	<input type="text">
-	<button>Envoyer</button>
-	{% for response in topic.topicResponses %}
-		<div class="response">
-			<p>
-				<strong>{{response.isAnonymous ? response.author.anonymousId : response.author.fullname}}</strong>,
-				{{response.responseDate|date('H:i, d/m/Y')}}
-			</p>
-			<p>{{response.content}}</p>
+	<main>
+		<div id="topic">
+			<h1>{{topic.title}}</h1>
+			<h2>{{topic.isAnonymous ? topic.author.getAnonymousId : topic.author.fullname}},
+				{{topic.creationDate|date('d/m/Y')}}</h2>
+			{% for tag in topic.tags %}
+				<i>{{tag.name}}</i>
+			{% endfor %}
+			<p>{{topic.content}}</p>
 		</div>
-	{% endfor %}
+		<h2>Réponses</h2>
+		<input type="text">
+		<button>Envoyer</button>
+		{% for response in topic.topicResponses %}
+			<div class="response">
+				<p>
+					<strong>{{response.isAnonymous ? response.author.anonymousId : response.author.fullname}}</strong>,
+					{{response.responseDate|date('H:i, d/m/Y')}}
+				</p>
+				<p>{{response.content}}</p>
+			</div>
+		{% endfor %}
+	</main>
 {% endblock %}

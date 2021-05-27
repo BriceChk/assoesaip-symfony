@@ -3,8 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Tag;
+use App\Entity\User;
 use App\Entity\Topic;
+use App\Entity\Message;
 use App\Form\TopicType;
+use App\Entity\AssoEsaipSettings;
+use App\Repository\MessageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,6 +22,9 @@ class PreventionController extends AbstractController
      */
     public function home(): Response
     {
+        $presentation = 'la presentation';
+        $settingsRep = $this->getDoctrine()->getRepository(AssoEsaipSettings::class);
+        //$pres = $settingsRep->getPresentationPolePrevention();
         return $this->render('prevention/home.html.twig', []);
     }
 
@@ -27,7 +34,7 @@ class PreventionController extends AbstractController
     public function forum(): Response
     {
         $doc = $this->getDoctrine();
-        $topics = $doc->getRepository(Topic::class)->findAll();
+        $topics = $doc->getRepository(Topic::class)->findBy(['status' => 'Validé'], ['creationDate' => 'DESC']);
         $tags = $doc->getRepository(Tag::class)->findAll();
         return $this->render('prevention/forum.html.twig', [
             'topics' => $topics,
@@ -36,17 +43,9 @@ class PreventionController extends AbstractController
     }
 
     /**
-     * @Route("/prevention/topic/{id}", name="prevention_view_topic")
-     */
-    public function view_topic(): Response
-    {
-        return $this->render('prevention/view_topic.html.twig', []);
-    }
-
-    /**
      * @Route("/prevention/topic/add", name="prevention_add_topic")
      */
-    public function add_topic(Topic $topic, Request $request): Response
+    public function add_topic(Request $request): Response
     {
         $topic = new Topic();
         $form = $this->createForm(TopicType::class, $topic);
@@ -56,7 +55,7 @@ class PreventionController extends AbstractController
             $topic->setCreationDate(new \DateTime());
             $topic->setAuthor($this->getUser());
             $topic->setIsAnonymous($form->get('is_anonymous')->getData());
-            $topic->setStatus('pending');
+            $topic->setStatus('En attente');
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($topic);
@@ -72,25 +71,61 @@ class PreventionController extends AbstractController
     }
 
     /**
-     * @Route("/prevention/chat", name="prevention_chat")
+     * @Route("/prevention/topic/{id}", name="prevention_view_topic")
      */
-    public function chat(): Response
+    public function view_topic(Topic $topic): Response
     {
-        $doc = $this->getDoctrine();
-        $messages = $doc->getRepository(Messages::class)->findBy(['user' => $this->getUser()], ['messageDate' => 'ASC']);
-        return $this->render('prevention/chat.html.twig', [
-            'messages' => $messages
+        return $this->render('prevention/view_topic.html.twig', [
+            'topic' => $topic
         ]);
     }
 
     /**
      * @Route("/prevention/profile", name="prevention_profile")
      */
-    public function profile(): Response
+    public function profile(Request $request): Response
     {
         $user = $this->getUser();
+
+        if ($request->get('is_anonymous')) {
+            $user->setIsAnonymous($request->get('is_anonymous') == 'on' ? false : true);
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($user);
+            $entityManager->flush();
+            return $this->redirectToRoute('prevention_profile');
+        }
+
         return $this->render('prevention/profile.html.twig', [
             'user' => $user
+        ]);
+    }
+
+    /**
+     * @Route("/prevention/chat", name="prevention_chat")
+     */
+    public function chat(): Response
+    {
+        $doc = $this->getDoctrine();
+        $messages = $doc->getRepository(Message::class)->findBy(['author' => $this->getUser()], ['messageDate' => 'ASC']);
+        return $this->render('prevention/chat.html.twig', [
+            'messages' => $messages
+        ]);
+    }
+
+    /**
+     * @Route("/prevention/admin/chat", name="prevention_admin_chat")
+     */
+    public function admin_chat(MessageRepository $messageRepository): Response
+    {
+        $authors = $messageRepository->getListOfAuthors();
+        $rep = $this->getDoctrine()->getRepository(Message::class);
+        //REFRESH USERS
+
+        $lastMessage = $rep->findOneBy([], ['messageDate' => 'DESC']);
+        $messages = $rep->findBy(['author' => $lastMessage->getAuthor()], ['messageDate' => 'DESC']);
+        return $this->render('prevention/chat_admin.html.twig', [
+            'messages' => $messages,
+            'authors' => $authors
         ]);
     }
 

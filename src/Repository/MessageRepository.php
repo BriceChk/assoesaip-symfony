@@ -2,9 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\User;
 use App\Entity\Message;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Message|null find($id, $lockMode = null, $lockVersion = null)
@@ -47,4 +48,15 @@ class MessageRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function getListOfAuthors()
+    {
+        return $this->createQueryBuilder('m')
+            ->select('max(m.messageDate), u.id, concat(u.firstName, \' \', u.lastName) as fullName')
+            ->join(User::class, 'u', 'WITH', 'm.author = u.id')
+            ->groupBy('u.id')
+            ->orderBy('max(m.messageDate)', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="Asso'esaip est la plateforme associative de l'ESAIP. Elle regroupe les informations sur tous les clubs, projets et associations des étudiants.">
+		<meta name="keywords" content="esaip, vie associative, vie étudiante, école d'ingénieurs">
+		<meta name="author" content="BDE ESAIP Angers">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+
+		<title>
+			{% block title %}Asso'esaip
+			{% endblock %}
+		</title>
+
+		{% block stylesheets %}
+			<link rel="apple-touch-icon" sizes="180x180" href="{{ asset('build/images/icons/apple-touch-icon.png') }}">
+			<link rel="icon" type="image/png" sizes="32x32" href="{{ asset('build/images/icons/favicon-32x32.png') }}">
+			<link rel="icon" type="image/png" sizes="16x16" href="{{ asset('build/images/icons/favicon-16x16.png') }}">
+			<link rel="manifest" href="{{ asset('build/images/icons/site.webmanifest') }}">
+			<link rel="mask-icon" href="{{ asset('build/images/icons/safari-pinned-tab.svg') }}" color="#0077b6">
+			<link rel="shortcut icon" href="{{ asset('build/images/icons/favicon.ico') }}">
+			<meta name="msapplication-TileColor" content="#0077b6">
+			<meta name="msapplication-config" content="{{ asset('/build/images/icons/browserconfig.xml') }}">
+			<meta name="theme-color" content="#0077b6">
+
+			{{ encore_entry_link_tags('app') }}
+
+		{% endblock %}
+	</head>
+
+	<body class="hold-transition sidebar-mini">
+		<div
+			class="wrapper">
+			<!-- Navbar -->
+			<nav class="navbar navbar-expand-xl navbar-esaip elevation-2">
+				<a class="navbar-brand" href="/">
+					<img src="{{ asset('build/images/icons/android-chrome-144x144.png') }}" style="margin-right: 10px; margin-top: -5px; width: 36px; height: 36px;" alt="logo_esaip">
+					Asso'esaip
+				</a>
+
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<!-- Left navbar links -->
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul class="navbar-nav mr-auto">
+						<li class="nav-item {{ app.request.get('_route') == 'home' ? 'active' }}">
+							<a class="nav-link" href="{{ path('home') }}">Accueil</a>
+						</li>
+						<li class="nav-item {{ app.request.get('_route') == 'prevention_forum' ? 'active' }}">
+							<a class="nav-link" href="{{ path('prevention_forum') }}">Forum</a>
+						</li>
+						{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_PREVENTION') %}
+							<li class="nav-item {{ app.request.get('_route') == 'prevention_admin_chat' ? 'active' }}">
+								<a class="nav-link" href="{{ path('prevention_admin_chat') }}">Chat</a>
+							</li>
+							<li class="nav-item {{ app.request.get('_route') == 'manage_forum' ? 'active' }}">
+								<a class="nav-link" href="{{ path('manage_forum') }}">Administration</a>
+							</li>
+						{% else %}
+							<li class="nav-item {{ app.request.get('_route') == 'prevention_chat' ? 'active' }}">
+								<a class="nav-link" href="{{ path('prevention_chat') }}">Chat</a>
+							</li>
+						{% endif %}
+					</ul>
+
+					<ul class="navbar-nav">
+						<li class="nav-item {{ app.request.get('_route') == 'prevention_profile' ? 'active' }}">
+							<a class="nav-link" href="{{ path('prevention_profile') }}">Profil</a>
+						</li>
+						<li class="nav-item dropdown dropleft active">
+							<a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								{{ app.user.fullName }}
+							</a>
+							<div class="dropdown-menu" aria-labelledby="profileDropdown">
+								<a class="dropdown-item" href="{{ path('profile') }}">Modifier mon profil</a>
+								<a class="dropdown-item" href="{{ path('app_logout') }}">Déconnexion</a>
+								<div class="dropdown-divider"></div>
+								<a class="dropdown-item" href="{{ path('project', {url: 'assoesaip'}) }}">À propos</a>
+								<a class="dropdown-item active" href="{{ path('espace_admin') }}">Administration</a>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</nav>
+			<!-- /.navbar -->
+			{% block body %}{% endblock %}
+		</div>
+
+		{% block javascripts %}
+			{{ encore_entry_script_tags('app') }}
+		{% endblock %}
+	</body>
+</html></li>

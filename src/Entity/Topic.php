@@ -25,7 +25,7 @@ class Topic
     private $title;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="text", length=65535)
      */
     private $content;
 
@@ -51,7 +51,7 @@ class Topic
     private $status;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="text", length=65535, nullable=true)
      */
     private $rejectionMessage;
 
@@ -204,9 +204,9 @@ class Topic
 
     public function getLastUpdate(): ?\DateTimeInterface
     {
-        $lastUpdate = NULL;
+        $lastUpdate = $this->getCreationDate();
         foreach ($this->topicResponses as $topicResponse) {
-            if ($lastUpdate == NULL) {
+            if ($lastUpdate == $this->getCreationDate()) {
                 $lastUpdate = $topicResponse->getResponseDate();
             } else if ($lastUpdate < $topicResponse->getResponseDate()) {
                 $lastUpdate = $topicResponse->getResponseDate();

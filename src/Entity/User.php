@@ -152,17 +152,17 @@ class User implements UserInterface
     private $fcmTokens;
 
     /**
-     * @ORM\OneToMany(targetEntity=Topic::class, mappedBy="auteur")
+     * @ORM\OneToMany(targetEntity=Topic::class, mappedBy="author")
      */
     private $topics;
 
     /**
-     * @ORM\OneToMany(targetEntity=TopicResponse::class, mappedBy="auteur")
+     * @ORM\OneToMany(targetEntity=TopicResponse::class, mappedBy="author")
      */
-    private $topicReponses;
+    private $topicResponses;
 
     /**
-     * @ORM\OneToMany(targetEntity=Message::class, mappedBy="auteur")
+     * @ORM\OneToMany(targetEntity=Message::class, mappedBy="author")
      */
     private $messages;
 
@@ -179,7 +179,7 @@ class User implements UserInterface
         $this->roomBooks = new ArrayCollection();
         $this->fcmTokens = new ArrayCollection();
         $this->topics = new ArrayCollection();
-        $this->topicReponses = new ArrayCollection();
+        $this->topicResponses = new ArrayCollection();
         $this->messages = new ArrayCollection();
     }
 
@@ -553,27 +553,27 @@ class User implements UserInterface
     /**
      * @return Collection|TopicResponse[]
      */
-    public function getTopicReponses(): Collection
+    public function getTopicResponses(): Collection
     {
-        return $this->topicReponses;
+        return $this->topicResponses;
     }
 
-    public function addTopicReponse(TopicResponse $topicReponse): self
+    public function addTopicResponse(TopicResponse $topicResponse): self
     {
-        if (!$this->topicReponses->contains($topicReponse)) {
-            $this->topicReponses[] = $topicReponse;
-            $topicReponse->setAuthor($this);
+        if (!$this->topicResponses->contains($topicResponse)) {
+            $this->topicResponses[] = $topicResponse;
+            $topicResponse->setAuthor($this);
         }
 
         return $this;
     }
 
-    public function removeTopicReponse(TopicResponse $topicReponse): self
+    public function removeTopicResponse(TopicResponse $topicResponse): self
     {
-        if ($this->topicReponses->removeElement($topicReponse)) {
+        if ($this->topicResponses->removeElement($topicResponse)) {
             // set the owning side to null (unless already changed)
-            if ($topicReponse->getAuthor() === $this) {
-                $topicReponse->setAuthor(null);
+            if ($topicResponse->getAuthor() === $this) {
+                $topicResponse->setAuthor(null);
             }
         }
 
@@ -612,7 +612,7 @@ class User implements UserInterface
 
     public function getAnonymousId(): string
     {
-        return "Anonymous";
+        return "Anonyme" . substr($this->getMsId(), 14, 4);
     }
 
     public function getIsAnonymous(): ?bool
