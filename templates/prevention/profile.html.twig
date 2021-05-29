@@ -4,19 +4,32 @@
 {% endblock %}
 
 {% block body %}
-	<main>
-		<h1>Mon profil</h1>
-		<label for="">Pseudo</label>
-		<input type="text" value="{{user.anonymousId}}" disabled>
+<main>
+	<div class="text-center pt-4">
+		<h1 class="display-4">Mon profil</h1>
+		<hr class="my-4">
+	</div>
+	<div class="container">
+		<h2>Mes informations</h2>
+		<div class="form-group">
+			<label for="user_pseudo">Pseudo</label>
+			<input type="text" class="form-control" id="user_pseudo" value="{{user.anonymousId}}" disabled>
+		</div>
+
 		<form action="">
-			<input type="checkbox" {{user.isAnonymous ? '' : "checked"}} name="is_anonymous">
-			<label for="">Afficher mon identité lorsque je chat avec le pôle prévention.</label>
-			<button>Sauvegarder les préférences</button>
+			<div class="form-group">
+				<div class="form-check">
+					<input type="checkbox" id="user_anonymity" class="form-check-input" {{user.isAnonymous ? ''
+						: "checked" }} name="is_anonymous">
+					<label for="user_anonymity">Afficher mon identité lorsque je chat avec le pôle prévention.</label>
+				</div>
+				<button class="btn btn-primary">Sauvegarder les préférences</button>
+			</div>
 		</form>
 
 		<h2>Mes topics</h2>
-		<table>
-			<thead>
+		<table class="table table-bordered">
+			<thead class="thead-light">
 				<tr>
 					<th>Titre</th>
 					<th>Contenu</th>
@@ -27,24 +40,28 @@
 			</thead>
 			<tbody>
 				{% for topic in user.topics %}
-					<tr>
-						<td>
-							<a href="{{path('prevention_view_topic', { 'id': topic.id })}}">{{topic.title}}</a>
-						</td>
-						<td>{{topic.content}}</td>
-						<td>{{topic.creationDate|date('d/m/Y')}}</td>
-						<td>{{topic.status}}</td>
-						<td>{{topic.rejectionMessage ? topic.rejectionMessage : '-'}}</td>
-						<td>
-							<i class="far fa-plus-square"></i>
-						</td>
-					</tr>
+				<tr>
+					{% if topic.status == "Validé" %}
+					<td>
+						<a href="{{path('prevention_view_topic', { 'id': topic.id })}}">{{topic.title}}</a>
+					</td>
+					{% else %}
+					<td>{{topic.title}}</td>
+					{% endif %}
+					<td>{{topic.content}}</td>
+					<td>{{topic.creationDate|date('d/m/Y')}}</td>
+					<td>{{topic.status}}</td>
+					<td>{{topic.rejectionMessage ? topic.rejectionMessage : '-'}}</td>
+					<td>
+						<i class="far fa-plus-square"></i>
+					</td>
+				</tr>
 				{% endfor %}
 			</tbody>
 		</table>
 		<h2>Mes messages</h2>
-		<table>
-			<thead>
+		<table class="table table-bordered">
+			<thead class="thead-light">
 				<tr>
 					<th>Topic</th>
 					<th>Contenu</th>
@@ -55,20 +72,22 @@
 			</thead>
 			<tbody>
 				{% for response in user.topicResponses %}
-					<tr>
-						<td>
-							<a href="{{path('prevention_view_topic', { 'id': response.topic.id })}}">{{response.topic.title}}</a>
-						</td>
-						<td>{{response.content}}</td>
-						<td>{{response.responseDate|date('d/m/Y')}}</td>
-						<td>{{response.status}}</td>
-						<td>{{response.rejectionMessage ? response.rejectionMessage : '-'}}</td>
-						<td>
-							<i class="far fa-plus-square"></i>
-						</td>
-					</tr>
+				<tr>
+					<td>
+						<a
+							href="{{path('prevention_view_topic', { 'id': response.topic.id })}}">{{response.topic.title}}</a>
+					</td>
+					<td>{{response.content}}</td>
+					<td>{{response.responseDate|date('d/m/Y')}}</td>
+					<td>{{response.status}}</td>
+					<td>{{response.rejectionMessage ? response.rejectionMessage : '-'}}</td>
+					<td>
+						<i class="far fa-plus-square"></i>
+					</td>
+				</tr>
 				{% endfor %}
 			</tbody>
 		</table>
-	</main>
+	</div>
+</main>
 {% endblock %}

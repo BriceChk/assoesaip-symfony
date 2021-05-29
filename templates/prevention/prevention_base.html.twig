@@ -28,69 +28,65 @@
 
 		{% endblock %}
 	</head>
+	<header>
+		<nav class="navbar fixed-top navbar-expand-xl navbar-esaip elevation-2">
+			<a class="navbar-brand" href="/">
+				<img src="{{ asset('build/images/icons/android-chrome-144x144.png') }}" style="margin-right: 10px; margin-top: -5px; width: 36px; height: 36px;" alt="logo_esaip">
+				Asso'esaip
+			</a>
 
-	<body class="hold-transition sidebar-mini">
-		<div
-			class="wrapper">
-			<!-- Navbar -->
-			<nav class="navbar navbar-expand-xl navbar-esaip elevation-2">
-				<a class="navbar-brand" href="/">
-					<img src="{{ asset('build/images/icons/android-chrome-144x144.png') }}" style="margin-right: 10px; margin-top: -5px; width: 36px; height: 36px;" alt="logo_esaip">
-					Asso'esaip
-				</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
 
-				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
+			<!-- Left navbar links -->
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item {{ app.request.get('_route') == 'home' ? 'active' }}">
+						<a class="nav-link" href="{{ path('home') }}">Accueil</a>
+					</li>
+					<li class="nav-item {{ app.request.get('_route') == 'prevention_forum' ? 'active' }}">
+						<a class="nav-link" href="{{ path('prevention_forum') }}">Forum</a>
+					</li>
+					{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_PREVENTION') %}
+						<li class="nav-item {{ app.request.get('_route') == 'prevention_admin_chat' ? 'active' }}">
+							<a class="nav-link" href="{{ path('prevention_admin_chat') }}">Chat</a>
+						</li>
+						<li class="nav-item {{ app.request.get('_route') == 'manage_forum' ? 'active' }}">
+							<a class="nav-link" href="{{ path('manage_forum') }}">Administration</a>
+						</li>
+					{% else %}
+						<li class="nav-item {{ app.request.get('_route') == 'prevention_chat' ? 'active' }}">
+							<a class="nav-link" href="{{ path('prevention_chat') }}">Chat</a>
+						</li>
+					{% endif %}
+				</ul>
 
-				<!-- Left navbar links -->
-				<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					<ul class="navbar-nav mr-auto">
-						<li class="nav-item {{ app.request.get('_route') == 'home' ? 'active' }}">
-							<a class="nav-link" href="{{ path('home') }}">Accueil</a>
-						</li>
-						<li class="nav-item {{ app.request.get('_route') == 'prevention_forum' ? 'active' }}">
-							<a class="nav-link" href="{{ path('prevention_forum') }}">Forum</a>
-						</li>
-						{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_PREVENTION') %}
-							<li class="nav-item {{ app.request.get('_route') == 'prevention_admin_chat' ? 'active' }}">
-								<a class="nav-link" href="{{ path('prevention_admin_chat') }}">Chat</a>
-							</li>
-							<li class="nav-item {{ app.request.get('_route') == 'manage_forum' ? 'active' }}">
-								<a class="nav-link" href="{{ path('manage_forum') }}">Administration</a>
-							</li>
-						{% else %}
-							<li class="nav-item {{ app.request.get('_route') == 'prevention_chat' ? 'active' }}">
-								<a class="nav-link" href="{{ path('prevention_chat') }}">Chat</a>
-							</li>
-						{% endif %}
-					</ul>
+				<ul class="navbar-nav">
+					<li class="nav-item {{ app.request.get('_route') == 'prevention_profile' ? 'active' }}">
+						<a class="nav-link" href="{{ path('prevention_profile') }}">Profil</a>
+					</li>
+					<li class="nav-item dropdown dropleft active">
+						<a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							{{ app.user.fullName }}
+						</a>
+						<div class="dropdown-menu" aria-labelledby="profileDropdown">
+							<a class="dropdown-item" href="{{ path('profile') }}">Modifier mon profil</a>
+							<a class="dropdown-item" href="{{ path('app_logout') }}">Déconnexion</a>
+							<div class="dropdown-divider"></div>
+							<a class="dropdown-item" href="{{ path('project', {url: 'assoesaip'}) }}">À propos</a>
+							<a class="dropdown-item active" href="{{ path('espace_admin') }}">Administration</a>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</nav>
+	</header>
 
-					<ul class="navbar-nav">
-						<li class="nav-item {{ app.request.get('_route') == 'prevention_profile' ? 'active' }}">
-							<a class="nav-link" href="{{ path('prevention_profile') }}">Profil</a>
-						</li>
-						<li class="nav-item dropdown dropleft active">
-							<a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								{{ app.user.fullName }}
-							</a>
-							<div class="dropdown-menu" aria-labelledby="profileDropdown">
-								<a class="dropdown-item" href="{{ path('profile') }}">Modifier mon profil</a>
-								<a class="dropdown-item" href="{{ path('app_logout') }}">Déconnexion</a>
-								<div class="dropdown-divider"></div>
-								<a class="dropdown-item" href="{{ path('project', {url: 'assoesaip'}) }}">À propos</a>
-								<a class="dropdown-item active" href="{{ path('espace_admin') }}">Administration</a>
-							</div>
-						</li>
-					</ul>
-				</div>
-			</nav>
-			<!-- /.navbar -->
-			{% block body %}{% endblock %}
-		</div>
+	<body class="bg-white"> {% block body %}{% endblock %}
 
 		{% block javascripts %}
 			{{ encore_entry_script_tags('app') }}
 		{% endblock %}
 	</body>
-</html></li>
+</html>

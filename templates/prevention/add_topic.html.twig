@@ -5,16 +5,20 @@
 
 {% block body %}
 	<main>
-		<div class="home-header text-center">
+		<div class="jumbotron text-center">
 			<h1 class="display-4">Proposer un topic</h1>
 			<p class="lead">Votre topic devra être validé par le pôle prévention avant d'être visible publiquement.</p>
 		</div>
-		{{ form_start(form) }}
-		{{ form_row(form.title) }}
-		{{ form_row(form.content) }}
-		{{ form_row(form.is_anonymous) }}
-		{{ form_row(form.tags) }}
-		<button>Proposer</button>
-		{{ form_end(form) }}
+		<div class="container py-3">
+			{{ form_start(form) }}
+			{{ form_row(form.title) }}
+			{{ form_row(form.content) }}
+			{{ form_row(form.tags) }}
+			{{ form_row(form.is_anonymous) }}
+			<div class="text-center">
+				<button class="btn btn-primary">Proposer</button>
+			</div>
+			{{ form_end(form) }}
+		</div>
 	</main>
 {% endblock %}

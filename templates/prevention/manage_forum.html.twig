@@ -1,6 +1,106 @@
 {% extends 'prevention/prevention_base.html.twig' %}
 
-{% block title %}Hello PreventionController!
+{% block title %}Asso'esaip - Administration
 {% endblock %}
 
-{% block body %}{% endblock %}
+{% block body %}
+<main>
+	<div class="jumbotron text-center">
+		<h1 class="display-4">Administration</h1>
+		<p class="lead">Description</p>
+	</div>
+	<div class="container">
+		<ul class="nav nav-tabs" id="myTab" role="tablist">
+			<li class="nav-item">
+				<a class="nav-link active" id="topics-tab" data-toggle="tab" href="#topics" role="tab"
+					aria-controls="topics" aria-selected="true">Topics</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" id="responses-tab" data-toggle="tab" href="#responses" role="tab"
+					aria-controls="responses" aria-selected="false">Réponses</a>
+			</li>
+		</ul>
+		<div class="tab-content" id="myTabContent">
+			<div class="tab-pane fade show active" id="topics" role="tabpanel" aria-labelledby="topics-tab">
+				<table class="table table-bordered">
+					<thead class="thead-light">
+						<tr>
+							<th>Titre</th>
+							<th>Auteur</th>
+							<th>Contenu</th>
+							<th>Date</th>
+							<th>État</th>
+							<th>Commentaire</th>
+							<th>Voir</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for topic in topics %}
+						<tr>
+							{% if topic.status == "Validé" %}
+							<td>
+								<a href="{{path('prevention_view_topic', { 'id': topic.id })}}">{{topic.title}}</a>
+							</td>
+							{% else %}
+							<td>
+								{{topic.title}}
+								<input type="hidden" class="objectId" value="topic|{{topic.id}}">
+							</td>
+							{% endif %}
+							<td>{{topic.isAnonymous ? topic.author.anonymousId : topic.author.fullname}}</td>
+							<td>{{topic.content}}</td>
+							<td>{{topic.creationDate|date('d/m/Y')}}</td>
+							<td>{{topic.status}}</td>
+							<td>{{topic.rejectionMessage ? topic.rejectionMessage : '-'}}</td>
+							<td>
+								<button class="btn btn-primary" onclick="setData(this)" data-toggle="modal"
+									data-target="#modal">Voir</button>
+							</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+			<div class="tab-pane fade" id="responses" role="tabpanel" aria-labelledby="responses-tab">...</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="modalLabel">Title</h5>
+					<h6>Author, date</h6>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<p>Content</p>
+				</div>
+				<div class="modal-footer">
+					<form action="" method="POST">
+						<div class="form-group">
+							<label for="rejectionMessage">Commentaire en cas de refus</label>
+							<input type="text" id="rejectionMessage" name="rejectionMessage" class="form-control">
+							<input type="hidden" id="objectId" name="objectId">
+						</div>
+						<button class="btn btn-success" name="status" value="Validé">Accepter</button>
+						<button class="btn btn-danger" name="status" value="Refusé">Refuser</button>
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</main>
+<script>
+	function setData(elem) {
+		let modal = $('.modal-content');
+		$(modal).find('.modal-header h5').text($(elem).parent().parent().children().eq(0).text());
+		$(modal).find('.modal-header h6').text($(elem).parent().parent().children().eq(1).text() + ', ' + $(elem).parent().parent().children().eq(3).text());
+		$(modal).find('.modal-body p').text($(elem).parent().parent().children().eq(2).text());
+		$(modal).find('#objectId').val($(elem).parent().parent().find('.objectId').val());
+	}
+</script>
+{% endblock %}

@@ -4,41 +4,67 @@
 {% endblock %}
 
 {% block body %}
-	<main>
-		<div class="home-header text-center">
-			<h1 class="display-4">Chat</h1>
+<main>
+	<div class="home-header text-center">
+		<h1 class="display-4">Chat</h1>
+	</div>
+	<ul id="users">
+		{% for author in authors %}
+		<li onclick="load('{{author.id}}')">{{author.fullName}}</li>
+		{% endfor %}
+	</ul>
+	<div id="chat">
+		{% for message in messages %}
+		<div class="message">
+			<p>{{message.content}}</p>
+			<i>{{message.messageDate|date('H:i, d/m/Y')}}</i>
 		</div>
-		<div id="users">
-			{% for author in authors %}
-				<ul>
-					<li onclick="load({{author.id}})">{{author.fullName}}</li>
-				</ul>
-			{% endfor %}
-		</div>
-		<div id="chat">
-			{% for message in messages %}
-				<div class="message">
-					<p>{{message.content}}</p>
-					<i>{{message.messageDate|date('H:i, d/m/Y')}}</i>
-				</div>
-			{% endfor %}
-		</div>
-		<input type="text">
-		<button>Envoyer</button>
-	</main>
-{% endblock %}
-{% block javascripts %}
-	<script>
-		let interval = null;
-function load(id) {
-clearInterval(interval);
-getData(id);
-interval = setInterval(() => {
-getData(id);
-}, 5000);
-}
-function getData(id) {
-$("#chat").load('{{ asset("prevention/chat.php") }}', {userId: id});
-}
-	</script>
+		{% endfor %}
+	</div>
+	<form onsubmit="return false;">
+		<input type="text" class="form-control" id="content">
+		<button onclick="send()" class="btn btn-primary">Envoyer</button>
+	</form>
+</main>
+<script>
+	let interval = null;
+	let idU = '{{ authors ? authors[0].id }}';
+
+	$(document).ready(function () {
+		setInterval(() => {
+			getUsers();
+		}, 5000);
+	});
+
+	function load(id) {
+		clearInterval(interval);
+		getData(id);
+		idU = id;
+		interval = setInterval(() => {
+			getData(id);
+		}, 5000);
+	}
+
+	function getData(id) {
+		$("#chat").load('{{ asset("prevention/chat_messages.php") }}', { id: id });
+	}
+
+	function getUsers() {
+		$("#users").load('{{ asset("prevention/chat_users.php") }}');
+	}
+
+	function send() {
+		if ($("#content").val() == '' || !idU) {
+			return;
+		}
+		$("#chat").load('{{ asset("prevention/chat_send.php") }}',
+			{
+				id: idU,
+				content: $("#content").val(),
+				is_prevention: 1
+			});
+		$("#content").val('');
+		getUsers();
+	}
+</script>
 {% endblock %}

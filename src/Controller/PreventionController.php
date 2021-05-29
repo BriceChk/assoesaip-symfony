@@ -8,6 +8,7 @@ use App\Entity\Topic;
 use App\Entity\Message;
 use App\Form\TopicType;
 use App\Entity\AssoEsaipSettings;
+use App\Entity\TopicResponse;
 use App\Repository\MessageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -119,10 +120,7 @@ class PreventionController extends AbstractController
     {
         $authors = $messageRepository->getListOfAuthors();
         $rep = $this->getDoctrine()->getRepository(Message::class);
-        //REFRESH USERS
-
-        $lastMessage = $rep->findOneBy([], ['messageDate' => 'DESC']);
-        $messages = $rep->findBy(['author' => $lastMessage->getAuthor()], ['messageDate' => 'DESC']);
+        $messages = $authors ? $rep->findBy(['author' => $authors[0]], ['messageDate' => 'ASC']) : null;
         return $this->render('prevention/chat_admin.html.twig', [
             'messages' => $messages,
             'authors' => $authors
@@ -140,8 +138,26 @@ class PreventionController extends AbstractController
     /**
      * @Route("/prevention/admin/manage_forum", name="manage_forum")
      */
-    public function manage_forum(): Response
+    public function manage_forum(Request $request): Response
     {
-        return $this->render('prevention/manage_forum.html.twig', []);
+        $doc = $this->getDoctrine();
+        $topics = $doc->getRepository(Topic::class)->findAll();
+        $responses = $doc->getRepository(TopicResponse::class)->findAll();
+
+        if ($request->get('objectId')) {
+            $rep = str_contains($request->get('objectId'), 'topic') ? $doc->getRepository(Topic::class) : $doc->getRepository(TopicResponse::class);
+            $object = $rep->findOneBy(['id' => (explode('|', $request->get('objectId'))[1])]);
+            $object->setRejectionMessage($request->get('rejectionMessage'));
+            $object->setStatus($request->get('status'));
+            $entityManager = $doc->getManager();
+            $entityManager->persist($object);
+            $entityManager->flush();
+            return $this->redirectToRoute('manage_forum');
+        }
+
+        return $this->render('prevention/manage_forum.html.twig', [
+            'topics' => $topics,
+            'responses' => $responses
+        ]);
     }
 }

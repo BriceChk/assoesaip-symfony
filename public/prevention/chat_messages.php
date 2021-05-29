@@ -1,9 +1,8 @@
 <?php
-$userId = $_POST['userId'];
 $bdd = new PDO('mysql:host=localhost;dbname=assoesaip_dev;charset=utf8', 'assoesaip_dev', 'ecompecomp');
-$test = $bdd->query("SELECT * from message where author_id = " . $userId);
+$messages = $bdd->query("SELECT * FROM message WHERE author_id = " . $_POST['id'] . " ORDER BY message_date");
 
-while ($message = $test->fetch()) {
+while ($message = $messages->fetch()) {
 ?>
     <div class="message">
         <p><?= $message['content'] ?></p>
