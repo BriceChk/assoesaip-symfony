@@ -55,8 +55,12 @@ class PreventionController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $topic->setCreationDate(new \DateTime());
             $topic->setAuthor($this->getUser());
-            $topic->setIsAnonymous($form->get('is_anonymous')->getData());
-            $topic->setStatus('En attente');
+            if (in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
+                $topic->setStatus('Validé');
+                $topic->setIsAnonymous(false);
+            } else {
+                $topic->setStatus('En attente');
+            }
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($topic);
@@ -74,8 +78,26 @@ class PreventionController extends AbstractController
     /**
      * @Route("/prevention/topic/{id}", name="prevention_view_topic")
      */
-    public function view_topic(Topic $topic): Response
+    public function view_topic(Topic $topic, Request $request): Response
     {
+        if ($request->get('content')) {
+            $response = new TopicResponse();
+            $response->setContent($request->get('content'));
+            $response->setResponseDate(new \DateTime());
+            $response->setAuthor($this->getUser());
+            $response->setTopic($topic);
+            $response->setIsAnonymous($request->get('is_anonymous') == "on" ? false : true);
+            if (in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
+                $response->setStatus('Validé');
+            } else {
+                $response->setStatus('En attente');
+            }
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($response);
+            $entityManager->flush();
+            return $this->redirectToRoute('prevention_view_topic', ['id' => $topic->getId()]);
+        }
+
         return $this->render('prevention/view_topic.html.twig', [
             'topic' => $topic
         ]);
@@ -88,8 +110,8 @@ class PreventionController extends AbstractController
     {
         $user = $this->getUser();
 
-        if ($request->get('is_anonymous')) {
-            $user->setIsAnonymous($request->get('is_anonymous') == 'on' ? false : true);
+        if ($request->get('send')) {
+            $user->setIsAnonymous($request->get('is_anonymous') == "on" ? false : true);
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
             $entityManager->flush();
@@ -141,14 +163,16 @@ class PreventionController extends AbstractController
     public function manage_forum(Request $request): Response
     {
         $doc = $this->getDoctrine();
-        $topics = $doc->getRepository(Topic::class)->findAll();
-        $responses = $doc->getRepository(TopicResponse::class)->findAll();
+        $topics = $doc->getRepository(Topic::class)->findBy(['status' => 'En attente']);
+        $responses = $doc->getRepository(TopicResponse::class)->findBy(['status' => 'En attente']);
 
         if ($request->get('objectId')) {
             $rep = str_contains($request->get('objectId'), 'topic') ? $doc->getRepository(Topic::class) : $doc->getRepository(TopicResponse::class);
             $object = $rep->findOneBy(['id' => (explode('|', $request->get('objectId'))[1])]);
-            $object->setRejectionMessage($request->get('rejectionMessage'));
             $object->setStatus($request->get('status'));
+            if ($request->get('status') == 'Refusé') {
+                $object->setRejectionMessage($request->get('rejectionMessage'));
+            }
             $entityManager = $doc->getManager();
             $entityManager->persist($object);
             $entityManager->flush();

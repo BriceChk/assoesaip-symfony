@@ -4,21 +4,25 @@
 {% endblock %}
 
 {% block body %}
-	<main>
-		<div class="jumbotron text-center">
-			<h1 class="display-4">Proposer un topic</h1>
-			<p class="lead">Votre topic devra être validé par le pôle prévention avant d'être visible publiquement.</p>
+<main>
+	<div class="jumbotron text-center">
+		<h1 class="display-4">Proposer un topic</h1>
+		{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_PREVENTION') %}
+		<p class="lead">Votre topic sera automatiquement publié.</p>
+		{% else %}
+		<p class="lead">Votre topic devra être validé par le pôle prévention avant d'être visible publiquement.</p>
+		{% endif %}
+	</div>
+	<div class="container py-3">
+		{{ form_start(form) }}
+		{{ form_row(form.title) }}
+		{{ form_row(form.content) }}
+		{{ form_row(form.tags) }}
+		{{ form_row(form.isAnonymous) }}
+		<div class="text-center">
+			<button class="btn btn-primary">Proposer</button>
 		</div>
-		<div class="container py-3">
-			{{ form_start(form) }}
-			{{ form_row(form.title) }}
-			{{ form_row(form.content) }}
-			{{ form_row(form.tags) }}
-			{{ form_row(form.is_anonymous) }}
-			<div class="text-center">
-				<button class="btn btn-primary">Proposer</button>
-			</div>
-			{{ form_end(form) }}
-		</div>
-	</main>
+		{{ form_end(form) }}
+	</div>
+</main>
 {% endblock %}

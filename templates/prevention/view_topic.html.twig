@@ -4,30 +4,58 @@
 {% endblock %}
 
 {% block body %}
-	<main>
+<main>
+	<form action="">
 		<div class="container py-4">
 			<h1>{{topic.title}}</h1>
 			<h3>{{topic.isAnonymous ? topic.author.getAnonymousId : topic.author.fullname}},
 				{{topic.creationDate|date('d/m/Y')}}</h3>
 			{% for tag in topic.tags %}
-				<i>{{tag.name}}</i>
+			<i>{{tag.name}}</i>
 			{% endfor %}
 			<p>{{topic.content}}</p>
 			<hr class="my-4">
 			<h2>Réponses</h2>
 			<div class="form-group">
-				<input type="text" class="form-control">
-				<button class="btn btn-primary">Envoyer</button>
+				<input type="text" class="form-control" name="content">
+				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal">
+					Envoyer
+				</button>
 			</div>
 			{% for response in topic.topicResponses %}
-				<div class="response">
-					<p>
-						<strong>{{response.isAnonymous ? response.author.anonymousId : response.author.fullname}}</strong>,
-						{{response.responseDate|date('H:i, d/m/Y')}}
-					</p>
-					<p>{{response.content}}</p>
-				</div>
+			<div class="response">
+				<p>
+					<strong>{{response.isAnonymous ? response.author.anonymousId : response.author.fullname}}</strong>,
+					{{response.responseDate|date('H:i, d/m/Y')}}
+				</p>
+				<p>{{response.content}}</p>
+			</div>
 			{% endfor %}
 		</div>
-	</main>
+
+		<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="modalLabel">Envoie de la réponse</h5>
+						<p>La réponse sera devra être validée par le pôle prévention avant d'être visible publiquement.
+						</p>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<input type="checkbox" name="is_anonymous">
+						<label for="">Voulez-vous que votre message soit publié anonymement ?</label>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary">Envoyer</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+</main>
 {% endblock %}

@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
+use Webmozart\Assert\Assert;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\TopicRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints\Count;
 
 /**
  * @ORM\Entity(repositoryClass=TopicRepository::class)
@@ -42,6 +44,7 @@ class Topic
 
     /**
      * @ORM\ManyToMany(targetEntity=Tag::class, inversedBy="topics")
+     * @Assert\Count(min="1", max="1")
      */
     private $tags;
 

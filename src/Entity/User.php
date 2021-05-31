@@ -3,16 +3,17 @@
 namespace App\Entity;
 
 use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation as Serializer;
+use Doctrine\ORM\Mapping\OrderBy;
 use JMS\Serializer\Annotation\Groups;
+use Doctrine\Common\Collections\Collection;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\HttpFoundation\File\File;
+use Doctrine\Common\Collections\ArrayCollection;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Validator\Constraints as Assert;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
@@ -153,11 +154,13 @@ class User implements UserInterface
 
     /**
      * @ORM\OneToMany(targetEntity=Topic::class, mappedBy="author")
+     * @ORM\OrderBy({"creationDate" = "DESC"})
      */
     private $topics;
 
     /**
      * @ORM\OneToMany(targetEntity=TopicResponse::class, mappedBy="author")
+     * @ORM\OrderBy({"responseDate" = "DESC"})
      */
     private $topicResponses;
 
