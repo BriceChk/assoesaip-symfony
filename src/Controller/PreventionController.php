@@ -19,14 +19,20 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class PreventionController extends AbstractController
 {
     /**
-     * @Route("/prevention", name="prevention_home")
+     * @Route("/prevention/home", name="prevention_home")
      */
     public function home(): Response
     {
-        $presentation = 'la presentation';
-        $settingsRep = $this->getDoctrine()->getRepository(AssoEsaipSettings::class);
-        //$pres = $settingsRep->getPresentationPolePrevention();
-        return $this->render('prevention/home.html.twig', []);
+        $doc = $this->getDoctrine();
+        $settingsRep = $doc->getRepository(AssoEsaipSettings::class);
+
+        $members = $doc->getRepository(User::class)->findByRole("ROLE_PREV");
+
+        $pres = $settingsRep->getPresentationPolePrevention();
+        return $this->render('prevention/home.html.twig', [
+            'presentation' => $pres,
+            'members' => $members
+        ]);
     }
 
     /**
@@ -154,7 +160,18 @@ class PreventionController extends AbstractController
      */
     public function update_home(): Response
     {
-        return $this->render('prevention/update_home.html.twig', []);
+        $doc = $this->getDoctrine();
+        $settingsRep = $doc->getRepository(AssoEsaipSettings::class);
+
+        $members = $doc->getRepository(User::class)->findByRole("ROLE_PREV");
+
+        $pres = $settingsRep->getPresentationPolePrevention();
+        $logoFileName = $settingsRep->getPresentationPolePrevention();
+        return $this->render('prevention/update_home.html.twig', [
+            'presentation' => $pres,
+            'members' => $members,
+            'logoFileName' => $logoFileName
+        ]);
     }
 
     /**

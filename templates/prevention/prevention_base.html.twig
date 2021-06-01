@@ -46,8 +46,8 @@
 		<!-- Left navbar links -->
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav mr-auto">
-				<li class="nav-item {{ app.request.get('_route') == 'home' ? 'active' }}">
-					<a class="nav-link" href="{{ path('home') }}">Accueil</a>
+				<li class="nav-item {{ app.request.get('_route') == 'prevention_home' ? 'active' }}">
+					<a class="nav-link" href="{{ path('prevention_home') }}">Accueil</a>
 				</li>
 				<li class="nav-item {{ app.request.get('_route') == 'prevention_forum' ? 'active' }}">
 					<a class="nav-link" href="{{ path('prevention_forum') }}">Forum</a>
@@ -58,6 +58,9 @@
 				</li>
 				<li class="nav-item {{ app.request.get('_route') == 'manage_forum' ? 'active' }}">
 					<a class="nav-link" href="{{ path('manage_forum') }}">Administration</a>
+				</li>
+				<li class="nav-item {{ app.request.get('_route') == 'update_home' ? 'active' }}">
+					<a class="nav-link" href="{{ path('update_home') }}">Modification</a>
 				</li>
 				{% else %}
 				<li class="nav-item {{ app.request.get('_route') == 'prevention_chat' ? 'active' }}">
