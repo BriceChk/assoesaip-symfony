@@ -17,12 +17,14 @@
 		{{ form_start(form) }}
 		{{ form_row(form.title) }}
 		{{ form_row(form.content) }}
-		{{ form_row(form.tags) }}
+		{{ form_row(form.tag) }}
+		{% if is_granted('ROLE_ADMIN') == null and is_granted('ROLE_PREVENTION') == null %}
 		{{ form_row(form.isAnonymous) }}
+		{% endif %}
 		<div class="text-center">
 			<button class="btn btn-primary">Proposer</button>
 		</div>
-		{{ form_end(form) }}
+		{{ form_end(form, {'render_rest': false}) }}
 	</div>
 </main>
 {% endblock %}

@@ -10,6 +10,7 @@ use App\Form\TopicType;
 use App\Entity\AssoEsaipSettings;
 use App\Entity\TopicResponse;
 use App\Repository\MessageRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -92,11 +93,12 @@ class PreventionController extends AbstractController
             $response->setResponseDate(new \DateTime());
             $response->setAuthor($this->getUser());
             $response->setTopic($topic);
-            $response->setIsAnonymous($request->get('is_anonymous') == "on" ? false : true);
             if (in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
                 $response->setStatus('Validé');
+                $topic->setIsAnonymous(false);
             } else {
                 $response->setStatus('En attente');
+                $response->setIsAnonymous($request->get('is_anonymous') == "on" ? false : true);
             }
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($response);

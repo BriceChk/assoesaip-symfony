@@ -16,15 +16,16 @@
 				<input type="text" id="search_bar" class="form-control">
 				<button onclick="filter()" class="btn btn-primary">Chercher</button>
 			</form>
-			<select class="form-control" onchange="filter()" multiple>
-				<option value="" disabled selected>Tags</option>
+			<label for="">Tags</label>
+			<select class="form-control" onchange="filter()" id="tags">
+				<option value="" selected>Tout</option>
 				{% for tag in tags %}
-				<option value="">{{tag.name}}</option>
+				<option value="{{tag.name}}">{{tag.name}}</option>
 				{% endfor %}
 			</select>
+			<label for="">Trier par</label>
 			<select class="form-control" onchange="sort(this.value)">
-				<option value="" disabled selected>Trier par</option>
-				<option value="creationDate">Date de création</option>
+				<option value="creationDate" selected>Date de création</option>
 				<option value="lastUpdate">Dernière modification</option>
 				<option value="popularity">Popularité</option>
 			</select>
@@ -37,12 +38,13 @@
 		{% for topic in topics %}
 		<div class="topic">
 			<h3>{{topic.title}}</h3>
-			<h4>{{topic.isAnonymous ? topic.author.anonymousId : topic.author.fullname}},
+
+			<h4>{{is_granted('ROLE_ADMIN') or is_granted('ROLE_PREVENTION') ? 'Pôle prévention' : (topic.isAnonymous ?
+				topic.author.anonymousId : topic.author.fullname)}},
 				<span class="sort_creationDate">{{topic.creationDate|date('d/m/Y')}}</span>
 			</h4>
-			{% for tag in topic.tags %}
-			<i>{{tag.name}}</i>
-			{% endfor %}
+
+			<i>{{topic.tag.name}}</i>
 			<p>{{topic.content|slice(0, 255)}}...</p>
 			<p>
 				<span class="sort_popularity">{{topic.topicResponses|length}}</span>
@@ -60,7 +62,8 @@
 <script>
 	function filter() {
 		$(".topic").each(function (i, book) {
-			$(book).find('h3, h4, p').text().toLowerCase().includes($("#search_bar").val().toLowerCase()) ? $(book).show() : $(book).hide();
+			$(book).find('h3, h4, p').text().toLowerCase().includes($("#search_bar").val().toLowerCase()) &&
+				$(book).find('i').text().toLowerCase().includes($("#tags").val().toLowerCase()) ? $(book).show() : $(book).hide();
 		});
 	}
 

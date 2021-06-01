@@ -34,12 +34,12 @@ class UserRepository extends ServiceEntityRepository
             ->orderBy('p.firstName', 'ASC')
             ->setMaxResults(10)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
 
     // They have set their promo & campus
-    public function getValidUsersCount() {
+    public function getValidUsersCount()
+    {
         return $this->createQueryBuilder('u')
             ->where("u.campus != ''")
             ->andWhere("u.promo != ''")
@@ -48,14 +48,16 @@ class UserRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
-    public function getTotalUsersCount() {
+    public function getTotalUsersCount()
+    {
         return $this->createQueryBuilder('u')
             ->select('count(u.id)')
             ->getQuery()
             ->getSingleScalarResult();
     }
 
-    public function getLastWeekUsersCount() {
+    public function getLastWeekUsersCount()
+    {
         $date = (new DateTime('now'))->sub(new \DateInterval('P7D'));
 
         return $this->createQueryBuilder('u')
@@ -67,17 +69,16 @@ class UserRepository extends ServiceEntityRepository
     }
 
     /**
-    * @return User[] Returns an array of User objects
-    */
+     * @return User[] Returns an array of User objects
+     */
     public function findByRole($value)
     {
         return $this->createQueryBuilder('p')
             ->andWhere('p.roles LIKE :val')
-            ->setParameter('val', '%'.$value.'%')
+            ->setParameter('val', '%' . $value . '%')
             ->orderBy('p.firstName', 'ASC')
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
 
 

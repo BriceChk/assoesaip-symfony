@@ -43,12 +43,6 @@ class Topic
     private $author;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Tag::class, inversedBy="topics")
-     * @Assert\Count(min="1", max="1")
-     */
-    private $tags;
-
-    /**
      * @ORM\Column(type="string", length=255)
      */
     private $status;
@@ -60,6 +54,7 @@ class Topic
 
     /**
      * @ORM\OneToMany(targetEntity=TopicResponse::class, mappedBy="topic")
+     * @ORM\OrderBy({"responseDate" = "DESC"})
      */
     private $topicResponses;
 
@@ -67,6 +62,12 @@ class Topic
      * @ORM\Column(type="boolean")
      */
     private $isAnonymous;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Tag::class, inversedBy="topics")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $tag;
 
     public function __construct()
     {
@@ -123,30 +124,6 @@ class Topic
     public function setAuthor(?User $author): self
     {
         $this->author = $author;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|tag[]
-     */
-    public function getTags(): Collection
-    {
-        return $this->tags;
-    }
-
-    public function addTag(tag $tag): self
-    {
-        if (!$this->tags->contains($tag)) {
-            $this->tags[] = $tag;
-        }
-
-        return $this;
-    }
-
-    public function removeTag(tag $tag): self
-    {
-        $this->tags->removeElement($tag);
 
         return $this;
     }
@@ -226,6 +203,18 @@ class Topic
     public function setIsAnonymous(bool $isAnonymous): self
     {
         $this->isAnonymous = $isAnonymous;
+
+        return $this;
+    }
+
+    public function getTag(): ?Tag
+    {
+        return $this->tag;
+    }
+
+    public function setTag(?Tag $tag): self
+    {
+        $this->tag = $tag;
 
         return $this;
     }
