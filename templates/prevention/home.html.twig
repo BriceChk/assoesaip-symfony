@@ -6,11 +6,11 @@
     <div class="album py-5 bg-white">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-lg-10 offset-lg-1">
+                <div class="col-lg-10 offset-lg-1 pt-5">
                     <div class="card justify-content-center">
                         <div class="card-body text-center">
                             <h1 class="display-4 titre-page">Pôle Prévention</h1>
-                            <span class="lead">{{ presentation }}</span>
+                            <span class="lead">{{ description }}</span>
                         </div>
                         <div class="card-footer">
                             <ul class="nav nav-pills justify-content-center">
@@ -26,7 +26,34 @@
                             <div class="tab-pane fade show active" id="tab_1" role="tabpanel" aria-labelledby="home">
                                 <h1>Présentation</h1>
                                 <hr>
-                                <p>{{ presentation }}</p>
+                                <p>{{ description }}</p>
+                            </div>
+                            <div class="tab-pane fade" id="tab_2" role="tabpanel" aria-labelledby="mem">
+                                <div class="row">
+                                    {% for member in members %}
+                                        <div class="col-xl-12" data-toggle="tooltip" title data-original-title="{{ member
+                                            .getUsername() }}">
+                                            <div class="card card-link">
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col-md-auto text-center">
+                                                            <img src="{{ member.getAvatarFile() }}"
+                                                                 alt="Photo auteur" class="img-circle elevation-2">
+                                                        </div>
+                                                        <div class="col my-auto">
+                                                            <h4>
+                                                                {{ member.getFirstName() }} {{ member.getLastName() }}
+                                                                <small class="text-muted">({{ member.getPromo() }})</small>
+                                                            </h4>
+                                                            <p>Membre</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <a href="mailto:email@esaip.org" class="stretched-link"></a>
+                                        </div>
+                                    {% endfor %}
+                                </div>
                             </div>
                         </div>
                     </div>

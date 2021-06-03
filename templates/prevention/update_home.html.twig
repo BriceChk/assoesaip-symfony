@@ -3,8 +3,20 @@
 {% block title %}Modification{% endblock %}
 
 {% block body %}
-    <section class="content">
-        <div class="container-fluid">
+    <section class="content pt-5">
+        <div class="container-fluid pt-5">
+            <div class="row mx-2">
+                <div>
+                    <h1>Informations du pôle prévention</h1>
+                </div>
+                <div class="ml-auto">
+                    <span>
+                        <button onclick="save()" class="btn btn-primary save-button">
+                            Enregistrer les modifications
+                        </button>
+                    </span>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-xl-6">
                     <div class="card">
@@ -14,13 +26,8 @@
                         <div class="card-body">
                             <div id="form-container">
                                 <div class="form-group">
-                                    <label for="inputName">Nom du projet</label>
-                                </div>
-
-                                <div class="form-group">
                                     <label for="inputDescription">Phrase de description</label>
-                                    <textarea class="form-control" id="inputDescription" rows="2" maxlength="180">{{
-                                        presentation }}</textarea>
+                                    <textarea class="form-control" id="inputDescription" rows="2" maxlength="180">{{ description }}</textarea>
                                     <small class="form-text text-muted">Rédiger une phrase pas trop longue (180 caractères max) qui explique rapidement le thème du projet.</small>
                                 </div>
 
@@ -62,20 +69,9 @@
                                 </div>
                                 <div class="row form-group">
                                     <div class="col">
-                                        <label for="inputYt">Chaîne YouTube</label>
-                                        <input type="url" class="form-control" id="inputYt" placeholder="Ex. https://www.youtube.com/user/MaChaineESAIP" value="">
-                                    </div>
-                                    <div class="col">
-                                        <label for="inputDiscord">Serveur Discord</label>
-                                        <input type="url" class="form-control" id="inputDiscord" placeholder="Ex. https://discord.com/invite/abcd123" value="">
-                                    </div>
-                                </div>
-                                <div class="row form-group">
-                                    <div class="col">
                                         <label for="inputTwitter">Pseudo Twitter</label>
                                         <input type="text" class="form-control" id="inputTwitter" placeholder="Ex. groupeesaip (pas de @)" maxlength="50" value="">
                                     </div>
-
                                     <div class="col">
                                         <label for="inputSnap">Pseudo Snapchat</label>
                                         <input type="text" class="form-control" id="inputSnap" placeholder="Ex. nrsesaip (pas de @)" maxlength="50" value="">
@@ -87,23 +83,6 @@
                 </div>
 
                 <div class="col-xl-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-text">Ajouter un membre</div>
-                        </div>
-                        <div class="card-body">
-                            <div class="alert alert-info">
-                                Les administrateurs ont accès à l'espace asso du projet.
-                            </div>
-                            <div class="form-group">
-                                <div class="autocomplete">
-                                    <input type="text" class="form-control" id="inputMembre" placeholder="Nom, adresse@esaip.org">
-                                </div>
-                                <small class="form-text text-muted">Entrer un nom ou une adresse mail esaip. La personne doit s'être connectée une première fois à Asso'esaip.</small>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="card">
                         <div class="card-header">
                             <div class="card-text">Liste des membres <i class="float-right text-muted">Glisser-déplacer pour réorganiser</i></div>

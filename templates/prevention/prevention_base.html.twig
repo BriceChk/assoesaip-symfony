@@ -59,8 +59,15 @@
 				<li class="nav-item {{ app.request.get('_route') == 'manage_forum' ? 'active' }}">
 					<a class="nav-link" href="{{ path('manage_forum') }}">Administration</a>
 				</li>
-				<li class="nav-item {{ app.request.get('_route') == 'update_home' ? 'active' }}">
-					<a class="nav-link" href="{{ path('update_home') }}">Modification</a>
+				<li class="nav-item dropdown {{ app.request.get('_route') == 'update_home' ? 'active' }}">
+					<a class="nav-link dropdown-toggle" href="#" id="updateDropdown" role="button"
+					   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Modification
+					</a>
+					<div class="dropdown-menu" aria-labelledby="updateDropdown">
+						<a class="dropdown-item" href="{{ path('update_home') }}">Page d'accueil</a>
+						<a class="dropdown-item" href="{{ path('update_presentation') }}">Présentation</a>
+					</div>
 				</li>
 				{% else %}
 				<li class="nav-item {{ app.request.get('_route') == 'prevention_chat' ? 'active' }}">
@@ -75,6 +82,18 @@
 					<a class="nav-link" href="{{ path('prevention_profile') }}">Profil</a>
 				</li>
 				{% endif %}
+				<li class="nav-item dropdown dropleft active">
+					<a class="nav-link dropdown-toggle" href="#" id="notificationDropdown" role="button"
+					   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<i class="fas fa-bell"></i>
+					</a>
+					<div class="dropdown-menu" aria-labelledby="notificationDropdown">
+						<a class="dropdown-item" href="#">un testvsvds</a>
+						<a class="dropdown-item" href="#">un testcs</a>
+						<a class="dropdown-item" href="#">un test</a>
+						<a class="dropdown-item" href="#">Untest</a>
+					</div>
+				</li>
 				<li class="nav-item dropdown dropleft active">
 					<a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button"
 						data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
