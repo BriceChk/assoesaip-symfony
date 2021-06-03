@@ -8,23 +8,38 @@
 	<div class="home-header text-center">
 		<h1 class="display-4">Chat</h1>
 	</div>
-	<ul id="users">
-		{% for author in authors %}
-		<li onclick="load('{{author.id}}')">{{author.fullName}}</li>
-		{% endfor %}
-	</ul>
-	<div id="chat">
-		{% for message in messages %}
-		<div class="message">
-			<p>{{message.content}}</p>
-			<i>{{message.messageDate|date('H:i, d/m/Y')}}</i>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-ms-4 border-right">
+				<ul class="navbar-nav py-3 px-4" id="users">
+					{% for author in authors %}
+					<li class="py-1" role="button" onclick="load('{{author.id}}', this)">{{author.isAnonymous ?
+						author.anonymousId : author.fullname}}</li>
+					{% endfor %}
+				</ul>
+			</div>
+			<div class="col col-ms-8 py-3 pl-4">
+				<h4>Vous discutez avec <span id="user">{{authors[0].isAnonymous ?
+						authors[0].anonymousId : authors[0].fullname}}</span></h4>
+				<hr>
+				<div id="chat" class="pt-1 pr-4 overflow-auto" style="height: calc(100vh - 355px);">
+					{% for message in messages %}
+					<div class="message card {{message.isPrevention ? 'ml-auto'}}" style="width:fit-content">
+						<div class="card-body" data-toggle="tooltip" title="{{message.messageDate|date('H:i, d/m/Y')}}">
+							{{message.content}}
+						</div>
+					</div>
+					{% endfor %}
+				</div>
+
+				<form onsubmit="return false;" class="input-group mt-4 pl-4">
+					<input type="text" class="form-control" id="content">
+					<button onclick="send()" class="btn btn-primary my-sm-0 ml-3">Envoyer</button>
+				</form>
+			</div>
+			<div id="blank"></div>
 		</div>
-		{% endfor %}
 	</div>
-	<form onsubmit="return false;">
-		<input type="text" class="form-control" id="content">
-		<button onclick="send()" class="btn btn-primary">Envoyer</button>
-	</form>
 </main>
 <script>
 	let interval = null;
@@ -34,19 +49,19 @@
 		setInterval(() => {
 			getUsers();
 		}, 5000);
+		$('#chat').scrollTop($('#chat')[0].scrollHeight);
 	});
 
-	function load(id) {
+	function load(id, elem) {
 		clearInterval(interval);
-		getData(id);
+		$("#chat").load('{{ asset("prevention/chat_messages.php") }}', { id: id, is_prevention: 1 }, function () {
+			$('#chat').scrollTop($('#chat')[0].scrollHeight);
+		});
 		idU = id;
 		interval = setInterval(() => {
-			getData(id);
+			$("#chat").load('{{ asset("prevention/chat_messages.php") }}', { id: id, is_prevention: 1 });
 		}, 5000);
-	}
-
-	function getData(id) {
-		$("#chat").load('{{ asset("prevention/chat_messages.php") }}', { id: id });
+		$('#user').text($(elem).text());
 	}
 
 	function getUsers() {
@@ -57,14 +72,18 @@
 		if ($("#content").val() == '' || !idU) {
 			return;
 		}
-		$("#chat").load('{{ asset("prevention/chat_send.php") }}',
+		$("#blank").load('{{ asset("prevention/chat_send.php") }}',
 			{
 				id: idU,
 				content: $("#content").val(),
 				is_prevention: 1
+			}, function () {
+				$("#chat").load('{{ asset("prevention/chat_messages.php") }}', { id: idU, is_prevention: 1 }, function () {
+					$('#chat').scrollTop($('#chat')[0].scrollHeight);
+					$("#content").val('');
+					getUsers();
+				})
 			});
-		$("#content").val('');
-		getUsers();
 	}
 </script>
 {% endblock %}

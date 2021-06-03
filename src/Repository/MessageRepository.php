@@ -52,7 +52,7 @@ class MessageRepository extends ServiceEntityRepository
     public function getListOfAuthors()
     {
         return $this->createQueryBuilder('m')
-            ->select('max(m.messageDate), u.id, concat(u.firstName, \' \', u.lastName) as fullName')
+            ->select('u')
             ->join(User::class, 'u', 'WITH', 'm.author = u.id')
             ->groupBy('u.id')
             ->orderBy('max(m.messageDate)', 'DESC')

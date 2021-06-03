@@ -10,22 +10,48 @@
 		<p class="lead">Discutez avec le pôle prévention</p>
 		<hr class="my-4">
 	</div>
-	<div id="chat">
-		{% for message in messages %}
-		<div class="message">
-			<p>{{message.content}}</p>
-			<i>{{message.messageDate|date('H:i, d/m/Y')}}</i>
+	<div class="container py-4">
+		<div id="chat" class="pr-4 overflow-auto" style="height: calc(100vh - 348px);">
+			{% for message in messages %}
+			<div class="message card {{message.isPrevention == false ? 'ml-auto'}}" style="width:fit-content">
+				<div class="card-body" data-toggle="tooltip" title="{{message.messageDate|date('H:i, d/m/Y')}}">
+					{{message.content}}
+				</div>
+			</div>
+			{% endfor %}
 		</div>
-		{% endfor %}
-	</div>
-	<div class="form-group">
-		<input type="text" class="form-control">
-		<button class="btn btn-primary">Envoyer</button>
+
+		<form onsubmit="return false;" class="input-group mt-4">
+			<input type="text" class="form-control" id="content">
+			<button onclick="send()" class="btn btn-primary my-sm-0 ml-3">Envoyer</button>
+		</form>
+		<div id="blank"></div>
 	</div>
 </main>
 <script>
-	setInterval(() => {
-		$("#chat").load('{{ asset("prevention/chat.php") }}', { userId: 512 });
-	}, 5000);
+	$(document).ready(function () {
+		setInterval(() => {
+			$("#chat").load('{{ asset("prevention/chat_messages.php") }}', { id: '{{ app.user.id }}', is_prevention: 0 });
+		}, 5000);
+		$('#chat').scrollTop($('#chat')[0].scrollHeight);
+	});
+
+	function send() {
+		if ($("#content").val() == '') {
+			return;
+		}
+		$("#blank").load('{{ asset("prevention/chat_send.php") }}',
+			{
+				content: $("#content").val(),
+				id: '{{ app.user.id }}',
+				is_prevention: 0
+			}, function () {
+				$("#chat").load('{{ asset("prevention/chat_messages.php") }}', { id: '{{ app.user.id }}', is_prevention: 0 }, function () {
+					$('#chat').scrollTop($('#chat')[0].scrollHeight);
+					$("#content").val('');
+					getUsers();
+				})
+			});
+	}
 </script>
 {% endblock %}
