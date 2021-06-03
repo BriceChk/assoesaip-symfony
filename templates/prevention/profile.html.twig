@@ -9,9 +9,9 @@
 		<h1 class="display-4">Mon profil</h1>
 		<hr class="my-4">
 	</div>
-	<div class="container py-4">
+	<div class="container">
 		<h2>Mes informations</h2>
-		<div class="form-group my-4">
+		<div class="form-group">
 			<label for="user_pseudo">Pseudo</label>
 			<input type="text" class="form-control" id="user_pseudo" value="{{user.anonymousId}}" disabled>
 		</div>
@@ -24,15 +24,11 @@
 					<label for="user_anonymity">Afficher mon identité lorsque je chat avec le pôle prévention.</label>
 				</div>
 				<input type="hidden" name="send" value="yes">
-				<button class="btn btn-primary my-4">Sauvegarder les préférences</button>
+				<button class="btn btn-primary">Sauvegarder les préférences</button>
 			</div>
 		</form>
 
-		<h2 class="mb-3">Mes topics</h2>
-		{% if user.topics|length == 0 %}
-		Vous n'avez rien publié.
-		{% else %}
-
+		<h2>Mes topics</h2>
 		<table class="table table-bordered">
 			<thead class="thead-light">
 				<tr>
@@ -53,40 +49,18 @@
 					{% else %}
 					<td>{{topic.title}}</td>
 					{% endif %}
-					<td>
-						<div class="short">{{topic.content|slice(0,160)}}{{topic.content|length > 160 ? '...'}}</div>
-						<div class="long" style="display: none;">{{topic.content}}</div>
-					</td>
+					<td>{{topic.content}}</td>
 					<td>{{topic.creationDate|date('d/m/Y')}}</td>
 					<td>{{topic.status}}</td>
-
-					{% if topic.rejectionMessage %}
+					<td>{{topic.rejectionMessage ? topic.rejectionMessage : '-'}}</td>
 					<td>
-						<div class="short">{{topic.rejectionMessage|slice(0,160)}}{{topic.rejectionMessage|length > 160
-							? '...'}}</div>
-						<div class="long" style="display: none;">{{topic.rejectionMessage}}</div>
-					</td>
-					{% else %}
-					<td>-</td>
-					{% endif %}
-
-					<td>
-						{% if topic.content|length > 160 %}
-						<i class="far fa-plus-square" onclick="display(true, this)"></i>
-						<i class="far fa-minus-square" style="display: none;" onclick="display(false, this)"></i>
-						{% endif %}
+						<i class="far fa-plus-square"></i>
 					</td>
 				</tr>
 				{% endfor %}
 			</tbody>
 		</table>
-		{% endif %}
-
-		<h2 class="mb-3">Mes réponses</h2>
-
-		{% if user.topicResponses|length == 0 %}
-		Vous n'avez rien publié.
-		{% else %}
+		<h2>Mes messages</h2>
 		<table class="table table-bordered">
 			<thead class="thead-light">
 				<tr>
@@ -115,21 +89,6 @@
 				{% endfor %}
 			</tbody>
 		</table>
-		{% endif %}
 	</div>
 </main>
-<script>
-	function display(bool, elem) {
-		if (bool) {
-			$(elem).next().show();
-			$(elem).parent().parent().find(".long").show();
-			$(elem).parent().parent().find(".short").hide();
-		} else {
-			$(elem).prev().show();
-			$(elem).parent().parent().find(".long").hide();
-			$(elem).parent().parent().find(".short").show();
-		}
-		$(elem).hide();
-	}
-</script>
 {% endblock %}

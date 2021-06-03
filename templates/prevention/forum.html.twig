@@ -9,83 +9,54 @@
 		<h1 class="display-4">Forum</h1>
 		<p class="lead">Explorez les divers topics du forum</p>
 	</div>
-	<div class="container">
-		<h2>Filters</h2>
+	<div class="container-fluid">
 		<div class="row">
-			<div class="col-auto ml-1">
-				<div class="form-group">
-					<label for="">Mots clefs</label>
-					<form onsubmit="return false;" class="input-group">
-						<input type="text" id="search_bar" class="form-control">
-						<button onclick="filter()" class="btn btn-primary"><i class="fas fa-search"></i></button>
-					</form>
-				</div>
-			</div>
-
-			<div class="col-auto ml-1">
-				<div class="form-group">
-					<label for="">Tags</label>
-					<select class="form-control col-xs-2" onchange="filter()" id="tags">
-						<option value="" selected>Tout</option>
-						{% for tag in tags %}
-						<option value="{{tag.name}}">{{tag.name}}</option>
-						{% endfor %}
-					</select>
-				</div>
-			</div>
-
-			<div class="col-auto">
-				<div class="form-group">
-					<label for="">Trier par</label>
-					<select class="form-control col-xs-2" onchange="sort(this.value)">
-						<option value="creationDate" selected>Date de création</option>
-						<option value="lastUpdate">Dernière modification</option>
-						<option value="popularity">Popularité</option>
-					</select>
-				</div>
-			</div>
+			<h2>Filters</h2>
+			<form onsubmit="return false;">
+				<input type="text" id="search_bar" class="form-control">
+				<button onclick="filter()" class="btn btn-primary">Chercher</button>
+			</form>
+			<label for="">Tags</label>
+			<select class="form-control" onchange="filter()" id="tags">
+				<option value="" selected>Tout</option>
+				{% for tag in tags %}
+				<option value="{{tag.name}}">{{tag.name}}</option>
+				{% endfor %}
+			</select>
+			<label for="">Trier par</label>
+			<select class="form-control" onchange="sort(this.value)">
+				<option value="creationDate" selected>Date de création</option>
+				<option value="lastUpdate">Dernière modification</option>
+				<option value="popularity">Popularité</option>
+			</select>
 		</div>
-		<a href="{{path('prevention_add_topic')}}">
-			<button class="btn btn-primary">Proposer un nouveau topic</button>
-		</a>
-		<div id="topics" class="mt-5">
-			{% for topic in topics %}
-			<div class="topic card">
-				<div class="card-header">
-					<h3>{{topic.title}}</h3>
-					<div class="row">
-						<div class="col-sm-7">
-							<h5>{{is_granted('ROLE_ADMIN') or is_granted('ROLE_PREVENTION') ? 'Pôle
-								prévention' :
-								(topic.isAnonymous ?
-								topic.author.anonymousId : topic.author.fullname)}},
-								<span class="sort_creationDate">{{topic.creationDate|date('d/m/Y')}}</span>
-							</h5>
-						</div>
-						<div class="col-sm-4 ml-auto text-right"><i class="card-txt">{{topic.tag.name}}</i></div>
-					</div>
-				</div>
-				<div class="card-body">
-					<p class="card-txt">{{topic.content|slice(0, 255)}}...</p>
-					<div class="row">
-						<div class="col-auto mr-3">
-							<span class="sort_popularity">{{topic.nbResponses}}</span>
-							{{topic.nbResponses > 1 ? "réponses" : "réponse" }}
-						</div>
-						<div class="col-auto">
-							Dernière activité le
-							<span class="sort_lastUpdate">{{topic.lastUpdate|date('d/m/Y à H:i')}}</span>
-						</div>
-						<a class="ml-auto col-auto text-right"
-							href="{{path('prevention_view_topic', { 'id': topic.id })}}">
-							En
-							savoir
-							plus...</a>
-					</div>
-				</div>
-			</div>
-			{% endfor %}
+	</div>
+	<a href="{{path('prevention_add_topic')}}">
+		<button class="btn btn-primary">Proposer un nouveau topic</button>
+	</a>
+	<div id="topics">
+		{% for topic in topics %}
+		<div class="topic">
+			<h3>{{topic.title}}</h3>
+
+			<h4>{{is_granted('ROLE_ADMIN') or is_granted('ROLE_PREVENTION') ? 'Pôle prévention' : (topic.isAnonymous ?
+				topic.author.anonymousId : topic.author.fullname)}},
+				<span class="sort_creationDate">{{topic.creationDate|date('d/m/Y')}}</span>
+			</h4>
+
+			<i>{{topic.tag.name}}</i>
+			<p>{{topic.content|slice(0, 255)}}...</p>
+			<p>
+				<span class="sort_popularity">{{topic.topicResponses|length}}</span>
+				{{topic.topicResponses|length > 1 ? "réponses" : "réponse" }}
+			</p>
+			<p>Dernière activité le
+				<span class="sort_lastUpdate">{{topic.lastUpdate|date('d/m/Y')}}</span>
+			</p>
+			<a href="{{path('prevention_view_topic', { 'id': topic.id })}}">En savoir plus...</a>
+			</p>
 		</div>
+		{% endfor %}
 	</div>
 </main>
 <script>

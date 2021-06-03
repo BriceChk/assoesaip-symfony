@@ -93,15 +93,13 @@ class PreventionController extends AbstractController
             $response->setResponseDate(new \DateTime());
             $response->setAuthor($this->getUser());
             $response->setTopic($topic);
-
             if (in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
                 $response->setStatus('Validé');
                 $topic->setIsAnonymous(false);
             } else {
                 $response->setStatus('En attente');
-                $response->setIsAnonymous($request->get('is_anonymous') == "on" ? true : false);
+                $response->setIsAnonymous($request->get('is_anonymous') == "on" ? false : true);
             }
-
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($response);
             $entityManager->flush();

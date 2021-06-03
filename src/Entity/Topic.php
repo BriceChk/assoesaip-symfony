@@ -54,6 +54,7 @@ class Topic
 
     /**
      * @ORM\OneToMany(targetEntity=TopicResponse::class, mappedBy="topic")
+     * @ORM\OrderBy({"responseDate" = "DESC"})
      */
     private $topicResponses;
 
@@ -157,17 +158,6 @@ class Topic
     public function getTopicResponses(): Collection
     {
         return $this->topicResponses;
-    }
-
-    public function getNbResponses(): int
-    {
-        $cout = 0;
-        foreach ($this->topicResponses as $topicResponse) {
-            if ($topicResponse->getStatus() == "Validé") {
-                $cout++;
-            }
-        }
-        return $cout;
     }
 
     public function addTopicResponse(TopicResponse $topicResponse): self

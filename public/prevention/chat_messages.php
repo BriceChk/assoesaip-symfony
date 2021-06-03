@@ -4,10 +4,9 @@ $messages = $bdd->query("SELECT * FROM message WHERE author_id = " . $_POST['id'
 
 while ($message = $messages->fetch()) {
 ?>
-    <div class="message card <?= $_POST['is_prevention'] && $message['is_prevention'] ? 'ml-auto' : '' ?>" style="width:fit-content">
-        <div class="card-body" data-toggle="tooltip" title="<?= date_create($message['message_date'])->format('H:i, d/m/Y') ?>">
-            <?= $message['content'] ?>
-        </div>
+    <div class="message">
+        <p><?= $message['content'] ?></p>
+        <i><?= date_create($message['message_date'])->format('H:i, d/m/Y') ?></i>
     </div>
 <?php
 }

@@ -8,47 +8,34 @@
 	<form action="">
 		<div class="container py-4">
 			<h1>{{topic.title}}</h1>
-			<div class="row mt-2 mb-3">
-				<div class="col-sm-7">
-					<h3>{{is_granted('ROLE_ADMIN') or is_granted('ROLE_PREVENTION') ? 'Pôle
-						prévention' :
-						(topic.isAnonymous ?
-						topic.author.anonymousId : topic.author.fullname)}},
-						{{topic.creationDate|date('d/m/Y')}}</h3>
-				</div>
-				<div class="col-sm-4 ml-auto text-right align-self-center"><i class="card-txt">{{topic.tag.name}}</i>
-				</div>
-			</div>
+			<h3>{{is_granted('ROLE_ADMIN') or is_granted('ROLE_PREVENTION') ? 'Pôle prévention' : (topic.isAnonymous ?
+				topic.author.anonymousId : topic.author.fullname)}},
+				{{topic.creationDate|date('d/m/Y')}}</h3>
+			<i>{{topic.tag.name}}</i>
 			<p>{{topic.content}}</p>
 			<hr class="my-4">
-
-			<h2>Réponses ({{topic.nbResponses}})</h2>
-			<div class="input-group mb-5 mt-4">
-				<textarea class="form-control" name="content" style="height:38px; min-height:38px" required></textarea>
-
-				<button class="btn btn-primary my-sm-0 ml-3" style="height: fit-content;" {{is_granted('ROLE_ADMIN') or
-					is_granted('ROLE_PREVENTION') ? '' : 'data-toggle="modal" data-target="#modal" type="button"' }}>
+			<h2>Réponses</h2>
+			<div class="form-group">
+				<input type="text" class="form-control" name="content">
+				{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_PREVENTION') %}
+				<button class="btn btn-primary">Envoyer</button>
+				{% else %}
+				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal">
 					Envoyer
 				</button>
-			</div>
-			<div>
-				{% for response in topic.topicResponses %}
-				{% if response.status == "Validé" %}
-				<div class="card">
-					<div class="card-body">
-						<p class="card-txt">
-							<strong>{{'ROLE_ADMIN' in response.author.roles or 'ROLE_PREVENTION' in
-								response.author.roles ?
-								'Pôle prévention' : (response.isAnonymous ? response.author.anonymousId :
-								response.author.fullname)}}</strong>, le
-							{{response.responseDate|date('d/m/Y à H:i')}}
-						</p>
-						{{response.content}}
-					</div>
-				</div>
 				{% endif %}
-				{% endfor %}
 			</div>
+			{% for response in topic.topicResponses %}
+			<div class="response">
+				<p>
+					<strong>{{'ROLE_ADMIN' in response.author.roles or 'ROLE_PREVENTION' in response.author.roles ?
+						'Pôle prévention' : (response.isAnonymous ? response.author.anonymousId :
+						response.author.fullname)}}</strong>,
+					{{response.responseDate|date('H:i, d/m/Y')}}
+				</p>
+				<p>{{response.content}}</p>
+			</div>
+			{% endfor %}
 		</div>
 
 		<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
@@ -57,23 +44,17 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<h5 class="modal-title" id="modalLabel">Envoie de la réponse</h5>
+						<p>La réponse sera devra être validée par le pôle prévention avant d'être visible publiquement.
+						</p>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">&times;</span>
 						</button>
 					</div>
 					<div class="modal-body">
-						<div class="form-check">
-							<input type="checkbox" name="is_anonymous" id="is_anonymous" class="form-check-input">
-							<label for="is_anonymous" class="form-check-label">Voulez-vous que votre message soit publié
-								anonymement
-								?</label>
-						</div>
+						<input type="checkbox" name="is_anonymous">
+						<label for="">Voulez-vous que votre message soit publié anonymement ?</label>
 					</div>
 					<div class="modal-footer">
-						<p class="modal-txt font-italic">La réponse sera devra être validée par le pôle prévention avant
-							d'être
-							visible publiquement.
-						</p>
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 						<button class="btn btn-primary">Envoyer</button>
 					</div>

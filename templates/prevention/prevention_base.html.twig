@@ -61,12 +61,12 @@
 				</li>
 				<li class="nav-item dropdown {{ app.request.get('_route') == 'update_home' ? 'active' }}">
 					<a class="nav-link dropdown-toggle" href="#" id="updateDropdown" role="button"
-						data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						Modification
 					</a>
 					<div class="dropdown-menu" aria-labelledby="updateDropdown">
 						<a class="dropdown-item" href="{{ path('update_home') }}">Page d'accueil</a>
-						<a class="dropdown-item" href="">Présentation</a>
+						<a class="dropdown-item" href="{{ path('update_presentation') }}">Présentation</a>
 					</div>
 				</li>
 				{% else %}
@@ -84,7 +84,7 @@
 				{% endif %}
 				<li class="nav-item dropdown dropleft active">
 					<a class="nav-link dropdown-toggle" href="#" id="notificationDropdown" role="button"
-						data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						<i class="fas fa-bell"></i>
 					</a>
 					<div class="dropdown-menu" aria-labelledby="notificationDropdown">
