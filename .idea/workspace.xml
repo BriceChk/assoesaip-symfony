@@ -3,11 +3,16 @@
   <component name="ChangeListManager">
     <list default="true" id="299c25c9-060d-4ba3-aa2f-77056cd0045f" name="Default Changelist" comment="entities2">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/prevention/chat_messages.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/prevention/chat_messages.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/prevention/chat_send.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/prevention/chat_send.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/prevention/chat_users.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/prevention/chat_users.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Controller/PreventionController.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controller/PreventionController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Entity/Topic.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/Topic.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Entity/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Entity/User.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Form/TopicType.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Form/TopicType.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/prevention/add_topic.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/prevention/add_topic.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Repository/MessageRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/src/Repository/MessageRepository.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/prevention/chat.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/prevention/chat.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/prevention/chat_admin.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/prevention/chat_admin.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/prevention/forum.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/prevention/forum.html.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/prevention/manage_forum.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/prevention/manage_forum.html.twig" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/prevention/prevention_base.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/prevention/prevention_base.html.twig" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/prevention/profile.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/prevention/profile.html.twig" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/prevention/view_topic.html.twig" beforeDir="false" afterPath="$PROJECT_DIR$/templates/prevention/view_topic.html.twig" afterDir="false" />
@@ -219,6 +224,9 @@
       <workItem from="1622190905472" duration="8295000" />
       <workItem from="1622227395909" duration="7057000" />
       <workItem from="1622488133440" duration="5522000" />
+      <workItem from="1622702929548" duration="4733000" />
+      <workItem from="1622719147790" duration="10683000" />
+      <workItem from="1622734490230" duration="4488000" />
     </task>
     <task id="LOCAL-00001" summary="entities">
       <created>1622035864277</created>

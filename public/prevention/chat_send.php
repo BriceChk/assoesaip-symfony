@@ -10,15 +10,4 @@ $stmt->bindParam(':content', $_POST['content'], PDO::PARAM_STR);
 $stmt->bindParam(':is_prevention', $_POST['is_prevention'], PDO::PARAM_INT);
 $stmt->execute();
 
-$messages = $bdd->query("SELECT * from message where author_id = " . $_POST['id'] . " ORDER BY message_date");
-
-while ($message = $messages->fetch()) {
-?>
-    <div class="message">
-        <p><?= $message['content'] ?></p>
-        <i><?= date_create($message['message_date'])->format('H:i, d/m/Y') ?></i>
-    </div>
-<?php
-}
-
 $bdd = null;
