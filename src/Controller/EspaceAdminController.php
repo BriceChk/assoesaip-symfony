@@ -104,6 +104,21 @@ class EspaceAdminController extends AbstractController
     }
 
     /**
+     * @Route("/espace-admin/prevention", name="espace_admin_prevention")
+     * @IsGranted("ROLE_ADMIN")
+     */
+    public function prevention()
+    {
+        $repo = $this->getDoctrine()->getRepository(User::class);
+        $prev_list = $repo->findByRole('ROLE_PREV');
+
+        return $this->render('espace_admin/espace_admin_prevention.html.twig', [
+            'prev_list' => $prev_list
+        ]);
+    }
+
+
+    /**
      * @Route("/espace-admin/reserv-salles", name="espace_admin_roombooks")
      * @IsGranted("ROLE_ADMIN")
      */

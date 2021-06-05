@@ -1,0 +1,74 @@
+{% extends 'espace_admin/espadmin_base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('espace_admin_admins') }}
+{% endblock %}
+
+{% block header %}Administrateurs{% endblock %}
+
+{% block body %}
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            Ajouter un membre
+                        </div>
+                        <div class="card-body">
+                            <div class="row form-group">
+                                <div class="col">
+                                    <label for="inputMembre">Choisir un premier administrateur</label>
+                                    <div class="autocomplete">
+                                        <input type="text" class="form-control" id="inputMembre" placeholder="Nom, adresse@esaip.org">
+                                    </div>
+                                    <small class="form-text text-muted">Entrez un nom ou une adresse mail esaip. La personne doit s'être connectée une première fois à Asso'esaip. Cette personne pourra gérer le site complet, comme vous.</small>
+                                    <ul class="list-group" id="listeMembres">
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            Liste des membres du pole prévention
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="list-group list-group-flush" id="prev-list">
+                                {% for p in prev_list %}
+                                    <li class="list-group-item" id="{{ p.id }}">
+                                        <div>
+                                            {{ p.fullName }} (<a href="mailto:{{ p.username }}">{{ p.username }}</a>)
+                                        </div>
+                                        <span class="float-right">
+                                        <button class="btn btn-danger" {{ p == app.user ? 'disabled' }}
+                                                onclick="deleteAdmin('{{ p.id }}', '{{ p.fullName }}')
+                                                        ">Supprimer</button>
+                                    </span>
+                                    </li>
+                                {% endfor %}
+                                <li class="list-group-item" id="prev-template" style="display: none">
+                                    <div>
+                                        %name% (<a href="mailto:%mail%">%mail%</a>)
+                                    </div>
+                                    <span class="float-right">
+                                        <button class="btn btn-danger" onclick="deleteAdmin('%id%', '%name%')">Supprimer</button>
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('build/js/jquery.easy-autocomplete.js') }}"></script>
+
+    {{ encore_entry_script_tags('espace_admin_prevention') }}
+{% endblock %}

@@ -27,12 +27,9 @@ class PreventionController extends AbstractController
         $doc = $this->getDoctrine();
         $settingsRep = $doc->getRepository(AssoEsaipSettings::class);
 
-        $members = $doc->getRepository(User::class)->findByRole("ROLE_PREV");
-
-        $pres = $settingsRep->getPresentationPolePrevention();
+        $description = $settingsRep->getPresentationPolePrevention();
         return $this->render('prevention/home.html.twig', [
-            'presentation' => $pres,
-            'members' => $members
+            'description' => $description
         ]);
     }
 
@@ -167,14 +164,9 @@ class PreventionController extends AbstractController
         $doc = $this->getDoctrine();
         $settingsRep = $doc->getRepository(AssoEsaipSettings::class);
 
-        $members = $doc->getRepository(User::class)->findByRole("ROLE_PREV");
-
-        $pres = $settingsRep->getPresentationPolePrevention();
-        $logoFileName = $settingsRep->getPresentationPolePrevention();
+        $description = $settingsRep->getPresentationPolePrevention();
         return $this->render('prevention/update_home.html.twig', [
-            'presentation' => $pres,
-            'members' => $members,
-            'logoFileName' => $logoFileName
+            'description' => $description
         ]);
     }
 

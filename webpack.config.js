@@ -28,6 +28,7 @@ Encore
     .addEntry('home', './assets/js/home.js')
     .addEntry('profile', './assets/js/profile.js')
     .addEntry('project', './assets/js/project.js')
+    .addEntry('prevention', './assets/js/prevention.js')
     .addEntry('calendar', './assets/js/calendar.js')
     .addEntry('category', './assets/js/category.js')
     .addEntry('espace_asso', './assets/js/espace_asso.js')
@@ -46,6 +47,7 @@ Encore
     .addEntry('espace_admin_admins', './assets/js/espace_admin_admins.js')
     .addEntry('espace_admin_categories', './assets/js/espace_admin_categories.js')
     .addEntry('espace_admin_projects', './assets/js/espace_admin_projects.js')
+    .addEntry('espace_admin_prevention', './assets/js/espace_admin_prevention.js')
     //.addEntry('page1', './assets/page1.js')
     //.addEntry('page2', './assets/page2.js')
 
