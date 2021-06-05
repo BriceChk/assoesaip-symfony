@@ -7,7 +7,7 @@
 <main>
 	<div class="jumbotron text-center">
 		<h1 class="display-4">Administration</h1>
-		<p class="lead">Description</p>
+		<p class="lead">Gérez les demandes de topics et de réponses</p>
 	</div>
 	<div class="container">
 		<div class="mb-4">
@@ -32,8 +32,8 @@
 						<tr>
 							<th>Titre</th>
 							<th>Auteur</th>
-							<th>Tag</th>
 							<th>Date</th>
+							<th>Tag</th>
 							<th>Action</th>
 						</tr>
 					</thead>
@@ -46,8 +46,8 @@
 								<input type="hidden" class="objectContent" value="{{topic.content}}">
 							</td>
 							<td>{{topic.isAnonymous ? topic.author.anonymousId : topic.author.fullname}}</td>
-							<td>{{topic.tag.name}}</td>
 							<td>{{topic.creationDate|date('d/m/Y')}}</td>
+							<td class="tag">{{topic.tag.name}}</td>
 							<td>
 								<button class="btn btn-primary" onclick="setData(this)" data-toggle="modal"
 									data-target="#modal">Voir</button>
@@ -67,7 +67,6 @@
 						<tr>
 							<th>Topic</th>
 							<th>Auteur</th>
-							<th>Tag</th>
 							<th>Date</th>
 							<th>Action</th>
 						</tr>
@@ -76,12 +75,12 @@
 						{% for response in responses %}
 						<tr>
 							<td>
-								{{response.topic.title}}
-								<input type="hidden" class="objectId" value="topic|{{response.id}}">
+								<a
+									href="{{path('prevention_view_topic', { 'id': response.topic.id })}}">{{response.topic.title}}</a>
+								<input type="hidden" class="objectId" value="topicResponse|{{response.id}}">
 								<input type="hidden" class="objectContent" value="{{response.content}}">
 							</td>
 							<td>{{response.isAnonymous ? response.author.anonymousId : response.author.fullname}}</td>
-							<td>{{response.tag.name}}</td>
 							<td>{{response.responseDate|date('d/m/Y')}}</td>
 							<td>
 								<button class="btn btn-primary" onclick="setData(this)" data-toggle="modal"
@@ -103,6 +102,7 @@
 					<div>
 						<h5 id="modalLabel">Title</h5>
 						<h6>Author, date</h6>
+						<i>Tag</i>
 					</div>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
@@ -133,8 +133,9 @@
 	function setData(elem) {
 		let modal = $('.modal-content');
 		$(modal).find('.modal-header h5').text($(elem).parent().parent().children().eq(0).text());
-		$(modal).find('.modal-header h6').text($(elem).parent().parent().children().eq(1).text() + ', ' + $(elem).parent().parent().children().eq(3).text());
-		$(modal).find('.modal-body p').text($(elem).parent().parent().find('.objectContent').val());
+		$(modal).find('.modal-header h6').text($(elem).parent().parent().children().eq(1).text() + ', ' + $(elem).parent().parent().children().eq(2).text());
+		$(modal).find('.modal-header i').text($(elem).parent().parent().find('.tag').text());
+		$(modal).find('.modal-header p').text($(elem).parent().parent().find('.objectContent').val());
 		$(modal).find('#objectId').val($(elem).parent().parent().find('.objectId').val());
 	}
 </script>
