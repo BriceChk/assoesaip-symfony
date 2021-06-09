@@ -11,9 +11,9 @@
 	</div>
 	<div class="container py-4">
 		<h2>Mes informations</h2>
-		<div class="form-group my-4">
+		<div class="form-group my-4 w-50">
 			<label for="user_pseudo">Pseudo</label>
-			<input type="text" class="form-control" id="user_pseudo" value="{{user.anonymousId}}" disabled>
+			<input type="text" class="form-control col-auto" id="user_pseudo" value="{{user.anonymousId}}" disabled>
 		</div>
 
 		<form action="">
@@ -38,6 +38,7 @@
 				<tr>
 					<th>Titre</th>
 					<th>Contenu</th>
+					<th>Tag</th>
 					<th>Date</th>
 					<th>État</th>
 					<th>Commentaire</th>
@@ -57,21 +58,23 @@
 						<div class="short">{{topic.content|slice(0,160)}}{{topic.content|length > 160 ? '...'}}</div>
 						<div class="long" style="display: none;">{{topic.content}}</div>
 					</td>
+					<td>{{topic.tag.name}}</td>
 					<td>{{topic.creationDate|date('d/m/Y')}}</td>
 					<td>{{topic.status}}</td>
 
 					{% if topic.rejectionMessage %}
 					<td>
-						<div class="short">{{topic.rejectionMessage|slice(0,160)}}{{topic.rejectionMessage|length > 160
+						<div role="button" class="short">
+							{{topic.rejectionMessage|slice(0,160)}}{{topic.rejectionMessage|length > 160
 							? '...'}}</div>
-						<div class="long" style="display: none;">{{topic.rejectionMessage}}</div>
+						<div role="button" class="long" style="display: none;">{{topic.rejectionMessage}}</div>
 					</td>
 					{% else %}
 					<td>-</td>
 					{% endif %}
 
 					<td>
-						{% if topic.content|length > 160 %}
+						{% if topic.content|length > 160 or topic.rejectionMessage|length > 160 %}
 						<i class="far fa-plus-square" onclick="display(true, this)"></i>
 						<i class="far fa-minus-square" style="display: none;" onclick="display(false, this)"></i>
 						{% endif %}
@@ -104,12 +107,29 @@
 						<a
 							href="{{path('prevention_view_topic', { 'id': response.topic.id })}}">{{response.topic.title}}</a>
 					</td>
-					<td>{{response.content}}</td>
+					<td>
+						<div class="short">{{response.content|slice(0,160)}}{{response.content|length > 160 ? '...'}}
+						</div>
+						<div class="long" style="display: none;">{{response.content}}</div>
+					</td>
 					<td>{{response.responseDate|date('d/m/Y')}}</td>
 					<td>{{response.status}}</td>
-					<td>{{response.rejectionMessage ? response.rejectionMessage : '-'}}</td>
+					{% if response.rejectionMessage %}
 					<td>
-						<i class="far fa-plus-square"></i>
+						<div role="button" class="short">
+							{{response.rejectionMessage|slice(0,160)}}{{response.rejectionMessage|length > 160
+							? '...'}}</div>
+						<div role="button" class="long" style="display: none;">{{response.rejectionMessage}}</div>
+					</td>
+					{% else %}
+					<td>-</td>
+					{% endif %}
+
+					<td>
+						{% if response.content|length > 160 or response.rejectionMessage|length > 160 %}
+						<i class="far fa-plus-square" onclick="display(true, this)"></i>
+						<i class="far fa-minus-square" style="display: none;" onclick="display(false, this)"></i>
+						{% endif %}
 					</td>
 				</tr>
 				{% endfor %}

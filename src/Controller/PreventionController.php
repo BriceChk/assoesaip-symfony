@@ -93,7 +93,7 @@ class PreventionController extends AbstractController
 
             if (in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
                 $response->setStatus('Validé');
-                $topic->setIsAnonymous(false);
+                $response->setIsAnonymous(false);
             } else {
                 $response->setStatus('En attente');
                 $response->setIsAnonymous($request->get('is_anonymous') == "on" ? true : false);
@@ -180,7 +180,7 @@ class PreventionController extends AbstractController
         $responses = $doc->getRepository(TopicResponse::class)->findBy(['status' => 'En attente']);
 
         if ($request->get('objectId')) {
-            $rep = str_contains($request->get('objectId'), 'topic') ? $doc->getRepository(Topic::class) : $doc->getRepository(TopicResponse::class);
+            $rep = str_contains($request->get('objectId'), 'Response') ? $doc->getRepository(TopicResponse::class) : $doc->getRepository(Topic::class);
             $object = $rep->findOneBy(['id' => (explode('|', $request->get('objectId'))[1])]);
             $object->setStatus($request->get('status'));
             if ($request->get('status') == 'Refusé') {
