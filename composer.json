@@ -3,10 +3,6 @@
     "license": "proprietary",
     "require": {
         "php": ">=7.4.12",
-        "ext-ctype": "*",
-        "ext-iconv": "*",
-        "ext-json": "*",
-        "ext-mysqli": "*",
         "cocur/slugify": "^4.0",
         "composer/package-versions-deprecated": "^1.11",
         "doctrine/annotations": "^1.11",
