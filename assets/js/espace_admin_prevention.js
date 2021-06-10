@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    console.log("tet");
     // Add member search
     let options = {
         url: function (phrase) {
@@ -47,10 +48,11 @@ $(document).ready(function () {
     $(".easy-autocomplete").removeAttr("style");
 });
 
-window.deleteAdmin = function (id, name) {
+window.deletePrevention = function (id, name) {
+    console.log("test");
     if (confirm("Supprimer le membre " + name + " ?")) {
         $.ajax({
-            url: '/api/admin/' + id,
+            url: '/api/prevention/' + id,
             type: 'DELETE',
             contentType: 'application/json',
             success: function () {

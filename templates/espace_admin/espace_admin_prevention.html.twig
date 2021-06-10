@@ -43,9 +43,7 @@
                                             {{ p.fullName }} (<a href="mailto:{{ p.username }}">{{ p.username }}</a>)
                                         </div>
                                         <span class="float-right">
-                                        <button class="btn btn-danger" {{ p == app.user ? 'disabled' }}
-                                                onclick="deleteAdmin('{{ p.id }}', '{{ p.fullName }}')
-                                                        ">Supprimer</button>
+                                        <button class="btn btn-danger" {{ p == app.user ? 'disabled' }} onclick="deletePrevention('{{ p.id }}', '{{ p.fullName }}')">Supprimer</button>
                                     </span>
                                     </li>
                                 {% endfor %}
@@ -54,7 +52,7 @@
                                         %name% (<a href="mailto:%mail%">%mail%</a>)
                                     </div>
                                     <span class="float-right">
-                                        <button class="btn btn-danger" onclick="deleteAdmin('%id%', '%name%')">Supprimer</button>
+                                        <button class="btn btn-danger" onclick="deletePrevention('%id%', '%name%')">Supprimer</button>
                                     </span>
                                 </li>
                             </ul>
