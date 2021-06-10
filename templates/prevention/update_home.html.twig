@@ -18,29 +18,20 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xl-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-text">Infos de base</div>
-                        </div>
-                        <div class="card-body">
-                            <div id="form-container">
-                                <div class="form-group">
-                                    <label for="inputDescription">Phrase de description</label>
-                                    <textarea class="form-control" id="inputDescription" rows="2" maxlength="180">{{ description }}</textarea>
-                                    <small class="form-text text-muted">Rédiger une phrase pas trop longue (180 caractères max) qui explique rapidement le thème du projet.</small>
-                                </div>
-
-                                <div class="form-group">
-                                    <div class="custom-file">
-                                        <label for="inputLogo" class="custom-file-label">Ajouter / remplacer le logo</label>
-                                        <input type="file" class="custom-file-input" id="inputLogo" accept=".png,.jpg" onchange="previewLogo(this)">
+                <div class="col-lg-8 order-lg-0" style="max-width: 1140px;">
+                    <div id="contenu">
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="page-home" role="tabpanel" aria-labelledby="home">
+                                <div id="summernote-home">RAW1</div>
+                            </div>
+                                <div class="tab-pane fade" id="page-ID" role="tabpanel" aria-labelledby="page-ID">
+                                    <div id="summernote-ID">
+                                        RAW2
                                     </div>
-                                    <small id="logoHelp" class="form-text text-muted">Fichier .png transparent (sans fond blanc). Ne rien envoyer pour garder l'image actuelle.</small>
                                 </div>
-                                <div class="form-group">
-                                    Mettre img
-                                </div>
+                        </div>
+                        <div style="display: none">
+                            <div class="tab-pane fade" id="tab-template" role="tabpanel" aria-labelledby="">
                             </div>
                         </div>
                     </div>
@@ -49,4 +40,9 @@
         </div>
     </section>
     <!-- /.content -->
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('prevention') }}
 {% endblock %}

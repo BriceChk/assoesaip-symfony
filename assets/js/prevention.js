@@ -41,51 +41,11 @@ $(document).ready(function () {
     });
 });
 
-window.newPage = function () {
-    let inputName = $('#inputName');
-    let name = inputName.val();
-    name = name.trim();
-
-    if (name === "") {
-        return;
-    }
-
-    let json = {
-        name: name,
-        order_position: $('#nav-list li').length,
-        html: '',
-        published: false
-    }
-
-    $.ajax({
-        url: '/api/project/' + id + '/pages',
-        type: 'PUT',
-        dataType: 'json',
-        contentType: 'application/json',
-        data: JSON.stringify(json),
-        success: function (page) {
-            $('#nav-list-card .btn-page').prop('disabled', false).text('Modifier');
-
-            let newTab = $('#tab-template').clone();
-            newTab.attr('aria-labelledby', 'page-' + page.id).attr('id', 'page-' + page.id);
-            newTab.append($('<div></div>').attr('id', 'summernote-' + page.id));
-            $('.tab-content').append(newTab);
-
-            let newListItem = $('#list-template').clone();
-            newListItem.html(newListItem.html().replace(/%id%/gi, page.id).replace('%name%', name));
-            newListItem.attr('id', 'page-list-' + page.id)
-            $('#nav-list').append(newListItem);
-
-            $('#summernote-' + page.id).summernote(summernoteOptions);
-            inputName.val('');
-            $('#nav-list a[href="#page-' + page.id + '"]').tab('show');
-
-            toastr.success('La nouvelle page a été créée !');
-        },
-        error: function (data) { error(data) }
-    });
+window.changePage = function(id, el) {
+    $('#nav-list a[href="#page-' + id + '"]').tab('show');
+    $('#nav-list-card .btn-page').prop('disabled', false).text('Modifier');
+    $(el).prop('disabled', true).text('Modif. en cours')
 }
-
 
 window.save = function () {
     let count = 0;
@@ -139,5 +99,17 @@ window.save = function () {
                 error: function (data) { error(data) }
             });
         }
+    });
+}
+
+window.ajaxRequest = function(uri, json, success, error) {
+    $.ajax({
+        url: uri,
+        type: 'POST',
+        dataType: 'json',
+        contentType: 'application/json',
+        data: JSON.stringify(json),
+        success: function (data) { success(data) },
+        error: function (data) { error(data) }
     });
 }

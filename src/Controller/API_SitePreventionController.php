@@ -6,14 +6,14 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Utils;
 use FOS\RestBundle\Controller\Annotations as Rest;
-use FOS\RestBundle\Controller\Annotations\View;
-use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 
-class API_SiteAdministrationController extends AbstractController {
+class API_SitePreventionController extends AbstractController
+{
+
 
     /**
      * @OA\Response (
@@ -29,8 +29,8 @@ class API_SiteAdministrationController extends AbstractController {
      *     description = "The requested User doesn't exist"
      * )
      * @Rest\Put(
-     *     path = "/api/admin/{id}",
-     *     name = "api_admin_add",
+     *     path = "/api/prevention/{id}",
+     *     name = "api_prevention_add",
      *     requirements = { "id"="\d+" }
      * )
      * @OA\Parameter (
@@ -39,12 +39,12 @@ class API_SiteAdministrationController extends AbstractController {
      *     description="The User unique identifier",
      *     @OA\Schema(type="integer")
      * )
-     * @OA\Tag(name="Prevention")
+     * @OA\Tag(name="Administration")
      * @IsGranted("ROLE_ADMIN")
      * @param $id
      * @return Response
      */
-    public function addAdmin($id): Response {
+    public function addPrevention($id): Response {
         $response = new Response();
         $em = $this->getDoctrine()->getManager();
         $admin = $em->getRepository(User::class)->find($id);
@@ -56,12 +56,12 @@ class API_SiteAdministrationController extends AbstractController {
         }
 
         $roles = $admin->getRoles();
-        if (($key = array_search('ROLE_ADMIN', $roles)) !== false) {
+        if (($key = array_search('ROLE_PREV', $roles)) !== false) {
             $response->setStatusCode(Response::HTTP_BAD_REQUEST);
-            $response->setContent(Utils::jsonMsg("Cet utilisateur est déjà administrateur"));
+            $response->setContent(Utils::jsonMsg("Cet utilisateur est déjà un membre du pôle prévention"));
             return $response;
         } else {
-            $roles[] = 'ROLE_ADMIN';
+            $roles[] = 'ROLE_PREV';
         }
         $admin->setRoles($roles);
 
@@ -69,7 +69,7 @@ class API_SiteAdministrationController extends AbstractController {
         $em->flush();
 
         $response->setStatusCode(Response::HTTP_OK);
-        $response->setContent(Utils::jsonMsg("L'utilisateur a été ajouté aux administrateurs"));
+        $response->setContent(Utils::jsonMsg("L'utilisateur a été ajouté aux membres du pôle prévention"));
         return $response;
     }
 
@@ -97,47 +97,48 @@ class API_SiteAdministrationController extends AbstractController {
      *     @OA\Schema(type="integer")
      * )
      * @Rest\Delete(
-     *     path = "/api/admin/{id}",
-     *     name = "api_admin_remove",
+     *     path = "/api/prevention/{id}",
+     *     name = "api_preventionn_remove",
      *     requirements = { "id"="\d+" }
      * )
-     * @OA\Tag(name="Prevention")
+     * @OA\Tag(name="Administration")
      * @IsGranted("ROLE_ADMIN")
      * @param $id
      * @return Response
      */
-    public function removeAdmin($id): Response {
+    public function removePrevention($id): Response
+    {
         $response = new Response();
         $em = $this->getDoctrine()->getManager();
-        $admin = $em->getRepository(User::class)->find($id);
+        $prevention = $em->getRepository(User::class)->find($id);
 
-        if ($admin == null) {
+        if ($prevention == null) {
             $response->setStatusCode(Response::HTTP_NOT_FOUND);
             $response->setContent(Utils::jsonMsg("Cet utilisateur n'existe pas"));
             return $response;
         }
 
-        if ($admin == $this->getUser()) {
+        if ($prevention == $this->getUser()) {
             $response->setStatusCode(Response::HTTP_FORBIDDEN);
-            $response->setContent(Utils::jsonMsg("Vous ne pouvez pas vous enlever vous même des administrateurs"));
+            $response->setContent(Utils::jsonMsg("Vous ne pouvez pas vous enlever vous même des membres du pôle prévention"));
             return $response;
         }
 
-        $roles = $admin->getRoles();
-        if (($key = array_search('ROLE_ADMIN', $roles)) !== false) {
+        $roles = $prevention->getRoles();
+        if (($key = array_search('ROLE_PREV', $roles)) !== false) {
             unset($roles[$key]);
         } else {
             $response->setStatusCode(Response::HTTP_BAD_REQUEST);
-            $response->setContent(Utils::jsonMsg("Cet utilisateur n'est pas administrateur"));
+            $response->setContent(Utils::jsonMsg("Cet utilisateur n'est pas membre du pôle prévention"));
             return $response;
         }
-        $admin->setRoles($roles);
+        $prevention->setRoles($roles);
 
-        $em->persist($admin);
+        $em->persist($prevention);
         $em->flush();
 
         $response->setStatusCode(Response::HTTP_OK);
-        $response->setContent(Utils::jsonMsg("L'utilisateur a été enlevé des administrateurs"));
+        $response->setContent(Utils::jsonMsg("L'utilisateur a été enlevé des membres du pôle prévention"));
         return $response;
     }
 }
