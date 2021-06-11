@@ -100,6 +100,22 @@ class AssoEsaipSettingsRepository extends ServiceEntityRepository
         return $setting->getValue() == '1';
     }
 
+    public function getPresentationPolePrevention() : string
+    {
+        /** @var AssoEsaipSettings $setting */
+        try {
+            $setting = $this->createQueryBuilder('a')
+                ->andWhere('a.name = :val')
+                ->setParameter('val', 'pole_prev_presentation')
+                ->getQuery()
+                ->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            return '';
+        }
+
+        return $setting->getValue();
+    }
+
     // /**
     //  * @return AssoEsaipSettings[] Returns an array of AssoEsaipSettings objects
     //  */
