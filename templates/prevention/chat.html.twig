@@ -31,7 +31,9 @@
 <script>
 	$(document).ready(function () {
 		setInterval(() => {
-			$("#chat").load('{{ asset("prevention/chat_messages.php") }}', { id: '{{ app.user.id }}', is_prevention: 0 });
+			$("#chat").load('{{ asset("prevention/chat_messages.php") }}', { id: '{{ app.user.id }}', is_prevention: 0 }, function () {
+				$('#chat').scrollTop($('#chat')[0].scrollHeight)
+			});
 		}, 5000);
 		$('#chat').scrollTop($('#chat')[0].scrollHeight);
 	});

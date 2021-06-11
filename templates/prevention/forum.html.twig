@@ -34,7 +34,7 @@
 				</div>
 			</div>
 
-			<div class="col-auto">
+			<div class="col-auto ml-1">
 				<div class="form-group">
 					<label for="">Trier par</label>
 					<select class="form-control col-xs-2" onchange="sort(this.value)">
@@ -44,10 +44,14 @@
 					</select>
 				</div>
 			</div>
+			<div class="col-auto mt-2 ml-1">
+				<div class="mt-4">
+					<a href="{{path('prevention_add_topic')}}">
+						<button class="btn btn-primary">Proposer un nouveau topic</button>
+					</a>
+				</div>
+			</div>
 		</div>
-		<a href="{{path('prevention_add_topic')}}">
-			<button class="btn btn-primary">Proposer un nouveau topic</button>
-		</a>
 		<div id="topics" class="mt-5">
 			{% for topic in topics %}
 			<div class="topic card">
@@ -55,7 +59,7 @@
 					<h3>{{topic.title}}</h3>
 					<div class="row">
 						<div class="col-sm-7">
-							<h5>{{is_granted('ROLE_ADMIN') or is_granted('ROLE_PREVENTION') ? 'Pôle
+							<h5>{{is_granted('ROLE_ADMIN') or is_granted('ROLE_PREV') ? 'Pôle
 								prévention' :
 								(topic.isAnonymous ?
 								topic.author.anonymousId : topic.author.fullname)}},

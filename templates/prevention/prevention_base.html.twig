@@ -52,7 +52,7 @@
 				<li class="nav-item {{ app.request.get('_route') == 'prevention_forum' ? 'active' }}">
 					<a class="nav-link" href="{{ path('prevention_forum') }}">Forum</a>
 				</li>
-				{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_PREVENTION') %}
+				{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_PREV') %}
 				<li class="nav-item {{ app.request.get('_route') == 'prevention_admin_chat' ? 'active' }}">
 					<a class="nav-link" href="{{ path('prevention_admin_chat') }}">Chat</a>
 				</li>
@@ -70,7 +70,7 @@
 			</ul>
 
 			<ul class="navbar-nav">
-				{% if is_granted('ROLE_ADMIN') == false and is_granted('ROLE_PREVENTION') == false %}
+				{% if is_granted('ROLE_ADMIN') == false and is_granted('ROLE_PREV') == false %}
 				<li class="nav-item {{ app.request.get('_route') == 'prevention_profile' ? 'active' }}">
 					<a class="nav-link" href="{{ path('prevention_profile') }}">Profil</a>
 				</li>

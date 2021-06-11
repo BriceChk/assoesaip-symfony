@@ -54,6 +54,11 @@ class TopicResponse
      */
     private $isAnonymous;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isSeen;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -139,6 +144,18 @@ class TopicResponse
     public function setIsAnonymous(bool $isAnonymous): self
     {
         $this->isAnonymous = $isAnonymous;
+
+        return $this;
+    }
+
+    public function getIsSeen(): ?bool
+    {
+        return $this->isSeen;
+    }
+
+    public function setIsSeen(bool $isSeen): self
+    {
+        $this->isSeen = $isSeen;
 
         return $this;
     }

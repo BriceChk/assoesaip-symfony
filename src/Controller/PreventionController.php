@@ -84,12 +84,24 @@ class PreventionController extends AbstractController
      */
     public function view_topic(Topic $topic, Request $request): Response
     {
+        if ($this->getUser() == $topic->getAuthor()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            foreach ($topic->getTopicResponses() as $response) {
+                if (!$response->getIsSeen() && $response->getStatus() == "Validé") {
+                    $response->setIsSeen(true);
+                    $entityManager->persist($response);
+                }
+            }
+            $entityManager->flush();
+        }
+
         if ($request->get('content')) {
             $response = new TopicResponse();
             $response->setContent($request->get('content'));
             $response->setResponseDate(new \DateTime());
             $response->setAuthor($this->getUser());
             $response->setTopic($topic);
+            $response->setIsSeen($this->getUser() == $topic->getAuthor() ? true : false);
 
             if (in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
                 $response->setStatus('Validé');

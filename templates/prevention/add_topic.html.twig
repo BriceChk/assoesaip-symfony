@@ -7,7 +7,7 @@
 <main>
 	<div class="jumbotron text-center">
 		<h1 class="display-4">Proposer un topic</h1>
-		{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_PREVENTION') %}
+		{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_PREV') %}
 		<p class="lead">Votre topic sera automatiquement publié.</p>
 		{% else %}
 		<p class="lead">Votre topic devra être validé par le pôle prévention avant d'être visible publiquement</p>
@@ -18,7 +18,7 @@
 		{{ form_row(form.title) }}
 		{{ form_row(form.content) }}
 		{{ form_row(form.tag) }}
-		{% if is_granted('ROLE_ADMIN') == null and is_granted('ROLE_PREVENTION') == null %}
+		{% if is_granted('ROLE_ADMIN') == null and is_granted('ROLE_PREV') == null %}
 		{{ form_row(form.isAnonymous) }}
 		{% endif %}
 		<div class="text-center">

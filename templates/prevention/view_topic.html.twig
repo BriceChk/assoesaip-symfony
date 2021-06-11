@@ -10,7 +10,7 @@
 			<h1>{{topic.title}}</h1>
 			<div class="row mt-2 mb-3">
 				<div class="col-sm-7">
-					<h3>{{is_granted('ROLE_ADMIN') or is_granted('ROLE_PREVENTION') ? 'Pôle
+					<h3>{{is_granted('ROLE_ADMIN') or is_granted('ROLE_PREV') ? 'Pôle
 						prévention' :
 						(topic.isAnonymous ?
 						topic.author.anonymousId : topic.author.fullname)}},
@@ -27,7 +27,7 @@
 				<textarea class="form-control" name="content" style="height:38px; min-height:38px" required></textarea>
 
 				<button class="btn btn-primary my-sm-0 ml-3" style="height: fit-content;" {{is_granted('ROLE_ADMIN') or
-					is_granted('ROLE_PREVENTION') ? '' : 'data-toggle="modal" data-target="#modal" type="button"' }}>
+					is_granted('ROLE_PREV') ? '' : 'data-toggle="modal" data-target="#modal" type="button"' }}>
 					Envoyer
 				</button>
 			</div>
@@ -37,7 +37,7 @@
 				<div class="card">
 					<div class="card-body">
 						<p class="card-txt">
-							<strong>{{'ROLE_ADMIN' in response.author.roles or 'ROLE_PREVENTION' in
+							<strong>{{'ROLE_ADMIN' in response.author.roles or 'ROLE_PREV' in
 								response.author.roles ?
 								'Pôle prévention' : (response.isAnonymous ? response.author.anonymousId :
 								response.author.fullname)}}</strong>, le

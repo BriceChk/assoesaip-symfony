@@ -49,6 +49,13 @@
 		setInterval(() => {
 			getUsers();
 		}, 5000);
+
+		interval = setInterval(() => {
+			$("#chat").load('{{ asset("prevention/chat_messages.php") }}', { id: idU, is_prevention: 1 }, function () {
+				$('#chat').scrollTop($('#chat')[0].scrollHeight)
+			});
+		}, 5000);
+
 		$('#chat').scrollTop($('#chat')[0].scrollHeight);
 	});
 
@@ -59,7 +66,9 @@
 		});
 		idU = id;
 		interval = setInterval(() => {
-			$("#chat").load('{{ asset("prevention/chat_messages.php") }}', { id: id, is_prevention: 1 });
+			$("#chat").load('{{ asset("prevention/chat_messages.php") }}', { id: id, is_prevention: 1 }, function () {
+				$('#chat').scrollTop($('#chat')[0].scrollHeight)
+			});
 		}, 5000);
 		$('#user').text($(elem).text());
 	}
